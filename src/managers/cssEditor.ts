@@ -1,0 +1,704 @@
+import { App, Notice, setIcon, Workspace } from 'obsidian';
+import CustomThemeStudioPlugin from '../main';
+import { CustomThemeStudioView } from '../view';
+import { CustomThemeStudioSettings, CustomElement } from '../settings';
+import { AceService } from '../services/AceService';
+import { ICodeEditorConfig } from '../interfaces/types';
+import * as ace from 'ace-builds';
+import { confirm } from '../modals/confirmModal';
+import { CSSVariableManager } from './cssVariabManager';
+
+export class CSSEditor {
+	plugin: CustomThemeStudioPlugin;
+	view: CustomThemeStudioView;
+	currentSelector: string = '';
+	editorEl: HTMLTextAreaElement | null = null;
+	selectorInputEl: HTMLInputElement | null = null;
+	nameInputEl: HTMLInputElement | null = null;
+	enabledToggleEl: HTMLInputElement | null = null;
+	editorSection: HTMLElement | null = null;
+	currentEditingElement: HTMLElement | null = null;
+	isEditingExisting: boolean = false;
+	app: App;
+	settings: CustomThemeStudioSettings;
+	workspace: Workspace;
+	private aceService: AceService;
+	editor: ace.Ace.Editor;
+	cssVarManager: CSSVariableManager;
+
+
+	constructor(workspace: Workspace, plugin: CustomThemeStudioPlugin, view: CustomThemeStudioView, private config: ICodeEditorConfig) {
+		this.plugin = plugin;
+		this.view = view;
+		this.app = this.app;
+		this.workspace = workspace;
+		this.settings = this.settings;
+		this.aceService = new AceService(this.plugin);
+		this.cssVarManager = new CSSVariableManager(this.plugin);
+	}
+
+	showEditorSection(show: boolean): void {
+		if (this.editorSection) {
+			if (show) {
+				this.editorSection.addClass('css-editor-section-show');
+				this.editorSection.removeClass('css-editor-section-hide');
+			} else {
+				this.editorSection.addClass('css-editor-section-hide');
+				this.editorSection.removeClass('css-editor-section-show');
+			}
+		}
+	}
+
+	createEditorSection(containerEl: HTMLElement): void {
+		this.editorSection = containerEl.createDiv('css-editor-section');
+
+		// Element name input
+		const nameContainer = this.editorSection.createDiv('editor-name-container');
+		nameContainer.createSpan({ text: 'Element name:' });
+		this.nameInputEl = nameContainer.createEl('input', {
+			attr: {
+				type: 'text',
+				placeholder: 'Enter a descriptive name (optional)'
+			}
+		});
+
+		// Selector input
+		const selectorContainer = this.editorSection.createDiv('editor-selector-container');
+		selectorContainer.createSpan({ text: 'CSS selector:' });
+		this.selectorInputEl = selectorContainer.createEl('input', {
+			attr: {
+				type: 'text',
+				placeholder: 'Enter CSS selector or use element picker'
+			}
+		});
+
+		// CSS editor
+		this.editorEl = this.editorSection.createEl('textarea', {
+			attr: {
+				placeholder: 'Enter CSS rules here...',
+				class: 'css-editor'
+			}
+		});
+
+		this.editor = this.aceService.createEditor(this.editorEl);
+
+		this.aceService.configureEditor(this.config, 'css');
+
+		// Snippet manager
+		// https://stackoverflow.com/questions/26089258/ace-editor-manually-adding-snippets/66923593#66923593
+		// https://ace.c9.io/build/kitchen-sink.html
+		this.editor.setOption('enableSnippets', true);
+		const snippetManager = ace.require('ace/snippets').snippetManager;
+		const snippetContent = this.cssVarManager.snippetManagerVars();
+		const snippets = snippetManager.parseSnippetFile(snippetContent);
+		snippetManager.register(snippets, 'css');
+
+		// Editor options
+		const editorOptions = this.editorSection.createDiv('editor-options-container', (el) => {
+			el.addClass('editor-options-container-hide');
+		});
+
+		// Wordwrap
+		const wordwrapOptionContainer = editorOptions.createDiv('wordwrap-toggle-container');
+		wordwrapOptionContainer.createEl('label', {
+			text: 'Wordwrap:',
+			attr: {
+				'for': 'toggle-wordwrap-checkbox'
+			}
+		})
+		const wordWrapCheckboxContainer = wordwrapOptionContainer.createDiv('checkbox-container');
+		const wordWrapCheckbox = wordWrapCheckboxContainer.createEl('input', {
+			attr: {
+				class: 'toggle-wordwrap-checkbox',
+				id: 'toggle-wordwrap-checkbox',
+				type: 'checkbox',
+			}
+		});
+		if (this.plugin.settings.EditorWordWrap) {
+			wordWrapCheckbox.checked = true;
+			wordWrapCheckboxContainer.addClass('is-enabled');
+		}
+		wordWrapCheckboxContainer.addEventListener('click', () => {
+			if (wordWrapCheckboxContainer.classList.contains('is-enabled')) {
+				wordWrapCheckboxContainer.removeClass('is-enabled');
+				wordWrapCheckbox.checked = false;
+				this.editor?.getSession().setUseWrapMode(false)
+			} else {
+				wordWrapCheckboxContainer.addClass('is-enabled');
+				wordWrapCheckbox.checked = true;
+				this.editor?.getSession().setUseWrapMode(true)
+			}
+		})
+
+		// Font-size
+		const fontsizeOptionContainer = editorOptions.createDiv('font-size-container');
+		fontsizeOptionContainer.createEl('label', {
+			text: 'Font size:',
+			attr: {
+				'for': 'fontsize-slider'
+			}
+		})
+		const fontsizeSliderContainer = fontsizeOptionContainer.createDiv('slider-container');
+		const fontsizeSlider = fontsizeSliderContainer.createEl('input', {
+			attr: {
+				class: 'slider',
+				id: 'fontsize-slider',
+				type: 'range',
+				min: 5,
+				max: 30,
+				step: 1,
+				value: this.plugin.settings.EditorFontSize
+			}
+		});
+
+		const fontsizeDisplayValue = fontsizeOptionContainer.createDiv('slider-value', (el) => {
+			el.innerText = ' ' + this.plugin.settings.EditorFontSize.toString();
+		});
+
+		fontsizeSlider.addEventListener('change', (e) => {
+			let sliderValue: number = Number((e.target! as HTMLInputElement).value);
+			this.editor?.setFontSize(sliderValue);
+			fontsizeDisplayValue.innerText = sliderValue.toString();
+		})
+
+		// Button container
+		const buttonContainer = this.editorSection.createDiv('button-container');
+
+		if (!this.plugin.settings.autoApplyChanges) {
+			const applyButton = buttonContainer.createEl('button', {
+				text: 'Apply Changes',
+				cls: 'mod-cta'
+			});
+			// Apply button
+			applyButton.addEventListener('click', () => {
+				this.applyChanges(this.aceService.getValue());
+			});
+		}
+
+		const saveButton = buttonContainer.createEl('button', {
+			text: 'Save Element',
+			cls: 'mod-cta'
+		});
+
+		const cancelButton = buttonContainer.createEl('button', {
+			text: 'Cancel'
+		});
+
+		const settingsButton = buttonContainer.createEl('button', {
+			cls: 'clickable-icon',
+			attr: {
+				'aria-label': 'Show editor options',
+				'data-tooltip-position': 'top'
+			}
+		});
+		setIcon(settingsButton, 'settings-2');
+
+		settingsButton.addEventListener('click', () => {
+			if (editorOptions.hasClass('editor-options-container-hide')) {
+				editorOptions.addClass('editor-options-container-show');
+				editorOptions.removeClass('editor-options-container-hide');
+				settingsButton.setAttr('aria-label', 'Hide editor options');
+			} else {
+				editorOptions.addClass('editor-options-container-hide');
+				editorOptions.removeClass('editor-options-container-show');
+				settingsButton.setAttr('aria-label', 'Show editor options');
+			}
+
+		})
+
+		// Event listeners
+		this.selectorInputEl.addEventListener('input', () => {
+			this.currentSelector = this.selectorInputEl!.value;
+		});
+
+		// Save button
+		saveButton.addEventListener('click', async () => {
+			const selector = this.selectorInputEl!.value.trim();
+			const existingIndex = this.plugin.settings.customElements.findIndex(el => el.selector === selector);
+			const css = this.aceService.getValue();
+			if (existingIndex >= 0 && !this.isEditingExisting) {
+				if (!await confirm('Their is a custom selector for "'+selector+'" already. Saving this new selector will overwrite the current one. Continue?', this.plugin.app)) {
+					return;
+				}
+			}
+			if (this.saveElement()) {
+				// Hide the editor section after saving
+				if (!this.isEditingExisting) {
+					this.showEditorSection(false);
+				} else {
+					// If editing an existing element, remove the inline editor
+					this.removeInlineEditor();
+				}
+			}
+		});
+
+		// Cancel button
+		cancelButton.addEventListener('click', () => {
+			if (this.isEditingExisting) {
+				// If editing an existing element, remove the inline editor;
+				this.removeInlineEditor();
+			} else {
+				// Otherwise only hide the editor section
+				this.showEditorSection(false);
+			}
+			// Reset the editor
+			this.resetEditor();
+			this.clearAppliedChanges();
+		});
+
+		this.workspace.on('css-change', async () => {
+			this.aceService.updateTheme();
+		})
+	}
+
+	// Auto-apply changes when typing (with debounce)
+	changeListener = (delta: ace.Ace.Delta) => {
+		let timeout;
+		timeout ??= setTimeout(() => {
+
+			let css = this.aceService.getValue();
+			if (css && this.plugin.settings.autoApplyChanges) {
+				this.applyChanges(css!);
+			}
+		}, 10);
+	}
+
+	setSelector(selector: string, isEditingExisting: boolean): void {
+		if (!this.selectorInputEl) return;
+
+		this.currentSelector = selector;
+		this.selectorInputEl.value = selector;
+
+		// Try to find existing element with this selector
+		const existingElement = this.plugin.settings.customElements.find(el => el.selector === selector);
+		if (existingElement) {
+
+			// this.editor!.session.on('change', this.changeListener);
+
+			this.editorEl!.value = existingElement.css;
+			this.aceService.setValue(existingElement.css, 1);
+
+			// Populate name if available			
+			if (existingElement.name) {
+				this.nameInputEl!.value = existingElement.name;
+			}
+			else {
+				this.nameInputEl!.value = '';
+			}
+
+			if (!isEditingExisting) {
+				new Notice('Their is a custom selector for "'+selector+'" already. The editor has been populated with the current CSS rule(s). Click this message to dismiss.', 0);
+			}
+
+		} else {
+			// Generate default CSS template
+			this.generateDefaultCSS(selector);
+			new Notice(`Element selected: ${selector}`);
+		}
+		this.editor!.session.on('change', this.changeListener);
+	}
+
+	generateDefaultCSS(selector: string): void {
+		if (!this.editorEl) return;
+
+		// Try to find the element
+		const element = this.findElementBySelector(selector);
+		let css: string = '';
+		css += `${selector} {\n`;
+		css += `\t\n`;
+		css += `}`;
+		this.aceService.setValue(css, 1);
+
+		// Clear name input
+		if (this.nameInputEl) {
+			this.nameInputEl.value = '';
+		}
+	}
+
+	findElementBySelector(selector: string): HTMLElement | null {
+		try {
+			return document.querySelector(selector) as HTMLElement;
+		} catch (error) {
+			console.error('Invalid selector:', selector);
+			return null;
+		}
+	}
+
+	applyChanges(css: string): void {
+		if (!this.editorEl || !this.selectorInputEl) return;
+
+		const selector = this.selectorInputEl.value.trim();
+
+		if (!selector || !css) {
+			new Notice('Please enter both a selector and CSS rules');
+			return;
+		}
+
+		// Update the custom CSS
+		this.updateCustomCSS(selector, css);
+
+
+
+		// Apply the changes
+		if (this.plugin.settings.themeEnabled) {
+			this.plugin.themeManager.applyCustomTheme();
+		}
+	}
+
+	clearAppliedChanges(): void {
+
+		// Update the custom CSS
+		this.updateCustomCSS('', '');
+
+		// Apply the changes
+		if (this.plugin.settings.themeEnabled) {
+			this.plugin.themeManager.applyCustomTheme();
+		}
+	}
+
+	saveElement(): boolean {
+
+		if (!this.editorEl || !this.selectorInputEl || !this.nameInputEl) return false;
+
+		const name = this.nameInputEl.value.trim();
+		const selector = this.selectorInputEl.value.trim();
+		const css = this.aceService.getValue();
+
+		if (!selector || !css) {
+			new Notice('Please enter both a selector and CSS rules');
+			return false;
+		}
+
+		// Check if element already exists
+		const existingIndex = this.plugin.settings.customElements.findIndex(el => el.selector === selector);
+
+		if (existingIndex >= 0) {
+			// Update existing element
+			this.plugin.settings.customElements[existingIndex] = {
+				selector,
+				css,
+				name: name || undefined,
+				enabled: this.plugin.settings.customElements[existingIndex].enabled
+			};
+		} else {
+			// Add new element
+			this.plugin.settings.customElements.push({
+				selector,
+				css,
+				name: name || undefined,
+				enabled: true
+			});
+		}
+
+		// Save settings
+		this.plugin.saveSettings();
+
+		// Update the custom CSS
+		this.updateCustomCSS(selector, css);
+
+		// Apply the changes
+		if (this.plugin.settings.themeEnabled) {
+			this.plugin.themeManager.applyCustomTheme();
+		}
+
+
+		this.editorEl.value = '';
+
+		// Get the element list
+		const elementList = this.view.containerEl.querySelector('.element-list');
+		if (elementList) {
+			// If we're editing an existing element, we need to update the list
+			if (this.isEditingExisting) {
+				// Clear the element list
+				elementList.empty();
+
+				// Re-populate with all elements
+				this.plugin.settings.customElements.forEach(element => {
+					this.createElementItem(elementList as HTMLElement, element);
+				});
+			} else {
+				// Check if element already exists in the list
+				const existingElements = elementList.querySelectorAll('.element-item');
+				let elementExists = false;
+
+				existingElements.forEach(el => {
+					if (el.getAttribute('data-selector') === selector) {
+						elementExists = true;
+					}
+				});
+
+				if (!elementExists) {
+					// Create new element item
+					this.createElementItem(elementList as HTMLElement, {
+						selector,
+						css,
+						name: name || undefined,
+						enabled: true
+					});
+				}
+
+				elementList.empty();
+
+				// Re-populate with all elements
+				this.plugin.settings.customElements.forEach(element => {
+					this.createElementItem(elementList as HTMLElement, element);
+				});
+			}
+		}
+
+		new Notice('Element saved successfully');
+		return true;
+	}
+
+	resetEditor(): void {
+		if (!this.editorEl || !this.selectorInputEl || !this.nameInputEl) return;
+
+		// Clear inputs
+		this.selectorInputEl.value = '';
+		this.aceService.setValue('');
+		this.nameInputEl.value = '';
+
+		// Reset current selector
+		this.currentSelector = '';
+
+		// Reset editing state
+		this.isEditingExisting = false;
+		this.currentEditingElement = null;
+	}
+
+	removeInlineEditor(): void {
+
+		this.editor!.session.off('change', this.changeListener);
+
+		// Remove any existing inline editors
+		const inlineEditors = document.querySelectorAll('.inline-element-editor');
+		inlineEditors.forEach(editor => editor.remove());
+
+		// Reset editing state
+		this.isEditingExisting = false;
+		this.currentEditingElement = null;
+
+		// Hide the main editor section
+		this.showEditorSection(false);
+
+		// Move the editor section back to its original container
+		if (this.editorSection) {
+			const content = this.view.containerEl.querySelector('.element-section .collapsible-content');
+			if (content) {
+				// Find the selector button container to insert after
+				const selectorButtonContainer = content.querySelector('.selector-button-container');
+				if (selectorButtonContainer && selectorButtonContainer.nextSibling) {
+					content.insertBefore(this.editorSection, selectorButtonContainer.nextSibling);
+				} else {
+					content.appendChild(this.editorSection);
+				}
+			}
+		}
+	}
+
+	async updateCustomCSS(selector: string, css: string): Promise<void> {
+		// Get all custom elements CSS
+		let fullCSS = '';
+		const existingIndex = this.plugin.settings.customElements.findIndex(el => el.selector === selector);
+		if (existingIndex >= 0) {
+			if (this.plugin.settings.customElements[existingIndex].enabled) {
+				// First add the current element
+				fullCSS += `/* ${selector} */\n${css}\n\n`;
+			}
+		} else {
+			// New custom element
+			fullCSS += `/* ${selector} */\n${css}\n\n`;
+		}
+
+		// Then add all other elements
+		this.plugin.settings.customElements.forEach(element => {
+			// Skip the current element as we already added it
+			if (element.selector === selector) return;
+			if (element.enabled) {
+				fullCSS += `/* ${element.name || element.selector} */\n${element.css}\n\n`;
+			}
+		});
+
+		// Update the settings
+		this.plugin.settings.customCSS = fullCSS;
+		await this.plugin.saveSettings();
+	}
+
+	createElementItem(containerEl: HTMLElement, element: CustomElement): HTMLElement {
+		const item = containerEl.createDiv({
+			cls: 'element-item',
+			attr: {
+				'data-selector': element.selector,
+				'data-tooltip-position': 'top'
+			}
+		});
+
+		let currentEnabled = element.enabled;
+
+		const titleEl = item.createDiv('element-item-title');
+		titleEl.createDiv({
+			text: element.name || element.selector,
+			attr: { 'aria-label': element.selector, 'data-tooltip-position': 'top' }
+		});
+
+		const actionsEl = item.createDiv('element-item-actions');
+
+		const editButton = actionsEl.createEl('button', {
+			cls: 'clickable-icon'
+		});
+		editButton.setAttr('aria-label', 'Edit this element');
+		editButton.setAttr('data-tooltip-position', 'top');
+		editButton.setAttr('tabindex', '0');
+		setIcon(editButton, 'edit');
+
+		const enabledButton = actionsEl.createEl('button', {
+			cls: 'clickable-icon'
+		});
+		enabledButton.setAttr('data-tooltip-position', 'top');
+		enabledButton.setAttr('tabindex', '0');
+		if (currentEnabled) {
+			setIcon(enabledButton, 'eye');
+			enabledButton.setAttr('aria-label', 'Disable this element');
+			enabledButton.setAttr('data-tooltip-position', 'top');
+		} else {
+			setIcon(enabledButton, 'eye-off');
+			enabledButton.setAttr('aria-label', 'Enable this element');
+			enabledButton.setAttr('data-tooltip-position', 'top');
+		}
+
+		const deleteButton = actionsEl.createEl('button', {
+			cls: 'clickable-icon element-item-delete-button'
+		});
+		deleteButton.setAttr('aria-label', 'Delete this element');
+		deleteButton.setAttr('data-tooltip-position', 'top');
+		deleteButton.setAttr('tabindex', '0');
+		setIcon(deleteButton, 'trash');
+
+		// Edit button
+		editButton.addEventListener('click', async () => {
+			// Check if editor section is already visible
+			const editorSection = window.document.querySelector('.css-editor-section');
+			const isEditorVisible = editorSection && getComputedStyle(editorSection).display !== 'none';
+
+			if (isEditorVisible && this.plugin.settings.showConfirmation) {
+				if (!await confirm('You have an unsaved element form open. Editing another element will discard your changes. Continue?', this.plugin.app)) {
+					return;
+				}
+			}
+
+			// Remove any existing inline editors
+			this.removeInlineEditor();
+
+			this.resetEditor();
+
+			// Set editing state
+			this.isEditingExisting = true;
+			this.currentEditingElement = item;
+
+			// Create inline editor container
+			const inlineEditor = item.createDiv({
+				cls: 'inline-element-editor'
+			});
+
+			// Clone the editor section into the inline editor
+			if (this.editorSection) {
+				// Show the editor with the current element's values
+				this.setSelector(element.selector, true);
+
+				// Move the editor section under this element
+				inlineEditor.appendChild(this.editorSection);
+				this.showEditorSection(true);
+			}
+		});
+
+		// Enabled button
+		enabledButton.addEventListener('click', async () => {
+			// Enable/disable other selector
+			const currentlyEditedIndex = await new Promise<number | boolean>((resolve) => {
+				const elementList = this.view.containerEl.querySelector('.element-list');
+				const existingElements = elementList!.querySelectorAll('.element-item');
+				existingElements!.forEach((el, index) => {
+					const openEditor = el.querySelector('.inline-element-editor');
+					if (openEditor!) {
+						return resolve(index);
+					}
+				});
+				return resolve(false);
+			});
+
+			const existingIndex = this.plugin.settings.customElements.findIndex(el => el.selector === element.selector);
+
+			if (existingIndex >= 0) {
+
+				this.plugin.settings.customElements[existingIndex].enabled = this.plugin.settings.customElements[existingIndex].enabled ? false : true;
+			}
+
+			if (currentEnabled) {
+				setIcon(enabledButton, 'eye-off');
+				currentEnabled = false;
+			} else {
+				setIcon(enabledButton, 'eye');
+				currentEnabled = true;
+			}
+
+			// Update custom CSS
+			let fullCSS = '';
+			this.plugin.settings.customElements.forEach((el, index) => {
+				if (el.enabled) {
+					// Need currently edited index here
+					if (index === currentlyEditedIndex) {
+						let css = this.aceService.getValue();
+						fullCSS += `/* ${el.name || el.selector} */\n${css}\n\n`;
+					} else {
+						fullCSS += `/* ${el.name || el.selector} */\n${el.css}\n\n`;
+					}
+
+				}
+			});
+
+			this.plugin.settings.customCSS = fullCSS;
+			this.plugin.saveSettings();
+
+			// Apply changes
+			if (this.plugin.settings.themeEnabled) {
+				this.plugin.themeManager.applyCustomTheme();
+			}
+		});
+
+		// Delete button
+		deleteButton.addEventListener('click', async () => {
+			// Confirm deletion
+			if (await confirm(`Are you sure you want to delete the element "${element.name || element.selector}"?`, this.plugin.app)) {
+				// Remove from settings
+				this.plugin.settings.customElements = this.plugin.settings.customElements.filter(
+					el => el.selector !== element.selector
+				);
+
+				// Update custom CSS
+				let fullCSS = '';
+				this.plugin.settings.customElements.forEach(el => {
+					fullCSS += `/* ${el.name || el.selector} */\n${el.css}\n\n`;
+				});
+
+				this.plugin.settings.customCSS = fullCSS;
+				this.plugin.saveSettings();
+
+				// Apply changes
+				if (this.plugin.settings.themeEnabled) {
+					this.plugin.themeManager.applyCustomTheme();
+				}
+
+				// remove editor
+				// NOT necessary ?
+				// this.removeInlineEditor();
+
+				// Remove from DOM
+				item.remove();
+
+				new Notice('Element deleted');
+			}
+		});
+		return item;
+	}
+
+}
