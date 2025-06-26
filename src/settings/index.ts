@@ -5,6 +5,7 @@ import CustomThemeStudioPlugin from '../main';
 import settingsIO from './settingsIO';
 
 export interface CustomElement {
+	uuid: string;
 	selector: string;
 	css: string;
 	name?: string;

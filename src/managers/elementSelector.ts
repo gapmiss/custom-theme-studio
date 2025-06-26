@@ -1,6 +1,7 @@
 import { Notice, ButtonComponent } from 'obsidian';
 import CustomThemeStudioPlugin from '../main';
 import { CustomThemeStudioView } from '../view';
+import { generateUniqueId } from '../utils';
 
 export class ElementSelector {
 	plugin: CustomThemeStudioPlugin;
@@ -340,7 +341,7 @@ export class ElementSelector {
 			this.view.cssEditor.removeInlineEditor();
 
 			// Set the selector in the editor
-			this.view.cssEditor.setSelector(selector, false);
+			this.view.cssEditor.setSelector(generateUniqueId(), selector, false);
 
 			// Show the editor section
 			this.view.cssEditor.showEditorSection(true);

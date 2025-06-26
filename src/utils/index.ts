@@ -72,3 +72,13 @@ export function getCurrentTheme() {
 	let currentTheme: string = this.app.getTheme() === 'obsidian' ? 'obsidian' : 'moonstone';
 	return currentTheme;
 }
+
+export function generateUniqueId(): string {
+	if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    	return String(crypto.randomUUID());
+    }
+	// Fallback
+	const timestamp = Date.now()
+	const randomNum = Math.floor(Math.random() * 10000)
+	return `cts-${timestamp}-${randomNum}`
+}

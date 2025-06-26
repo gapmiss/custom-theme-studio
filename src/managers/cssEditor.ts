@@ -7,6 +7,7 @@ import { ICodeEditorConfig } from '../interfaces/types';
 import * as ace from 'ace-builds';
 import { confirm } from '../modals/confirmModal';
 import { CSSVariableManager } from './cssVariabManager';
+import { generateUniqueId } from "../utils";
 
 export class CSSEditor {
 	plugin: CustomThemeStudioPlugin;
@@ -15,6 +16,7 @@ export class CSSEditor {
 	editorEl: HTMLTextAreaElement | null = null;
 	selectorInputEl: HTMLInputElement | null = null;
 	nameInputEl: HTMLInputElement | null = null;
+	uuidHiddenEl: HTMLInputElement;
 	enabledToggleEl: HTMLInputElement | null = null;
 	editorSection: HTMLElement | null = null;
 	currentEditingElement: HTMLElement | null = null;
@@ -51,6 +53,14 @@ export class CSSEditor {
 
 	createEditorSection(containerEl: HTMLElement): void {
 		this.editorSection = containerEl.createDiv('css-editor-section');
+
+		// UUID
+		this.uuidHiddenEl = this.editorSection.createEl('input', {
+			cls: 'css-editor-uuid',
+			attr: {
+				type: 'hidden'
+			}
+		});
 
 		// Element name input
 		const nameContainer = this.editorSection.createDiv('editor-name-container');
@@ -214,13 +224,17 @@ export class CSSEditor {
 		// Save button
 		saveButton.addEventListener('click', async () => {
 			const selector = this.selectorInputEl!.value.trim();
-			const existingIndex = this.plugin.settings.customElements.findIndex(el => el.selector === selector);
+			
+			// const existingIndex = this.plugin.settings.customElements.findIndex(el => el.selector === selector);
+			const existingIndex = this.plugin.settings.customElements.findIndex(el => el.uuid === this.uuidHiddenEl.value);
+			
 			const css = this.aceService.getValue();
-			if (existingIndex >= 0 && !this.isEditingExisting) {
-				if (!await confirm('Their is a custom selector for "'+selector+'" already. Saving this new selector will overwrite the current one. Continue?', this.plugin.app)) {
-					return;
-				}
-			}
+
+			// if (existingIndex >= 0 && !this.isEditingExisting) {
+			// 	if (!await confirm('Their is a custom selector for "'+selector+'" already. Saving this new selector will overwrite the current one. Continue?', this.plugin.app)) {
+			// 		return;
+			// 	}
+			// }
 			if (this.saveElement()) {
 				// Hide the editor section after saving
 				if (!this.isEditingExisting) {
@@ -263,18 +277,24 @@ export class CSSEditor {
 		}, 10);
 	}
 
-	setSelector(selector: string, isEditingExisting: boolean): void {
-		if (!this.selectorInputEl) return;
+	setSelector(uuid: string, selector: string, isEditingExisting: boolean): void {
+		if (!this.selectorInputEl || !this.uuidHiddenEl) return;
 
 		this.currentSelector = selector;
 		this.selectorInputEl.value = selector;
+		this.uuidHiddenEl.value = uuid;
 
 		// Try to find existing element with this selector
-		const existingElement = this.plugin.settings.customElements.find(el => el.selector === selector);
+		// const existingElement = this.plugin.settings.customElements.find(el => el.selector === selector);
+
+		// Try to find existing element with this UUID
+		const existingElement = this.plugin.settings.customElements.find(el => el.uuid === uuid);
+
 		if (existingElement) {
 
 			// this.editor!.session.on('change', this.changeListener);
 
+			this.uuidHiddenEl!.value = existingElement.uuid;
 			this.editorEl!.value = existingElement.css;
 			this.aceService.setValue(existingElement.css, 1);
 
@@ -286,9 +306,9 @@ export class CSSEditor {
 				this.nameInputEl!.value = '';
 			}
 
-			if (!isEditingExisting) {
-				new Notice('Their is a custom selector for "'+selector+'" already. The editor has been populated with the current CSS rule(s). Click this message to dismiss.', 0);
-			}
+			// if (!isEditingExisting) {
+			// 	new Notice('Their is a custom selector for "'+selector+'" already. The editor has been populated with the current CSS rule(s). Click this message to dismiss.', 0);
+			// }
 
 		} else {
 			// Generate default CSS template
@@ -328,14 +348,15 @@ export class CSSEditor {
 		if (!this.editorEl || !this.selectorInputEl) return;
 
 		const selector = this.selectorInputEl.value.trim();
+		const uuid = this.uuidHiddenEl.value;
 
-		if (!selector || !css) {
+		if (!uuid || !selector || !css) {
 			new Notice('Please enter both a selector and CSS rules');
 			return;
 		}
 
 		// Update the custom CSS
-		this.updateCustomCSS(selector, css);
+		this.updateCustomCSS(uuid, selector, css);
 
 
 
@@ -348,7 +369,7 @@ export class CSSEditor {
 	clearAppliedChanges(): void {
 
 		// Update the custom CSS
-		this.updateCustomCSS('', '');
+		this.updateCustomCSS(generateUniqueId(), '', '');
 
 		// Apply the changes
 		if (this.plugin.settings.themeEnabled) {
@@ -360,6 +381,7 @@ export class CSSEditor {
 
 		if (!this.editorEl || !this.selectorInputEl || !this.nameInputEl) return false;
 
+		const uuid = this.uuidHiddenEl.value;
 		const name = this.nameInputEl.value.trim();
 		const selector = this.selectorInputEl.value.trim();
 		const css = this.aceService.getValue();
@@ -370,11 +392,13 @@ export class CSSEditor {
 		}
 
 		// Check if element already exists
-		const existingIndex = this.plugin.settings.customElements.findIndex(el => el.selector === selector);
+		// const existingIndex = this.plugin.settings.customElements.findIndex(el => el.selector === selector);
+		const existingIndex = this.plugin.settings.customElements.findIndex(el => el.uuid === uuid);
 
 		if (existingIndex >= 0) {
 			// Update existing element
 			this.plugin.settings.customElements[existingIndex] = {
+				uuid,
 				selector,
 				css,
 				name: name || undefined,
@@ -383,6 +407,7 @@ export class CSSEditor {
 		} else {
 			// Add new element
 			this.plugin.settings.customElements.push({
+				uuid,
 				selector,
 				css,
 				name: name || undefined,
@@ -394,7 +419,7 @@ export class CSSEditor {
 		this.plugin.saveSettings();
 
 		// Update the custom CSS
-		this.updateCustomCSS(selector, css);
+		this.updateCustomCSS(uuid, selector, css);
 
 		// Apply the changes
 		if (this.plugin.settings.themeEnabled) {
@@ -422,7 +447,8 @@ export class CSSEditor {
 				let elementExists = false;
 
 				existingElements.forEach(el => {
-					if (el.getAttribute('data-selector') === selector) {
+					// if (el.getAttribute('data-selector') === selector) {
+					if (el.getAttribute('') === uuid) {
 						elementExists = true;
 					}
 				});
@@ -430,6 +456,7 @@ export class CSSEditor {
 				if (!elementExists) {
 					// Create new element item
 					this.createElementItem(elementList as HTMLElement, {
+						uuid,
 						selector,
 						css,
 						name: name || undefined,
@@ -454,6 +481,7 @@ export class CSSEditor {
 		if (!this.editorEl || !this.selectorInputEl || !this.nameInputEl) return;
 
 		// Clear inputs
+		this.uuidHiddenEl.value = generateUniqueId();
 		this.selectorInputEl.value = '';
 		this.aceService.setValue('');
 		this.nameInputEl.value = '';
@@ -496,10 +524,10 @@ export class CSSEditor {
 		}
 	}
 
-	async updateCustomCSS(selector: string, css: string): Promise<void> {
+	async updateCustomCSS(uuid: string, selector: string, css: string): Promise<void> {
 		// Get all custom elements CSS
 		let fullCSS = '';
-		const existingIndex = this.plugin.settings.customElements.findIndex(el => el.selector === selector);
+		const existingIndex = this.plugin.settings.customElements.findIndex(el => el.uuid === uuid);
 		if (existingIndex >= 0) {
 			if (this.plugin.settings.customElements[existingIndex].enabled) {
 				// First add the current element
@@ -513,7 +541,7 @@ export class CSSEditor {
 		// Then add all other elements
 		this.plugin.settings.customElements.forEach(element => {
 			// Skip the current element as we already added it
-			if (element.selector === selector) return;
+			if (element.uuid === uuid) return;
 			if (element.enabled) {
 				fullCSS += `/* ${element.name || element.selector} */\n${element.css}\n\n`;
 			}
@@ -528,7 +556,8 @@ export class CSSEditor {
 		const item = containerEl.createDiv({
 			cls: 'element-item',
 			attr: {
-				'data-selector': element.selector,
+				// 'data-selector': element.selector,
+				'data-cts-uuid': element.uuid,
 				'data-tooltip-position': 'top'
 			}
 		});
@@ -603,7 +632,7 @@ export class CSSEditor {
 			// Clone the editor section into the inline editor
 			if (this.editorSection) {
 				// Show the editor with the current element's values
-				this.setSelector(element.selector, true);
+				this.setSelector(element.uuid, element.selector, true);
 
 				// Move the editor section under this element
 				inlineEditor.appendChild(this.editorSection);
@@ -626,7 +655,8 @@ export class CSSEditor {
 				return resolve(false);
 			});
 
-			const existingIndex = this.plugin.settings.customElements.findIndex(el => el.selector === element.selector);
+			// const existingIndex = this.plugin.settings.customElements.findIndex(el => el.selector === element.selector);
+			const existingIndex = this.plugin.settings.customElements.findIndex(el => el.uuid === element.uuid);
 
 			if (existingIndex >= 0) {
 
@@ -671,7 +701,7 @@ export class CSSEditor {
 			if (await confirm(`Are you sure you want to delete the element "${element.name || element.selector}"?`, this.plugin.app)) {
 				// Remove from settings
 				this.plugin.settings.customElements = this.plugin.settings.customElements.filter(
-					el => el.selector !== element.selector
+					el => el.uuid !== element.uuid
 				);
 
 				// Update custom CSS
