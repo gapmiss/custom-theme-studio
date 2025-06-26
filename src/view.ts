@@ -947,6 +947,7 @@ export class CustomThemeStudioView extends ItemView {
 	async onClose(): Promise<void> {
 		// Clean up any active element selection
 		this.elementSelector.stopElementSelection();
+		this.cssEditor.clearAppliedChanges();
 	}
 
 }

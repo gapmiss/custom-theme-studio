@@ -32,6 +32,7 @@ export interface CustomThemeStudioSettings {
 	collapsedElementCustomization: boolean;
 	collapsedExportTheme: boolean;
 	autoApplyChanges: boolean;
+	generateComputedCSS: boolean;
 	showConfirmation: boolean;
 	enableColorPicker: boolean;
 	EditorLineNumbers: boolean;
@@ -59,6 +60,7 @@ export const DEFAULT_SETTINGS: CustomThemeStudioSettings = {
 	collapsedElementCustomization: false,
 	collapsedExportTheme: false,
 	autoApplyChanges: false,
+	generateComputedCSS: false,
 	showConfirmation: true,
 	enableColorPicker: false,
 	EditorLineNumbers: true,
@@ -147,6 +149,17 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				.setValue(this.plugin.settings.autoApplyChanges)
 				.onChange(async (value) => {
 					this.plugin.settings.autoApplyChanges = value;
+					await this.plugin.saveSettings();
+				})
+			);
+
+		new Setting(containerEl)
+			.setName('Generate CSS')
+			.setDesc('For custom elements, when selecting an element, automatically generate CSS rules with the most common properties.')
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.generateComputedCSS)
+				.onChange(async (value) => {
+					this.plugin.settings.generateComputedCSS = value;
 					await this.plugin.saveSettings();
 				})
 			);

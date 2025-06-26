@@ -324,9 +324,44 @@ export class CSSEditor {
 		// Try to find the element
 		const element = this.findElementBySelector(selector);
 		let css: string = '';
-		css += `${selector} {\n`;
-		css += `\t\n`;
-		css += `}`;
+
+		const computedStyle = getComputedStyle(element!);
+
+		if (element && this.plugin.settings.generateComputedCSS) {
+			css += `${selector} {\n`;
+			css += `  /* Basic styling */\n`;
+			css += `  color: ${computedStyle.color};\n`;
+			css += `  background-color: ${computedStyle.backgroundColor};\n`;
+			
+			// Add border if it exists
+			if (computedStyle.borderWidth !== '0px') {
+				css += `  border: ${computedStyle.borderWidth} ${computedStyle.borderStyle} ${computedStyle.borderColor};\n`;
+			}
+			
+			css += `  \n  /* Spacing */\n`;
+			css += `  padding: ${computedStyle.padding};\n`;
+			css += `  margin: ${computedStyle.margin};\n`;
+			
+			css += `  \n  /* Typography */\n`;
+			css += `  font-family: ${computedStyle.fontFamily};\n`;
+			css += `  font-size: ${computedStyle.fontSize};\n`;
+			css += `  font-weight: ${computedStyle.fontWeight};\n`;
+			
+			css += `}\n`;
+			css += `\n`;
+			
+			// Add hover state template
+			css += `${selector}:hover {\n`;
+			css += `  /* Hover state styling */\n`;
+			css += `  /* background-color: var(--interactive-hover); */\n`;
+			css += `}\n`;
+		} else {
+			css += `${selector} {\n`;
+			css += `\t\n`;
+			css += `}`;
+		}
+
+		
 		this.aceService.setValue(css, 1);
 
 		// Clear name input
