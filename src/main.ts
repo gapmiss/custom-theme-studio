@@ -3,11 +3,13 @@ import { CustomThemeStudioView, VIEW_TYPE_CTS } from './view';
 import { ThemeManager } from './managers/themeManager';
 import { DEFAULT_SETTINGS, CustomThemeStudioSettings, CustomThemeStudioSettingTab } from './settings';
 import { ICodeEditorConfig } from './interfaces/types';
+import { freezeTimer } from "./utils";
 
 export default class CustomThemeStudioPlugin extends Plugin {
 	settings: CustomThemeStudioSettings;
 	themeManager: ThemeManager;
 	config: ICodeEditorConfig;
+	freezeDelaySecs = 4; // CONFIG
 
 	async onload() {
 		await this.loadSettings();
@@ -51,6 +53,15 @@ export default class CustomThemeStudioPlugin extends Plugin {
 			callback: () => {
 				this.themeManager.startElementSelection();
 			}
+		});
+
+		// https://github.com/chrisgrieser/obsidian-theme-design-utilities/blob/main/src/main.ts#L19
+		this.addCommand({
+			id: "freeze-obsidian",
+			name: "Freeze Obsidian (with " + this.freezeDelaySecs.toString() + "s delay)",
+			callback: () => {
+				freezeTimer(this.freezeDelaySecs);
+			},
 		});
 
 		// Add settings tab

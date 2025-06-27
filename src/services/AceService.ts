@@ -8,6 +8,7 @@ import 'ace-builds/src-noconflict/keybinding-vim';
 import 'ace-builds/src-noconflict/keybinding-vscode';
 import { ICodeEditorConfig } from '../interfaces/types';
 import CustomThemeStudioPlugin from '../main';
+import AceColorPicker from '../lib/ace-colorpicker';
 
 export class AceService {
 	private editor: ace.Ace.Editor | null = null;
@@ -29,7 +30,15 @@ export class AceService {
 		const settings = this.getEditorSettings(languageMode, config, this.plugin);
 
 		this.editor.setOptions(settings);
-		this.editor.session.setMode(`ace/mode/${languageMode}`);
+		this.editor.getSession().setMode(`ace/mode/${languageMode}`, () => {
+			if (this.plugin.settings.enableAceColorPicker) {
+				AceColorPicker.load(ace, this.editor, {
+					hideDelay: 2000,
+					showDelay: 500,
+					// type: 'mini'
+				});
+			}
+		})
 
 		if (this.plugin.settings.EditorKeyboard === 'default') {
 			this.editor.setKeyboardHandler(null);

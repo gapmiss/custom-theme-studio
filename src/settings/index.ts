@@ -35,6 +35,7 @@ export interface CustomThemeStudioSettings {
 	generateComputedCSS: boolean;
 	showConfirmation: boolean;
 	enableColorPicker: boolean;
+	enableAceColorPicker: boolean;
 	EditorLineNumbers: boolean;
 	EditorWordWrap: boolean;
 	EditorFontSize: number;
@@ -63,6 +64,7 @@ export const DEFAULT_SETTINGS: CustomThemeStudioSettings = {
 	generateComputedCSS: false,
 	showConfirmation: true,
 	enableColorPicker: false,
+	enableAceColorPicker: true,
 	EditorLineNumbers: true,
 	EditorWordWrap: false,
 	EditorFontSize: 15,
@@ -160,6 +162,17 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				.setValue(this.plugin.settings.generateComputedCSS)
 				.onChange(async (value) => {
 					this.plugin.settings.generateComputedCSS = value;
+					await this.plugin.saveSettings();
+				})
+			);
+
+		new Setting(containerEl)
+			.setName('Color picker')
+			.setDesc('For custom elements, enable inline color picker in CSS editor.')
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.enableAceColorPicker)
+				.onChange(async (value) => {
+					this.plugin.settings.enableAceColorPicker = value;
 					await this.plugin.saveSettings();
 				})
 			);
