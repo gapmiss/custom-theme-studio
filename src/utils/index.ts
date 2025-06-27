@@ -80,14 +80,26 @@ export function getCurrentTheme() {
 	return currentTheme;
 }
 
+// https://github.com/Yuichi-Aragi/Version-Control/blob/main/src/utils/id.ts
 export function generateUniqueId(): string {
 	if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-    	return String(crypto.randomUUID());
-    }
-	// Fallback
-	const timestamp = Date.now()
-	const randomNum = Math.floor(Math.random() * 10000)
-	return `cts-${timestamp}-${randomNum}`
+		return String(crypto.randomUUID());
+	}
+	// Fallback for environments without crypto.randomUUID (e.g., older Node.js in some test runners, or very old browsers)
+	// This is a standard RFC4122 version 4 UUID.
+	let d = new Date().getTime(); //Timestamp
+	let d2 = (typeof performance !== 'undefined' && performance.now && (performance.now() * 1000)) || 0; //Time in microseconds since page-load or 0 if unsupported
+	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+		let r = Math.random() * 16; //random number between 0 and 16
+		if (d > 0) { //Use timestamp until depleted
+			r = (d + r) % 16 | 0;
+			d = Math.floor(d / 16);
+		} else { //Use microseconds since page-load if supported
+			r = (d2 + r) % 16 | 0;
+			d2 = Math.floor(d2 / 16);
+		}
+		return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+	});
 }
 
 // https://github.com/chrisgrieser/obsidian-theme-design-utilities/blob/main/src/main.ts#L128
