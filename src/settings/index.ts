@@ -130,6 +130,8 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				})
 			);
 
+		containerEl.createEl('h3', { text: 'CSS variables options' });
+
 		new Setting(containerEl)
 			.setName('Enable color picker')
 			.setDesc('Enable a color picker for CSS variables that have a default HEX color value (requires the plugin\'s view to be reloaded to take effect).')
@@ -407,7 +409,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				});
 			});
 
-		containerEl.createEl('h3', { text: 'Reset options' });
+		containerEl.createEl('h3', { text: 'Reset options', cls: 'reset-options-heading' });
 
 		new Setting(containerEl)
 			.setName('Reset theme')
