@@ -37,7 +37,7 @@ export class AceService {
 				AceColorPicker.load(ace, this.editor, {
 					hideDelay: 2000,
 					showDelay: 500,
-					// type: 'mini'
+					type: 'vscode'
 				});
 			}
 		})
