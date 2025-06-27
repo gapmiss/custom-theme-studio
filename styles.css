@@ -243,10 +243,15 @@ a[class*="tag-filter"]:focus {
         width: 16px;
         height: 16px;
     }
-    
+
     & .variable-category-help {
         font-size: var(--font-smallest);
         color: var(--text-muted);
+    }
+
+    & .external-link {
+        padding-right: 1.15em;
+        background-position-y: .15em;
     }
 }
 

@@ -9,518 +9,81 @@ export interface cssCategory {
 	help: DocumentFragment|null;
 }
 
-let bordersHelpFragment = document.createDocumentFragment();
-bordersHelpFragment.append(
-	bordersHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Foundations/Borders',
-	text: 'Borders - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Foundations/Borders', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-
-let blockquoteHelpFragment = document.createDocumentFragment();
-blockquoteHelpFragment.append(
-	blockquoteHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Editor/Blockquote',
-	text: 'Blockquote - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Editor/Blockquote', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let buttonHelpFragment = document.createDocumentFragment();
-buttonHelpFragment.append(
-	buttonHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Components/Button',
-	text: 'Button - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Components/Button', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let calloutHelpFragment = document.createDocumentFragment();
-calloutHelpFragment.append(
-	calloutHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Editor/Callout',
-	text: 'Callout - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Editor/Callout', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let canvasHelpFragment = document.createDocumentFragment();
-canvasHelpFragment.append(
-	canvasHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Plugins/Canvas',
-	text: 'Canvas - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Plugins/Canvas', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let checkboxHelpFragment = document.createDocumentFragment();
-checkboxHelpFragment.append(
-	checkboxHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Components/Checkbox',
-	text: 'Checkbox - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Components/Checkbox', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let codeHelpFragment = document.createDocumentFragment();
-codeHelpFragment.append(
-	codeHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Editor/Code',
-	text: 'Code - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Editor/Code', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let colorInputHelpFragment = document.createDocumentFragment();
-colorInputHelpFragment.append(
-	colorInputHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Components/Color+input',
-	text: 'Color input - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Components/Color+input', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let colorsHelpFragment = document.createDocumentFragment();
-colorsHelpFragment.append(
-	colorsHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Foundations/Colors',
-	text: 'Colors - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Foundations/Colors', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let cursorHelpFragment = document.createDocumentFragment();
-cursorHelpFragment.append(
-	cursorHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Foundations/Cursor',
-	text: 'Cursor - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Foundations/Cursor', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let dialogHelpFragment = document.createDocumentFragment();
-dialogHelpFragment.append(
-	dialogHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Components/Dialog',
-	text: 'Dialog - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Components/Dialog', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let dividerHelpFragment = document.createDocumentFragment();
-dividerHelpFragment.append(
-	'Dividers between panes'
-);
-
-let draggingHelpFragment = document.createDocumentFragment();
-draggingHelpFragment.append(
-	draggingHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Components/Dragging',
-	text: 'Dragging - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Components/Dragging', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let dropdownsHelpFragment = document.createDocumentFragment();
-dropdownsHelpFragment.append(
-	dropdownsHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Components/Dropdowns',
-	text: 'Dropdowns - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Components/Dropdowns', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let embedHelpFragment = document.createDocumentFragment();
-embedHelpFragment.append(
-	embedHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Editor/Embed',
-	text: 'Embed - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Editor/Embed', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let fileHelpFragment = document.createDocumentFragment();
-fileHelpFragment.append(
-	fileHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Editor/File',
-	text: 'File - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Editor/File', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let fileExplorerHelpFragment = document.createDocumentFragment();
-fileExplorerHelpFragment.append(
-	fileExplorerHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Plugins/File+explorer',
-	text: 'File explorer - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Plugins/File+explorer', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let footnoteHelpFragment = document.createDocumentFragment();
-footnoteHelpFragment.append(
-	footnoteHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Editor/Footnote',
-	text: 'Footnote - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Editor/Footnote', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let graphHelpFragment = document.createDocumentFragment();
-graphHelpFragment.append(
-	graphHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Plugins/Graph',
-	text: 'Graph - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Plugins/Graph', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let headingsHelpFragment = document.createDocumentFragment();
-headingsHelpFragment.append(
-	headingsHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Editor/Headings',
-	text: 'Headings - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Editor/Headings', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let horizontalRuleHelpFragment = document.createDocumentFragment();
-horizontalRuleHelpFragment.append(
-	horizontalRuleHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Editor/Horizontal+rule',
-	text: 'Horizontal rule - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Editor/Horizontal+rule', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let iconsHelpFragment = document.createDocumentFragment();
-iconsHelpFragment.append(
-	iconsHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Foundations/Icons',
-	text: 'Icons - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Foundations/Icons', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let indentationHelpFragment = document.createDocumentFragment();
-indentationHelpFragment.append(
-	indentationHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Components/Indentation+guides',
-	text: 'Indentation guides - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Components/Indentation+guides', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let inlineTitleHelpFragment = document.createDocumentFragment();
-inlineTitleHelpFragment.append(
-	inlineTitleHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Editor/Inline+title',
-	text: 'Inline title - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Editor/Inline+title', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let layersHelpFragment = document.createDocumentFragment();
-layersHelpFragment.append(
-	layersHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Foundations/Layers',
-	text: 'Layers - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Foundations/Layers', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let linkHelpFragment = document.createDocumentFragment();
-linkHelpFragment.append(
-	linkHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Editor/Link',
-	text: 'Link - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Editor/Link', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let listHelpFragment = document.createDocumentFragment();
-listHelpFragment.append(
-	listHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Editor/List',
-	text: 'List - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Editor/List', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let modalHelpFragment = document.createDocumentFragment();
-modalHelpFragment.append(
-	modalHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Components/Modal',
-	text: 'Modal - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Components/Modal', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let multiSelectHelpFragment = document.createDocumentFragment();
-multiSelectHelpFragment.append(
-	multiSelectHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Components/Multi-select',
-	text: 'Multi-select - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Components/Multi-select', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let navigationHelpFragment = document.createDocumentFragment();
-navigationHelpFragment.append(
-	navigationHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Components/Navigation',
-	text: 'Navigation - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Components/Navigation', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let popoverHelpFragment = document.createDocumentFragment();
-popoverHelpFragment.append(
-	popoverHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Components/Popover',
-	text: 'Popover - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Components/Popover', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let promptHelpFragment = document.createDocumentFragment();
-promptHelpFragment.append(
-	promptHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Components/Prompt',
-	text: 'Prompt - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Components/Prompt', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let propertiesHelpFragment = document.createDocumentFragment();
-propertiesHelpFragment.append(
-	propertiesHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Editor/Properties',
-	text: 'Properties - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Editor/Properties', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let radiusesHelpFragment = document.createDocumentFragment();
-radiusesHelpFragment.append(
-	radiusesHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Foundations/Radiuses',
-	text: 'Radiuses - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Foundations/Radiuses', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let ribbonHelpFragment = document.createDocumentFragment();
-ribbonHelpFragment.append(
-	ribbonHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Window/Ribbon',
-	text: 'Ribbon - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Window/Ribbon', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let scrollbarHelpFragment = document.createDocumentFragment();
-scrollbarHelpFragment.append(
-	scrollbarHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Window/Scrollbar',
-	text: 'Scrollbar - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Window/Scrollbar', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let searchHelpFragment = document.createDocumentFragment();
-searchHelpFragment.append(
-	searchHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Plugins/Search',
-	text: 'Search - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Plugins/Search', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let sidebarHelpFragment = document.createDocumentFragment();
-sidebarHelpFragment.append(
-	sidebarHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Window/Sidebar',
-	text: 'Sidebar - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Window/Sidebar', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let sliderHelpFragment = document.createDocumentFragment();
-sliderHelpFragment.append(
-	sliderHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Components/Slider',
-	text: 'Slider - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Components/Slider', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let spacingHelpFragment = document.createDocumentFragment();
-spacingHelpFragment.append(
-	spacingHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Foundations/Spacing',
-	text: 'Spacing - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Foundations/Spacing', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let statusBarHelpFragment = document.createDocumentFragment();
-statusBarHelpFragment.append(
-	statusBarHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Window/Status+bar',
-	text: 'Status bar - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Window/Status+bar', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let syncHelpFragment = document.createDocumentFragment();
-syncHelpFragment.append(
-	syncHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Plugins/Sync',
-	text: 'Sync - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Plugins/Sync', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let tableHelpFragment = document.createDocumentFragment();
-tableHelpFragment.append(
-	tableHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Editor/Table',
-	text: 'Table - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Editor/Table', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let tabsHelpFragment = document.createDocumentFragment();
-tabsHelpFragment.append(
-	tabsHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Components/Tabs',
-	text: 'Tabs - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Components/Tabs', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let tagHelpFragment = document.createDocumentFragment();
-tagHelpFragment.append(
-	tagHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Editor/Tag',
-	text: 'Tag - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Editor/Tag', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let textInputHelpFragment = document.createDocumentFragment();
-textInputHelpFragment.append(
-	textInputHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Components/Text+input',
-	text: 'Text input - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Components/Text+input', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let toggleHelpFragment = document.createDocumentFragment();
-toggleHelpFragment.append(
-	toggleHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Components/Toggle',
-	text: 'Toggle - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Components/Toggle', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let typographyHelpFragment = document.createDocumentFragment();
-typographyHelpFragment.append(
-	typographyHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Foundations/Typography',
-	text: 'Typography - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Foundations/Typography', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let vaultProfileHelpFragment = document.createDocumentFragment();
-vaultProfileHelpFragment.append(
-	vaultProfileHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Window/Vault+profile',
-	text: 'Vault profile - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Window/Vault+profile', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let windowFrameHelpFragment = document.createDocumentFragment();
-windowFrameHelpFragment.append(
-	windowFrameHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Window/Window+frame',
-	text: 'Window frame - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Window/Window+frame', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
-
-let workspaceHelpFragment = document.createDocumentFragment();
-workspaceHelpFragment.append(
-	workspaceHelpFragment.createEl('a', {
-	href: 'https://docs.obsidian.md/Reference/CSS+variables/Window/Workspace',
-	text: 'Workspace - Developer Documentation',
-	attr: { 'aria-label': 'https://docs.obsidian.md/Reference/CSS+variables/Window/Workspace', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-	})
-);
+function createHelpFragment(text: string, parent: string = '', category: string = '' ) {
+	let helpFragment = document.createDocumentFragment();
+	if (text !== '') {
+		helpFragment.append(
+			text
+		);
+	}
+	if (parent !== '' && category !== '') {
+		helpFragment.append(
+			helpFragment.createEl('a', {
+			href: 'https://docs.obsidian.md/Reference/CSS+variables/' + parent + '/' + category,
+			text: category + ' - Developer Documentation',
+			attr: { 'aria-label': 'https://docs.obsidian.md/Reference/' + parent + '/' + category, 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
+			})
+		);
+	}
+	return helpFragment;
+}
 
 export const allCategories: cssCategory[] = [
 { category: 'animation', title: 'Animation', tag: 'foundations', help: null },
 { category: 'bases', title: 'Bases', tag: 'plugins', help: null },
-{ category: 'blockquote', title: 'Blockquote', tag: 'editor', help: blockquoteHelpFragment },
-{ category: 'borders', title: 'Borders', tag: 'foundations', help: bordersHelpFragment },
-{ category: 'button', title: 'Button', tag: 'components', help: buttonHelpFragment },
-{ category: 'callout', title: 'Callout', tag: 'editor', help: calloutHelpFragment },
-{ category: 'canvas', title: 'Canvas', tag: 'plugins', help: canvasHelpFragment },
-{ category: 'checkbox', title: 'Checkbox', tag: 'components', help: checkboxHelpFragment },
-{ category: 'code', title: 'Code', tag: 'editor', help: codeHelpFragment },
-{ category: 'colorinput', title: 'Color input', tag: 'components', help: colorInputHelpFragment },
-{ category: 'colors', title: 'Colors', tag: 'foundations', help: colorsHelpFragment },
-{ category: 'cursor', title: 'Cursor', tag: 'foundations', help: cursorHelpFragment },
-{ category: 'dialog', title: 'Dialog', tag: 'components', help: dialogHelpFragment },
-{ category: 'divider', title: 'Divider', tag: 'window', help: dividerHelpFragment },
-{ category: 'dragging', title: 'Dragging', tag: 'components', help: draggingHelpFragment },
-{ category: 'dropdowns', title: 'Dropdowns', tag: 'components', help: dropdownsHelpFragment },
-{ category: 'embed', title: 'Embed', tag: 'editor', help: embedHelpFragment },
-{ category: 'file', title: 'File', tag: 'editor', help: fileHelpFragment },
-{ category: 'fileexplorer', title: 'File explorer', tag: 'plugins', help: fileExplorerHelpFragment },
-{ category: 'footnote', title: 'Footnote', tag: 'editor', help: footnoteHelpFragment },
-{ category: 'graph', title: 'Graph', tag: 'plugins', help: graphHelpFragment },
-{ category: 'heading', title: 'Heading', tag: 'editor', help: headingsHelpFragment },
-{ category: 'horizontalrule', title: 'Horizontal rule', tag: 'editor', help: horizontalRuleHelpFragment },
-{ category: 'icons', title: 'Icons', tag: 'foundations', help: iconsHelpFragment },
-{ category: 'indentation', title: 'Indentation', tag: 'components', help: indentationHelpFragment },
-{ category: 'inlinetitle', title: 'Inline title', tag: 'editor', help: inlineTitleHelpFragment },
-{ category: 'layers', title: 'Layers', tag: 'foundations', help: layersHelpFragment },
-{ category: 'link', title: 'Link', tag: 'editor', help: linkHelpFragment },
-{ category: 'list', title: 'List', tag: 'editor', help: listHelpFragment },
-{ category: 'modal', title: 'Modal', tag: 'components', help: modalHelpFragment },
-{ category: 'multiselect', title: 'Multi-select', tag: 'components', help: multiSelectHelpFragment },
-{ category: 'navigation', title: 'Navigation', tag: 'components', help: navigationHelpFragment },
-{ category: 'popover', title: 'Popover', tag: 'components', help: popoverHelpFragment },
-{ category: 'prompt', title: 'Prompt', tag: 'components', help: promptHelpFragment },
-{ category: 'properties', title: 'Properties', tag: 'editor', help: propertiesHelpFragment },
-{ category: 'radiuses', title: 'Radiuses', tag: 'foudnations', help: radiusesHelpFragment },
-{ category: 'ribbon', title: 'Ribbon', tag: 'window', help: ribbonHelpFragment },
-{ category: 'scrollbar', title: 'Scrollbar', tag: 'window', help: scrollbarHelpFragment },
-{ category: 'search', title: 'Search', tag: 'plugins', help: searchHelpFragment },
-{ category: 'sidebar', title: 'Sidebar', tag: 'window', help: sidebarHelpFragment },
-{ category: 'slider', title: 'Slider', tag: 'components', help: sliderHelpFragment },
-{ category: 'spacing', title: 'Spacing', tag: 'foundations', help: spacingHelpFragment },
-{ category: 'statusbar', title: 'Status bar', tag: 'window', help: statusBarHelpFragment },
-{ category: 'sync', title: 'Sync', tag: 'plugins', help: syncHelpFragment },
-{ category: 'table', title: 'Table', tag: 'editor', help: tableHelpFragment },
-{ category: 'tabs', title: 'Tabs', tag: 'components', help: tabsHelpFragment },
-{ category: 'tag', title: 'Tag', tag: 'editor', help: tagHelpFragment },
-{ category: 'textinput', title: 'Text input', tag: 'components', help: textInputHelpFragment },
-{ category: 'toggle', title: 'Toggle', tag: 'components', help: toggleHelpFragment },
-{ category: 'themelight', title: 'Theme - light', tag: 'theme-light', help: null },
-{ category: 'themedark', title: 'Theme - dark', tag: 'theme-dark', help: null },
-{ category: 'typography', title: 'Typography', tag: 'foundations', help: typographyHelpFragment },
-{ category: 'vaultprofile', title: 'Vault profile', tag: 'window', help: vaultProfileHelpFragment },
-{ category: 'windowframe', title: 'Window frame', tag: 'window', help: windowFrameHelpFragment },
-{ category: 'workspace', title: 'Workspace', tag: 'window', help: workspaceHelpFragment  }
+{ category: 'blockquote', title: 'Blockquote', tag: 'editor', help: createHelpFragment('', 'Editor', 'Blockquote') },
+{ category: 'borders', title: 'Borders', tag: 'foundations', help: createHelpFragment('', 'Foundations', 'Borders') },
+{ category: 'button', title: 'Button', tag: 'components', help: createHelpFragment('', 'Components', 'Button') },
+{ category: 'callout', title: 'Callout', tag: 'editor', help: createHelpFragment('', 'Editor', 'Callout') },
+{ category: 'canvas', title: 'Canvas', tag: 'plugins', help: createHelpFragment('', 'Plugins', 'Canvas') },
+{ category: 'checkbox', title: 'Checkbox', tag: 'components', help: createHelpFragment('', 'Components', 'Checkbox') },
+{ category: 'code', title: 'Code', tag: 'editor', help: createHelpFragment('', 'Editor', 'Code') },
+{ category: 'colorinput', title: 'Color input', tag: 'components', help: createHelpFragment('', 'Components', 'Color+input') },
+{ category: 'colors', title: 'Colors', tag: 'foundations', help: createHelpFragment('', 'Foundations', 'Colors') },
+{ category: 'cursor', title: 'Cursor', tag: 'foundations', help: createHelpFragment('', 'Foundations', 'Cursor') },
+{ category: 'dialog', title: 'Dialog', tag: 'components', help: createHelpFragment('', 'Components', 'Dialog') },
+{ category: 'divider', title: 'Divider', tag: 'window', help: createHelpFragment('Dividers between panes') },
+{ category: 'dragging', title: 'Dragging', tag: 'components', help: createHelpFragment('', 'Components', 'Dragging') },
+{ category: 'dropdowns', title: 'Dropdowns', tag: 'components', help: createHelpFragment('', 'Components', 'Dropdowns') },
+{ category: 'embed', title: 'Embed', tag: 'editor', help: createHelpFragment('', 'Editor', 'Embed') },
+{ category: 'file', title: 'File', tag: 'editor', help: createHelpFragment('', 'Editor', 'File') },
+{ category: 'fileexplorer', title: 'File explorer', tag: 'plugins', help: createHelpFragment('', 'Plugins', 'File+explorer') },
+{ category: 'footnote', title: 'Footnote', tag: 'editor', help: createHelpFragment('', 'Editor', 'Footnote') },
+{ category: 'graph', title: 'Graph', tag: 'plugins', help: createHelpFragment('', 'Plugins', 'Graph') },
+{ category: 'headings', title: 'Headings', tag: 'editor', help: createHelpFragment('', 'Editor', 'Headings') },
+{ category: 'horizontalrule', title: 'Horizontal rule', tag: 'editor', help: createHelpFragment('', 'Editor', 'Horizontal+rule') },
+{ category: 'icons', title: 'Icons', tag: 'foundations', help: createHelpFragment('', 'Foundations', 'Icons') },
+{ category: 'indentation', title: 'Indentation', tag: 'components', help: createHelpFragment('', 'Components', 'Indentation+guides') },
+{ category: 'inlinetitle', title: 'Inline title', tag: 'editor', help: createHelpFragment('', 'Editor', 'Inline+title') },
+{ category: 'layers', title: 'Layers', tag: 'foundations', help: createHelpFragment('', 'Foundations', 'Layers') },
+{ category: 'link', title: 'Link', tag: 'editor', help: createHelpFragment('', 'Editor', 'Link') },
+{ category: 'list', title: 'List', tag: 'editor', help: createHelpFragment('', 'Editor', 'List') },
+{ category: 'modal', title: 'Modal', tag: 'components', help: createHelpFragment('', 'Components', 'Modal') },
+{ category: 'multiselect', title: 'Multi-select', tag: 'components', help: createHelpFragment('', 'Components', 'Multi-select') },
+{ category: 'navigation', title: 'Navigation', tag: 'components', help: createHelpFragment('', 'Components', 'Navigation') },
+{ category: 'popover', title: 'Popover', tag: 'components', help: createHelpFragment('', 'Components', 'Popover') },
+{ category: 'prompt', title: 'Prompt', tag: 'components', help: createHelpFragment('', 'Components', 'Prompt') },
+{ category: 'properties', title: 'Properties', tag: 'editor', help: createHelpFragment('', 'Editor', 'Properties') },
+{ category: 'radiuses', title: 'Radiuses', tag: 'foundations', help: createHelpFragment('', 'Foundations', 'Radiuses') },
+{ category: 'ribbon', title: 'Ribbon', tag: 'window', help: createHelpFragment('', 'Window', 'Ribbon') },
+{ category: 'scrollbar', title: 'Scrollbar', tag: 'window', help: createHelpFragment('', 'Window', 'Scrollbar') },
+{ category: 'search', title: 'Search', tag: 'plugins', help: createHelpFragment('', 'Plugins', 'Search') },
+{ category: 'sidebar', title: 'Sidebar', tag: 'window', help: createHelpFragment('', 'Window', 'Sidebar') },
+{ category: 'slider', title: 'Slider', tag: 'components', help: createHelpFragment('', 'Components', 'Slider') },
+{ category: 'spacing', title: 'Spacing', tag: 'foundations', help: createHelpFragment('', 'Foundations', 'Spacing') },
+{ category: 'statusbar', title: 'Status bar', tag: 'window', help: createHelpFragment('', 'Window', 'Status+bar') },
+{ category: 'sync', title: 'Sync', tag: 'plugins', help: createHelpFragment('', 'Plugins', 'Sync') },
+{ category: 'table', title: 'Table', tag: 'editor', help: createHelpFragment('', 'Editor', 'Table') },
+{ category: 'tabs', title: 'Tabs', tag: 'components', help: createHelpFragment('', 'Components', 'Tabs') },
+{ category: 'tag', title: 'Tag', tag: 'editor', help: createHelpFragment('', 'Editor', 'Tag') },
+{ category: 'textinput', title: 'Text input', tag: 'components', help: createHelpFragment('', 'Components', 'Text+input') },
+{ category: 'toggle', title: 'Toggle', tag: 'components', help: createHelpFragment('', 'Components', 'Toggle') },
+{ category: 'themelight', title: 'Theme - light', tag: 'theme-light', help: createHelpFragment('Variables specifically for light theme', '', '') },
+{ category: 'themedark', title: 'Theme - dark', tag: 'theme-dark', help: createHelpFragment('Variables specifically for dark theme', '', '') },
+{ category: 'typography', title: 'Typography', tag: 'foundations', help: createHelpFragment('', 'Foundations', 'Typography') },
+{ category: 'vaultprofile', title: 'Vault profile', tag: 'window', help: createHelpFragment('', 'Window', 'Vault+profile') },
+{ category: 'windowframe', title: 'Window frame', tag: 'window', help: createHelpFragment('', 'Window', 'Window+frame') },
+{ category: 'workspace', title: 'Workspace', tag: 'window', help: createHelpFragment('', 'Window', 'Workspace')  }
 ]
 
 export interface cssVariable {
@@ -752,50 +315,50 @@ export const cssVariableDefaults: cssVariable[] = [
 	{ cat: 'graph', variable: '--graph-node-focused', default: 'var(--text-accent)' },
 	{ cat: 'graph', variable: '--graph-node-tag', default: 'var(--color-green)' },
 	{ cat: 'graph', variable: '--graph-node-attachment', default: 'var(--color-yellow)' },
-	{ cat: 'heading', variable: '--heading-formatting', default: 'var(--text-faint)' },
-	{ cat: 'heading', variable: '--heading-spacing', default: 'calc(var(--p-spacing) * 2.5)' },
-	{ cat: 'heading', variable: '--h1-color', default: 'inherit' },
-	{ cat: 'heading', variable: '--h2-color', default: 'inherit' },
-	{ cat: 'heading', variable: '--h3-color', default: 'inherit' },
-	{ cat: 'heading', variable: '--h4-color', default: 'inherit' },
-	{ cat: 'heading', variable: '--h5-color', default: 'inherit' },
-	{ cat: 'heading', variable: '--h6-color', default: 'inherit' },
-	{ cat: 'heading', variable: '--h1-font', default: 'inherit' },
-	{ cat: 'heading', variable: '--h2-font', default: 'inherit' },
-	{ cat: 'heading', variable: '--h3-font', default: 'inherit' },
-	{ cat: 'heading', variable: '--h4-font', default: 'inherit' },
-	{ cat: 'heading', variable: '--h5-font', default: 'inherit' },
-	{ cat: 'heading', variable: '--h6-font', default: 'inherit' },
-	{ cat: 'heading', variable: '--h1-line-height', default: '1.2' },
-	{ cat: 'heading', variable: '--h2-line-height', default: '1.2' },
-	{ cat: 'heading', variable: '--h3-line-height', default: '1.3' },
-	{ cat: 'heading', variable: '--h4-line-height', default: '1.4' },
-	{ cat: 'heading', variable: '--h5-line-height', default: 'var(--line-height-normal)' },
-	{ cat: 'heading', variable: '--h6-line-height', default: 'var(--line-height-normal)' },
-	{ cat: 'heading', variable: '--h1-size', default: '1.802em' },
-	{ cat: 'heading', variable: '--h2-size', default: '1.602em' },
-	{ cat: 'heading', variable: '--h3-size', default: '1.424em' },
-	{ cat: 'heading', variable: '--h4-size', default: '1.266em' },
-	{ cat: 'heading', variable: '--h5-size', default: '1.125em' },
-	{ cat: 'heading', variable: '--h6-size', default: '1em' },
-	{ cat: 'heading', variable: '--h1-style', default: 'normal' },
-	{ cat: 'heading', variable: '--h2-style', default: 'normal' },
-	{ cat: 'heading', variable: '--h3-style', default: 'normal' },
-	{ cat: 'heading', variable: '--h4-style', default: 'normal' },
-	{ cat: 'heading', variable: '--h5-style', default: 'normal' },
-	{ cat: 'heading', variable: '--h6-style', default: 'normal' },
-	{ cat: 'heading', variable: '--h1-variant', default: 'normal' },
-	{ cat: 'heading', variable: '--h2-variant', default: 'normal' },
-	{ cat: 'heading', variable: '--h3-variant', default: 'normal' },
-	{ cat: 'heading', variable: '--h4-variant', default: 'normal' },
-	{ cat: 'heading', variable: '--h5-variant', default: 'normal' },
-	{ cat: 'heading', variable: '--h6-variant', default: 'normal' },
-	{ cat: 'heading', variable: '--h1-weight', default: '700' },
-	{ cat: 'heading', variable: '--h2-weight', default: '600' },
-	{ cat: 'heading', variable: '--h3-weight', default: '600' },
-	{ cat: 'heading', variable: '--h4-weight', default: '600' },
-	{ cat: 'heading', variable: '--h5-weight', default: '600' },
-	{ cat: 'heading', variable: '--h6-weight', default: '600' },
+	{ cat: 'headings', variable: '--heading-formatting', default: 'var(--text-faint)' },
+	{ cat: 'headings', variable: '--heading-spacing', default: 'calc(var(--p-spacing) * 2.5)' },
+	{ cat: 'headings', variable: '--h1-color', default: 'inherit' },
+	{ cat: 'headings', variable: '--h2-color', default: 'inherit' },
+	{ cat: 'headings', variable: '--h3-color', default: 'inherit' },
+	{ cat: 'headings', variable: '--h4-color', default: 'inherit' },
+	{ cat: 'headings', variable: '--h5-color', default: 'inherit' },
+	{ cat: 'headings', variable: '--h6-color', default: 'inherit' },
+	{ cat: 'headings', variable: '--h1-font', default: 'inherit' },
+	{ cat: 'headings', variable: '--h2-font', default: 'inherit' },
+	{ cat: 'headings', variable: '--h3-font', default: 'inherit' },
+	{ cat: 'headings', variable: '--h4-font', default: 'inherit' },
+	{ cat: 'headings', variable: '--h5-font', default: 'inherit' },
+	{ cat: 'headings', variable: '--h6-font', default: 'inherit' },
+	{ cat: 'headings', variable: '--h1-line-height', default: '1.2' },
+	{ cat: 'headings', variable: '--h2-line-height', default: '1.2' },
+	{ cat: 'headings', variable: '--h3-line-height', default: '1.3' },
+	{ cat: 'headings', variable: '--h4-line-height', default: '1.4' },
+	{ cat: 'headings', variable: '--h5-line-height', default: 'var(--line-height-normal)' },
+	{ cat: 'headings', variable: '--h6-line-height', default: 'var(--line-height-normal)' },
+	{ cat: 'headings', variable: '--h1-size', default: '1.802em' },
+	{ cat: 'headings', variable: '--h2-size', default: '1.602em' },
+	{ cat: 'headings', variable: '--h3-size', default: '1.424em' },
+	{ cat: 'headings', variable: '--h4-size', default: '1.266em' },
+	{ cat: 'headings', variable: '--h5-size', default: '1.125em' },
+	{ cat: 'headings', variable: '--h6-size', default: '1em' },
+	{ cat: 'headings', variable: '--h1-style', default: 'normal' },
+	{ cat: 'headings', variable: '--h2-style', default: 'normal' },
+	{ cat: 'headings', variable: '--h3-style', default: 'normal' },
+	{ cat: 'headings', variable: '--h4-style', default: 'normal' },
+	{ cat: 'headings', variable: '--h5-style', default: 'normal' },
+	{ cat: 'headings', variable: '--h6-style', default: 'normal' },
+	{ cat: 'headings', variable: '--h1-variant', default: 'normal' },
+	{ cat: 'headings', variable: '--h2-variant', default: 'normal' },
+	{ cat: 'headings', variable: '--h3-variant', default: 'normal' },
+	{ cat: 'headings', variable: '--h4-variant', default: 'normal' },
+	{ cat: 'headings', variable: '--h5-variant', default: 'normal' },
+	{ cat: 'headings', variable: '--h6-variant', default: 'normal' },
+	{ cat: 'headings', variable: '--h1-weight', default: '700' },
+	{ cat: 'headings', variable: '--h2-weight', default: '600' },
+	{ cat: 'headings', variable: '--h3-weight', default: '600' },
+	{ cat: 'headings', variable: '--h4-weight', default: '600' },
+	{ cat: 'headings', variable: '--h5-weight', default: '600' },
+	{ cat: 'headings', variable: '--h6-weight', default: '600' },
 	{ cat: 'horizontalrule', variable: '--hr-color', default: 'var(--background-modifier-border)' },
 	{ cat: 'horizontalrule', variable: '--hr-thickness', default: '2px' },
 	{ cat: 'icons', variable: '--icon-size', default: 'var(--icon-m)' },
@@ -1226,6 +789,20 @@ export const cssVariableDefaults: cssVariable[] = [
 	{ cat: 'themedark', variable: '--shadow-l', default: '0px 1.8px 7.3px rgba(0, 0, 0, 0.071), 0px 6.3px 24.7px rgba(0, 0, 0, 0.112), 0px 30px 90px rgba(0, 0, 0, 0.2)' },
 	{ cat: 'themedark', variable: '--pdf-shadow', default: '0 0 0 1px var(--background-modifier-border)' },
 	{ cat: 'themedark', variable: '--pdf-thumbnail-shadow', default: '0 0 0 1px var(--background-modifier-border)' },
+	{ cat: 'typography', variable: '--font-default', default: 'ui-sans-serif, -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", Roboto, "Inter", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif' },
+	{ cat: 'typography', variable: '--font-monospace-default', default: 'ui-monospace, SFMono-Regular, "Cascadia Mono", "Roboto Mono", "DejaVu Sans Mono", "Liberation Mono", Menlo, Monaco, "Consolas", "Source Code Pro", monospace' },
+	{ cat: 'typography', variable: '--font-interface-override', default: '\'??\'' },
+	{ cat: 'typography', variable: '--font-interface-theme', default: '\'??\'' },
+	{ cat: 'typography', variable: '--font-interface', default: 'var(--font-interface-override), var(--font-interface-theme), var(--default-font, \'??\'), var(--font-default)' },
+	{ cat: 'typography', variable: '--font-text-override', default: '\'??\'' },
+	{ cat: 'typography', variable: '--font-text-theme', default: '\'??\'' },
+	{ cat: 'typography', variable: '--font-text', default: 'var(--font-text-override), var(--font-text-theme), var(--font-default)' },
+	{ cat: 'typography', variable: '--font-print-override', default: '\'??\'' },
+	{ cat: 'typography', variable: '--font-print', default: 'var(--font-print-override), var(--font-text-override), var(--font-text-theme), \'Arial\'' },
+	{ cat: 'typography', variable: '--font-monospace-override', default: '\'??\'' },
+	{ cat: 'typography', variable: '--font-monospace-theme', default: '\'??\'' },
+	{ cat: 'typography', variable: '--font-monospace', default: 'var(--font-monospace-override), var(--font-monospace-theme), var(--font-monospace-default)' },
+	{ cat: 'typography', variable: '--font-mermaid', default: 'var(--font-text)' },
 	{ cat: 'typography', variable: '--font-text-size', default: '16px' },
 	{ cat: 'typography', variable: '--font-smallest', default: '0.8em' },
 	{ cat: 'typography', variable: '--font-smaller', default: '0.875em' },
