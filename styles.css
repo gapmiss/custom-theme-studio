@@ -25,6 +25,26 @@
     text-align: right;
 }
 
+.auto-apply-changes-notice {
+    padding-bottom: .75em;
+    display: flex;
+    /* align-items: center; */
+}
+.auto-apply-changes-notice-icon {
+    color: var(--color-red);
+    /* border: 1px solid orange; */
+    & svg {
+        width: 24px;
+        height: 24px;
+    }
+}
+
+.auto-apply-changes-notice-text {
+    font-size: var(--font-smaller);
+    margin-left: .75em;
+    /* border: 1px solid blue; */
+}
+
 /* theme toggle section */
 .cts-view .theme-toggle-container {
     display: flex;

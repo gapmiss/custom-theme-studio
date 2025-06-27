@@ -1,4 +1,4 @@
-import { App, PluginSettingTab, Setting, Notice } from 'obsidian';
+import { App, PluginSettingTab, Setting, Notice, setIcon } from 'obsidian';
 import { AceLightThemesList, AceDarkThemesList, AceKeyboardList } from '../services/AceThemes';
 import { confirm } from '../modals/confirmModal';
 import CustomThemeStudioPlugin from '../main';
@@ -97,7 +97,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Enable custom theme')
-			.setDesc('Toggle your custom theme on or off')
+			.setDesc('Toggle your custom theme on or off.')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.themeEnabled)
 				.onChange(async (value) => {
@@ -121,7 +121,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Show confirmations')
-			.setDesc('Show a confirmation dialog warning about unsaved changes when leaving a CSS editor')
+			.setDesc('Show a confirmation dialog warning about unsaved changes when leaving a CSS editor.')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.showConfirmation)
 				.onChange(async (value) => {
@@ -132,7 +132,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Enable color picker')
-			.setDesc('Enable a color picker for CSS variables that have a default HEX color value. (require the plugin\'s view to be reloaded to take effect)')
+			.setDesc('Enable a color picker for CSS variables that have a default HEX color value (requires the plugin\'s view to be reloaded to take effect).')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.enableColorPicker)
 				.onChange(async (value) => {
@@ -141,8 +141,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				})
 			);
 
-		containerEl.createEl('h3', { text: 'Editor options' });
-
+		containerEl.createEl('h3', { text: 'CSS editor options' });
 
 		new Setting(containerEl)
 			.setName('Auto-apply changes')
@@ -154,6 +153,17 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				})
 			);
+
+		let noticeDiv = this.containerEl.createDiv({cls: 'auto-apply-changes-notice'});
+		let noticeIcon = noticeDiv.createDiv({cls: 'auto-apply-changes-notice-icon'});
+		noticeIcon.setAttribute('aria-label', 'Notice');
+		noticeIcon.setAttribute('data-tooltip-position', 'top');
+		let noticeText = noticeDiv.createDiv({cls: 'auto-apply-changes-notice-text'});
+		noticeText.textContent = 'When enabled, every keystroke triggers a "live" refresh of your theme. This can lead to unwanted styling and possibly make Obsidian unusable.';
+		setIcon((noticeIcon), 'alert-triangle');
+
+		this.containerEl.appendChild(noticeDiv);
+
 
 		new Setting(containerEl)
 			.setName('Generate CSS')
@@ -168,7 +178,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Color picker')
-			.setDesc('For custom elements, enable inline color picker in CSS editor.')
+			.setDesc('For custom elements, enable an inline color picker in the CSS editor.')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.enableAceColorPicker)
 				.onChange(async (value) => {
@@ -179,7 +189,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Theme')
-			.setDesc('Choose a theme for the code editor, "Auto" defaults to theme of Obsidian.')
+			.setDesc('Choose a theme for the CSS editor, "Auto" defaults to theme of Obsidian.')
 			.addDropdown(async (dropdown) => {
 				for (const key in THEME_COLOR) {
 					dropdown.addOption(key, key);
@@ -241,7 +251,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 		let fontSizeText: HTMLDivElement;
 		new Setting(containerEl)
 			.setName('Font size')
-			.setDesc('Set the font size of the code editor.')
+			.setDesc('Set the font size of the CSS editor.')
 			.addSlider(slider => slider
 				.setLimits(5, 30, 1)
 				.setValue(this.plugin.settings.EditorFontSize)
@@ -257,7 +267,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Font family')
-			.setDesc('')
+			.setDesc('Custom font for the CSS editor.')
 			.addText(text => text
 				.setValue(this.plugin.settings.EditorFontFamily)
 				.onChange(async (value) => {
@@ -284,7 +294,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Wordwrap')
-			.setDesc('Editor will wrap long lines.')
+			.setDesc('Enable word wrapping.')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.EditorWordWrap)
 				.onChange(async (value) => {
@@ -295,7 +305,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Line numbers')
-			.setDesc('Show line numbers in the code editor.')
+			.setDesc('Enable line numbers.')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.EditorLineNumbers)
 				.onChange(async (value) => {
@@ -305,7 +315,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Reload view')
-			.setDesc('Editor options require the plugin\'s view to be reloaded to take effect.')
+			.setDesc('CSS editor options require the plugin\'s view to be reloaded to take effect.')
 			.addButton(button => button
 				.setButtonText('Reload')
 				.setClass('mod-destructive')
@@ -316,7 +326,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 							new Notice('The Custom Theme Studio view has been reloaded');
 						} catch (error) {
 							console.error(error);
-							new Notice('Failed to reload view. Check developer console for details.', 5000);
+							new Notice('Failed to reload view. Check developer console for details.', 10000);
 						}
 					}
 				}));
@@ -325,7 +335,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Theme name')
-			.setDesc('Name for your exported theme')
+			.setDesc('The name or title for your exported theme.')
 			.addText(text => text
 				.setValue(this.plugin.settings.exportThemeName)
 				.onChange(async (value) => {
@@ -337,7 +347,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Author name')
-			.setDesc('Your name as the theme author')
+			.setDesc('Your name as the theme author.')
 			.addText(text => text
 				.setValue(this.plugin.settings.exportAuthor)
 				.onChange(async (value) => {
@@ -351,7 +361,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Author URL')
-			.setDesc('URL to your github profile')
+			.setDesc('URL to your github profile page (e.g. https://github.com/username).')
 			.addText(text => text
 				.setValue(this.plugin.settings.exportURL)
 				.onChange(async (value) => {
@@ -365,7 +375,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Prettier formatting')
-			.setDesc('Automatically format CSS using Prettier')
+			.setDesc('Automatically format CSS using Prettier formatter.')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.exportPrettierFormat)
 				.onChange(async (value) => {

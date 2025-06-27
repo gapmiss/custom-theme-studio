@@ -3,13 +3,13 @@ import CustomThemeStudioPlugin from '../main';
 import { CSSVariable } from 'src/settings';
 
 export interface cssCategory {
-    category: string;
+	category: string;
 	title: string;
 	tag: string;
-	help: DocumentFragment|null;
+	help: DocumentFragment | null;
 }
 
-function createHelpFragment(text: string, parent: string = '', category: string = '' ) {
+function createHelpFragment(text: string, parent: string = '', category: string = '') {
 	let helpFragment = document.createDocumentFragment();
 	if (text !== '') {
 		helpFragment.append(
@@ -19,9 +19,9 @@ function createHelpFragment(text: string, parent: string = '', category: string 
 	if (parent !== '' && category !== '') {
 		helpFragment.append(
 			helpFragment.createEl('a', {
-			href: 'https://docs.obsidian.md/Reference/CSS+variables/' + parent + '/' + category,
-			text: category + ' - Developer Documentation',
-			attr: { 'aria-label': 'https://docs.obsidian.md/Reference/' + parent + '/' + category, 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
+				href: 'https://docs.obsidian.md/Reference/CSS+variables/' + parent + '/' + category,
+				text: category + ' - Developer Documentation',
+				attr: { 'aria-label': 'https://docs.obsidian.md/Reference/' + parent + '/' + category, 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
 			})
 		);
 	}
@@ -29,65 +29,65 @@ function createHelpFragment(text: string, parent: string = '', category: string 
 }
 
 export const allCategories: cssCategory[] = [
-{ category: 'animation', title: 'Animation', tag: 'foundations', help: null },
-{ category: 'bases', title: 'Bases', tag: 'plugins', help: null },
-{ category: 'blockquote', title: 'Blockquote', tag: 'editor', help: createHelpFragment('', 'Editor', 'Blockquote') },
-{ category: 'borders', title: 'Borders', tag: 'foundations', help: createHelpFragment('', 'Foundations', 'Borders') },
-{ category: 'button', title: 'Button', tag: 'components', help: createHelpFragment('', 'Components', 'Button') },
-{ category: 'callout', title: 'Callout', tag: 'editor', help: createHelpFragment('', 'Editor', 'Callout') },
-{ category: 'canvas', title: 'Canvas', tag: 'plugins', help: createHelpFragment('', 'Plugins', 'Canvas') },
-{ category: 'checkbox', title: 'Checkbox', tag: 'components', help: createHelpFragment('', 'Components', 'Checkbox') },
-{ category: 'code', title: 'Code', tag: 'editor', help: createHelpFragment('', 'Editor', 'Code') },
-{ category: 'colorinput', title: 'Color input', tag: 'components', help: createHelpFragment('', 'Components', 'Color+input') },
-{ category: 'colors', title: 'Colors', tag: 'foundations', help: createHelpFragment('', 'Foundations', 'Colors') },
-{ category: 'cursor', title: 'Cursor', tag: 'foundations', help: createHelpFragment('', 'Foundations', 'Cursor') },
-{ category: 'dialog', title: 'Dialog', tag: 'components', help: createHelpFragment('', 'Components', 'Dialog') },
-{ category: 'divider', title: 'Divider', tag: 'window', help: createHelpFragment('Dividers between panes') },
-{ category: 'dragging', title: 'Dragging', tag: 'components', help: createHelpFragment('', 'Components', 'Dragging') },
-{ category: 'dropdowns', title: 'Dropdowns', tag: 'components', help: createHelpFragment('', 'Components', 'Dropdowns') },
-{ category: 'embed', title: 'Embed', tag: 'editor', help: createHelpFragment('', 'Editor', 'Embed') },
-{ category: 'file', title: 'File', tag: 'editor', help: createHelpFragment('', 'Editor', 'File') },
-{ category: 'fileexplorer', title: 'File explorer', tag: 'plugins', help: createHelpFragment('', 'Plugins', 'File+explorer') },
-{ category: 'footnote', title: 'Footnote', tag: 'editor', help: createHelpFragment('', 'Editor', 'Footnote') },
-{ category: 'graph', title: 'Graph', tag: 'plugins', help: createHelpFragment('', 'Plugins', 'Graph') },
-{ category: 'headings', title: 'Headings', tag: 'editor', help: createHelpFragment('', 'Editor', 'Headings') },
-{ category: 'horizontalrule', title: 'Horizontal rule', tag: 'editor', help: createHelpFragment('', 'Editor', 'Horizontal+rule') },
-{ category: 'icons', title: 'Icons', tag: 'foundations', help: createHelpFragment('', 'Foundations', 'Icons') },
-{ category: 'indentation', title: 'Indentation', tag: 'components', help: createHelpFragment('', 'Components', 'Indentation+guides') },
-{ category: 'inlinetitle', title: 'Inline title', tag: 'editor', help: createHelpFragment('', 'Editor', 'Inline+title') },
-{ category: 'layers', title: 'Layers', tag: 'foundations', help: createHelpFragment('', 'Foundations', 'Layers') },
-{ category: 'link', title: 'Link', tag: 'editor', help: createHelpFragment('', 'Editor', 'Link') },
-{ category: 'list', title: 'List', tag: 'editor', help: createHelpFragment('', 'Editor', 'List') },
-{ category: 'modal', title: 'Modal', tag: 'components', help: createHelpFragment('', 'Components', 'Modal') },
-{ category: 'multiselect', title: 'Multi-select', tag: 'components', help: createHelpFragment('', 'Components', 'Multi-select') },
-{ category: 'navigation', title: 'Navigation', tag: 'components', help: createHelpFragment('', 'Components', 'Navigation') },
-{ category: 'popover', title: 'Popover', tag: 'components', help: createHelpFragment('', 'Components', 'Popover') },
-{ category: 'prompt', title: 'Prompt', tag: 'components', help: createHelpFragment('', 'Components', 'Prompt') },
-{ category: 'properties', title: 'Properties', tag: 'editor', help: createHelpFragment('', 'Editor', 'Properties') },
-{ category: 'radiuses', title: 'Radiuses', tag: 'foundations', help: createHelpFragment('', 'Foundations', 'Radiuses') },
-{ category: 'ribbon', title: 'Ribbon', tag: 'window', help: createHelpFragment('', 'Window', 'Ribbon') },
-{ category: 'scrollbar', title: 'Scrollbar', tag: 'window', help: createHelpFragment('', 'Window', 'Scrollbar') },
-{ category: 'search', title: 'Search', tag: 'plugins', help: createHelpFragment('', 'Plugins', 'Search') },
-{ category: 'sidebar', title: 'Sidebar', tag: 'window', help: createHelpFragment('', 'Window', 'Sidebar') },
-{ category: 'slider', title: 'Slider', tag: 'components', help: createHelpFragment('', 'Components', 'Slider') },
-{ category: 'spacing', title: 'Spacing', tag: 'foundations', help: createHelpFragment('', 'Foundations', 'Spacing') },
-{ category: 'statusbar', title: 'Status bar', tag: 'window', help: createHelpFragment('', 'Window', 'Status+bar') },
-{ category: 'sync', title: 'Sync', tag: 'plugins', help: createHelpFragment('', 'Plugins', 'Sync') },
-{ category: 'table', title: 'Table', tag: 'editor', help: createHelpFragment('', 'Editor', 'Table') },
-{ category: 'tabs', title: 'Tabs', tag: 'components', help: createHelpFragment('', 'Components', 'Tabs') },
-{ category: 'tag', title: 'Tag', tag: 'editor', help: createHelpFragment('', 'Editor', 'Tag') },
-{ category: 'textinput', title: 'Text input', tag: 'components', help: createHelpFragment('', 'Components', 'Text+input') },
-{ category: 'toggle', title: 'Toggle', tag: 'components', help: createHelpFragment('', 'Components', 'Toggle') },
-{ category: 'themelight', title: 'Theme - light', tag: 'theme-light', help: createHelpFragment('Variables specifically for light theme', '', '') },
-{ category: 'themedark', title: 'Theme - dark', tag: 'theme-dark', help: createHelpFragment('Variables specifically for dark theme', '', '') },
-{ category: 'typography', title: 'Typography', tag: 'foundations', help: createHelpFragment('', 'Foundations', 'Typography') },
-{ category: 'vaultprofile', title: 'Vault profile', tag: 'window', help: createHelpFragment('', 'Window', 'Vault+profile') },
-{ category: 'windowframe', title: 'Window frame', tag: 'window', help: createHelpFragment('', 'Window', 'Window+frame') },
-{ category: 'workspace', title: 'Workspace', tag: 'window', help: createHelpFragment('', 'Window', 'Workspace')  }
+	{ category: 'animation', title: 'Animation', tag: 'foundations', help: null },
+	{ category: 'bases', title: 'Bases', tag: 'plugins', help: null },
+	{ category: 'blockquote', title: 'Blockquote', tag: 'editor', help: createHelpFragment('', 'Editor', 'Blockquote') },
+	{ category: 'borders', title: 'Borders', tag: 'foundations', help: createHelpFragment('', 'Foundations', 'Borders') },
+	{ category: 'button', title: 'Button', tag: 'components', help: createHelpFragment('', 'Components', 'Button') },
+	{ category: 'callout', title: 'Callout', tag: 'editor', help: createHelpFragment('', 'Editor', 'Callout') },
+	{ category: 'canvas', title: 'Canvas', tag: 'plugins', help: createHelpFragment('', 'Plugins', 'Canvas') },
+	{ category: 'checkbox', title: 'Checkbox', tag: 'components', help: createHelpFragment('', 'Components', 'Checkbox') },
+	{ category: 'code', title: 'Code', tag: 'editor', help: createHelpFragment('', 'Editor', 'Code') },
+	{ category: 'colorinput', title: 'Color input', tag: 'components', help: createHelpFragment('', 'Components', 'Color+input') },
+	{ category: 'colors', title: 'Colors', tag: 'foundations', help: createHelpFragment('', 'Foundations', 'Colors') },
+	{ category: 'cursor', title: 'Cursor', tag: 'foundations', help: createHelpFragment('', 'Foundations', 'Cursor') },
+	{ category: 'dialog', title: 'Dialog', tag: 'components', help: createHelpFragment('', 'Components', 'Dialog') },
+	{ category: 'divider', title: 'Divider', tag: 'window', help: createHelpFragment('Dividers between panes') },
+	{ category: 'dragging', title: 'Dragging', tag: 'components', help: createHelpFragment('', 'Components', 'Dragging') },
+	{ category: 'dropdowns', title: 'Dropdowns', tag: 'components', help: createHelpFragment('', 'Components', 'Dropdowns') },
+	{ category: 'embed', title: 'Embed', tag: 'editor', help: createHelpFragment('', 'Editor', 'Embed') },
+	{ category: 'file', title: 'File', tag: 'editor', help: createHelpFragment('', 'Editor', 'File') },
+	{ category: 'fileexplorer', title: 'File explorer', tag: 'plugins', help: createHelpFragment('', 'Plugins', 'File+explorer') },
+	{ category: 'footnote', title: 'Footnote', tag: 'editor', help: createHelpFragment('', 'Editor', 'Footnote') },
+	{ category: 'graph', title: 'Graph', tag: 'plugins', help: createHelpFragment('', 'Plugins', 'Graph') },
+	{ category: 'headings', title: 'Headings', tag: 'editor', help: createHelpFragment('', 'Editor', 'Headings') },
+	{ category: 'horizontalrule', title: 'Horizontal rule', tag: 'editor', help: createHelpFragment('', 'Editor', 'Horizontal+rule') },
+	{ category: 'icons', title: 'Icons', tag: 'foundations', help: createHelpFragment('', 'Foundations', 'Icons') },
+	{ category: 'indentation', title: 'Indentation', tag: 'components', help: createHelpFragment('', 'Components', 'Indentation+guides') },
+	{ category: 'inlinetitle', title: 'Inline title', tag: 'editor', help: createHelpFragment('', 'Editor', 'Inline+title') },
+	{ category: 'layers', title: 'Layers', tag: 'foundations', help: createHelpFragment('', 'Foundations', 'Layers') },
+	{ category: 'link', title: 'Link', tag: 'editor', help: createHelpFragment('', 'Editor', 'Link') },
+	{ category: 'list', title: 'List', tag: 'editor', help: createHelpFragment('', 'Editor', 'List') },
+	{ category: 'modal', title: 'Modal', tag: 'components', help: createHelpFragment('', 'Components', 'Modal') },
+	{ category: 'multiselect', title: 'Multi-select', tag: 'components', help: createHelpFragment('', 'Components', 'Multi-select') },
+	{ category: 'navigation', title: 'Navigation', tag: 'components', help: createHelpFragment('', 'Components', 'Navigation') },
+	{ category: 'popover', title: 'Popover', tag: 'components', help: createHelpFragment('', 'Components', 'Popover') },
+	{ category: 'prompt', title: 'Prompt', tag: 'components', help: createHelpFragment('', 'Components', 'Prompt') },
+	{ category: 'properties', title: 'Properties', tag: 'editor', help: createHelpFragment('', 'Editor', 'Properties') },
+	{ category: 'radiuses', title: 'Radiuses', tag: 'foundations', help: createHelpFragment('', 'Foundations', 'Radiuses') },
+	{ category: 'ribbon', title: 'Ribbon', tag: 'window', help: createHelpFragment('', 'Window', 'Ribbon') },
+	{ category: 'scrollbar', title: 'Scrollbar', tag: 'window', help: createHelpFragment('', 'Window', 'Scrollbar') },
+	{ category: 'search', title: 'Search', tag: 'plugins', help: createHelpFragment('', 'Plugins', 'Search') },
+	{ category: 'sidebar', title: 'Sidebar', tag: 'window', help: createHelpFragment('', 'Window', 'Sidebar') },
+	{ category: 'slider', title: 'Slider', tag: 'components', help: createHelpFragment('', 'Components', 'Slider') },
+	{ category: 'spacing', title: 'Spacing', tag: 'foundations', help: createHelpFragment('', 'Foundations', 'Spacing') },
+	{ category: 'statusbar', title: 'Status bar', tag: 'window', help: createHelpFragment('', 'Window', 'Status+bar') },
+	{ category: 'sync', title: 'Sync', tag: 'plugins', help: createHelpFragment('', 'Plugins', 'Sync') },
+	{ category: 'table', title: 'Table', tag: 'editor', help: createHelpFragment('', 'Editor', 'Table') },
+	{ category: 'tabs', title: 'Tabs', tag: 'components', help: createHelpFragment('', 'Components', 'Tabs') },
+	{ category: 'tag', title: 'Tag', tag: 'editor', help: createHelpFragment('', 'Editor', 'Tag') },
+	{ category: 'textinput', title: 'Text input', tag: 'components', help: createHelpFragment('', 'Components', 'Text+input') },
+	{ category: 'toggle', title: 'Toggle', tag: 'components', help: createHelpFragment('', 'Components', 'Toggle') },
+	{ category: 'themelight', title: 'Theme - light', tag: 'theme-light', help: createHelpFragment('Variables specifically for light theme', '', '') },
+	{ category: 'themedark', title: 'Theme - dark', tag: 'theme-dark', help: createHelpFragment('Variables specifically for dark theme', '', '') },
+	{ category: 'typography', title: 'Typography', tag: 'foundations', help: createHelpFragment('', 'Foundations', 'Typography') },
+	{ category: 'vaultprofile', title: 'Vault profile', tag: 'window', help: createHelpFragment('', 'Window', 'Vault+profile') },
+	{ category: 'windowframe', title: 'Window frame', tag: 'window', help: createHelpFragment('', 'Window', 'Window+frame') },
+	{ category: 'workspace', title: 'Workspace', tag: 'window', help: createHelpFragment('', 'Window', 'Workspace') }
 ]
 
 export interface cssVariable {
-    cat: string;
+	cat: string;
 	variable: string;
 	default: string;
 }
@@ -101,7 +101,7 @@ export const cssVariableDefaults: cssVariable[] = [
 	{ cat: 'animation', variable: '--anim-motion-smooth', default: 'cubic-bezier(0.45, 0.05, 0.55, 0.95)' },
 	{ cat: 'animation', variable: '--anim-motion-delay', default: 'cubic-bezier(0.65, 0.05, 0.36, 1)' },
 	{ cat: 'animation', variable: '--anim-motion-jumpy', default: 'cubic-bezier(0.68, -0.55, 0.27, 1.55)' },
-	{ cat: 'animation', variable: '--anim-motion-swing', default: 'cubic-bezier(0, 0.55, 0.45, 1)' },	
+	{ cat: 'animation', variable: '--anim-motion-swing', default: 'cubic-bezier(0, 0.55, 0.45, 1)' },
 	{ cat: 'bases', variable: '--bases-header-border-width', default: ' 0 0 1px 0' },
 	{ cat: 'bases', variable: '--bases-header-height', default: ' 40px' },
 	{ cat: 'bases', variable: '--bases-header-padding-start', default: ' 2px' },
@@ -891,7 +891,7 @@ export class CSSVariableManager {
 				'variable': name,
 				'value': value
 			}
-			customVars.push(obj)				
+			customVars.push(obj)
 		}
 
 		this.plugin.saveSettings();
