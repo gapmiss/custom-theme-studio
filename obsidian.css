@@ -17,25 +17,43 @@ body {
   --bases-header-height: 40px;
   --bases-header-padding-start: 2px;
   --bases-header-padding-end: 2px;
-  --bases-embed-border: 1px solid var(--background-modifier-border);
+  --bases-toolbar-label-display: block;
+  --bases-toolbar-badge-display: none;
+  --bases-embed-border-width: 0px;
+  --bases-embed-border-color: var(--background-modifier-border);
   --bases-embed-border-radius: var(--radius-s);
-  --bases-table-row-height: 30px;
-  --bases-table-white-space: nowrap;
+  --bases-filter-menu-width: 520px;
   --bases-table-container-border-width: 1px;
   --bases-table-container-border-radius: var(--radius-s);
   --bases-table-header-weight: var(--font-weight);
   --bases-table-header-color: var(--text-muted);
+  --bases-table-header-icon-display: flex;
   --bases-table-header-background: var(--background-primary);
   --bases-table-header-background-hover: var(--background-modifier-hover);
   --bases-table-header-sort-mask: linear-gradient(to left, transparent var(--size-4-6), black var(--size-4-6));
   --bases-table-border-color: var(--table-border-color);
   --bases-table-column-border-width: 1px;
   --bases-table-row-border-width: 1px;
+  --bases-table-row-background-hover: var(--table-row-background-hover);
+  --bases-table-row-height: 30px;
   --bases-table-text-size: var(--font-smaller);
   --bases-table-column-max-width: 300;
   --bases-table-column-min-width: 40;
-  --bases-table-cell-background-active: var(--background-modifier-hover);
-  --bases-table-cell-background-disabled: var(--background-modifier-cover);
+  --bases-table-cell-radius-active: 2px;
+  --bases-table-cell-shadow-active: 0 0 0 2px var(--interactive-accent);
+  --bases-table-cell-background-active: var(--background-primary);
+  --bases-table-cell-background-disabled: var(--background-primary-alt);
+  --bases-table-white-space: nowrap;
+  --bases-cards-container-background: var(--background-primary);
+  --bases-cards-background: var(--background-primary);
+  --bases-cards-cover-background: var(--background-primary-alt);
+  --bases-cards-width: 200px;
+  --bases-cards-group-padding: var(--size-4-3);
+  --bases-cards-line-height: 24px;
+  --bases-cards-border-width: 1px;
+  --bases-cards-shadow: 0 0 0 1px var(--background-modifier-border);
+  --bases-cards-shadow-hover: 0 0 0 1px var(--background-modifier-border-hover);
+  --bases-cards-text-size: var(--font-smaller);
   /* Blockquotes */
   --blockquote-border-thickness: 2px;
   --blockquote-border-color: var(--interactive-accent);
@@ -127,7 +145,7 @@ body {
   --dialog-width: 560px;
   --dialog-max-width: 80vw;
   --dialog-max-height: 85vh;
-  /* Dividers â€” between panes */
+  /* Dividers — between panes */
   --divider-color: var(--background-modifier-border);
   --divider-color-hover: var(--interactive-accent);
   --divider-width: 1px;
@@ -629,6 +647,7 @@ body {
   --table-drag-handle-background-active: var(--table-selection-border-color);
   --table-drag-handle-color: var(--text-faint);
   --table-drag-handle-color-active: var(--text-on-accent);
+  --table-drop-indicator-half-width: 2px;
   --table-add-button-background: transparent;
   --table-add-button-border-width: var(--table-border-width);
   --table-add-button-border-color: var(--background-modifier-border);
@@ -686,7 +705,7 @@ body {
   --background-primary-alt: var(--color-base-10);
   --background-secondary: var(--color-base-20);
   --background-modifier-hover: rgba(var(--mono-rgb-100), 0.067);
-  --background-modifier-active-hover: hsla(var(--interactive-accent-hsl), 0.15);
+  --background-modifier-active-hover: hsla(var(--interactive-accent-hsl), 0.1);
   --background-modifier-border: var(--color-base-30);
   --background-modifier-border-hover: var(--color-base-35);
   --background-modifier-border-focus: var(--color-base-40);
