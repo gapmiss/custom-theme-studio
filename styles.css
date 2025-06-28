@@ -525,6 +525,16 @@ a[class*="tag-filter"]:focus {
 }
 
 /* css editor */
+:not(.inline-element-editor) > .css-editor-section.css-editor-section-show {
+    border: 2px solid var(--background-modifier-border);
+    border-radius: var(--size-4-2);
+    padding: var(--size-4-2);
+    margin-block: var(--size-4-2);
+    padding-bottom: .15em;
+    width: 100%;
+    background-color: var(--background-primary);
+}
+
 .cts-view .css-editor-section .button-container {
     padding: .5em;
     display: flex;
@@ -538,8 +548,8 @@ a[class*="tag-filter"]:focus {
 .css-editor-section-show {
     /* border: 2px solid var(--background-modifier-border); */
     /* border-radius: var(--size-4-2); */
-    padding: var(--size-4-2);
-    margin-block: var(--size-4-4);
+    /* padding: var(--size-4-2); */
+    margin-block: var(--size-4-2);
     display: block;
 }
 
@@ -573,13 +583,16 @@ a[class*="tag-filter"]:focus {
     }
 }
 
-.cts-view .element-item {
-    max-width: 100%;
+.cts-view .element-item-header {
+    width: 100%;
     display: grid;
+    /* border: 1px solid lime; */
     /* https://codepen.io/johnykei/pen/xNpKqW */
-    grid-template: "title actions" 40px / 1fr minmax(min-content, max-content);
+    grid-template: "title actions" auto / 1fr minmax(min-content, max-content);
     align-items: center;
     border-radius: var(--size-2-2);
+    margin-bottom: .25em;
+    padding-block: .25em;
 
     & .element-item-title {
         grid-area: title;
@@ -604,7 +617,7 @@ a[class*="tag-filter"]:focus {
     border: 2px solid var(--background-modifier-border);
     border-radius: var(--size-4-2);
     padding: var(--size-4-2);
-    margin-block: var(--size-4-4);
+    margin-block: var(--size-4-2);
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
@@ -651,6 +664,7 @@ a[class*="tag-filter"]:focus {
 
 .cts-view .element-item-actions {
     display: flex;
+    flex-wrap: wrap;
 }
 
 .cts-view .element-item-delete-button:hover svg {

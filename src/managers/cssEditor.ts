@@ -593,13 +593,15 @@ export class CSSEditor {
 
 		let currentEnabled = element.enabled;
 
-		const titleEl = item.createDiv('element-item-title');
+		const elementHeader = item.createDiv('element-item-header');
+
+		const titleEl = elementHeader.createDiv('element-item-title');
 		titleEl.createDiv({
 			text: element.name || element.selector,
 			attr: { 'aria-label': element.selector, 'data-tooltip-position': 'top' }
 		});
 
-		const actionsEl = item.createDiv('element-item-actions');
+		const actionsEl = elementHeader.createDiv('element-item-actions');
 
 		const editButton = actionsEl.createEl('button', {
 			cls: 'clickable-icon'
@@ -666,6 +668,9 @@ export class CSSEditor {
 				// Move the editor section under this element
 				inlineEditor.appendChild(this.editorSection);
 				this.showEditorSection(true);
+				setTimeout(async () => {
+					this.nameInputEl!.focus();
+				}, 25);
 			}
 		});
 
