@@ -11,7 +11,7 @@ export function copyStringToClipboard(text: string, topic: string | undefined = 
 	navigator.clipboard
 		.writeText(text)
 		.then(function () {
-			showNotice('"' + (topic !== undefined ? topic + '"' : 'Text') + ' copied to clipboard', 2500, 'success');
+			showNotice('"' + (topic !== undefined ? topic + '"' : 'Text') + ' copied to clipboard', 5000, 'success');
 		})
 		.catch(function (error) {
 			console.error('Failed to copy to clipboard: ', error)

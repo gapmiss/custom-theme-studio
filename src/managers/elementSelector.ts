@@ -2,6 +2,7 @@ import { Notice, ButtonComponent } from 'obsidian';
 import CustomThemeStudioPlugin from '../main';
 import { CustomThemeStudioView } from '../view';
 import { generateUniqueId } from '../utils';
+import { copyStringToClipboard, getCurrentTheme } from '../utils';
 
 export class ElementSelector {
 	plugin: CustomThemeStudioPlugin;
@@ -269,6 +270,7 @@ export class ElementSelector {
 			<div><strong>Specific Selector:</strong> <span class="selector-highlight">${specificSelector}</span></div>
 			<div><em>Click to select with default selector</em></div>
 			<div><em>Alt+Click to select with specific selector</em></div>
+			<div><em>Shift+Click to copy the specific selector to your clipboard</em></div>
 		`;
 
 		this.tooltip.insertAdjacentHTML('afterbegin', tooltipContent);
@@ -328,6 +330,13 @@ export class ElementSelector {
 	}
 
 	selectElement(element: HTMLElement, evt: MouseEvent): void {
+
+		// if (evt.metaKey) {
+		if (evt.shiftKey) {
+			this.copySelectorToClipboard(element);
+			return;
+		}
+
 		// Generate selector based on whether alt key is pressed
 		const selector = this.generateSelector(element, evt.altKey);
 
@@ -437,6 +446,60 @@ export class ElementSelector {
 		}
 
 		return selector.replace('.cts-element-picker-hover', '');
+	}
+
+	copySelectorToClipboard(element: HTMLElement): void {
+		// Start with the tag name
+		let selector = element.tagName.toLowerCase();
+
+		// Add id if present (highest priority for both modes)
+		if (element.id) {
+			selector = `${selector}#${element.id}`;
+		} else {
+			// For specific selector, include everything possible in a consistent order
+
+			// Add all classes first
+			if (element.classList.length > 0) {
+				const classes = Array.from(element.classList)
+					.filter(cls => !cls.includes('cts-element-picker-highlight'))
+					.map(cls => `.${cls}`)
+					.join('');
+
+				if (classes) {
+					selector = `${selector}${classes}`;
+				}
+			}
+
+			// Add aria-label if present (high priority)
+			if (element.hasAttribute('aria-label')) {
+				const ariaLabel = element.getAttribute('aria-label');
+				const escapedAriaLabel = this.escapeAttributeValue(ariaLabel!);
+				selector = `${selector}[aria-label="${escapedAriaLabel}"]`;
+			}
+
+			// Add all data attributes
+			const dataAttributes = this.getDataAttributes(element);
+			if (dataAttributes.length > 0) {
+				// Sort data attributes for consistent ordering
+				dataAttributes.sort((a, b) => a.name.localeCompare(b.name));
+				dataAttributes.forEach(attr => {
+					const escapedValue = this.escapeAttributeValue(attr.value);
+					selector = `${selector}[${attr.name}="${escapedValue}"]`;
+				});
+			}
+
+			// Add other significant attributes
+			const significantAttrs = ['role', 'type', 'name'];
+			significantAttrs.forEach(attrName => {
+				if (element.hasAttribute(attrName)) {
+					const value = element.getAttribute(attrName);
+					const escapedValue = this.escapeAttributeValue(value!);
+					selector = `${selector}[${attrName}="${escapedValue}"]`;
+				}
+			});
+		}
+		selector = selector.replace('.cts-element-picker-hover', '');
+		copyStringToClipboard(selector, selector);
 	}
 
 	/**

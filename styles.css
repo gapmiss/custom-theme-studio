@@ -2063,7 +2063,8 @@ a[class*="tag-filter"]:focus {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    text-shadow: 0 0 3px #535353;
+    /* text-shadow: 0 0 3px #535353; */
+    font-weight: 700;
 }
 
 .ace-colorpicker.vscode .colorpicker-body .color-tool {

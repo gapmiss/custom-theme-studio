@@ -16,7 +16,7 @@ export class CSSEditor {
 	editorEl: HTMLTextAreaElement | null = null;
 	selectorInputEl: HTMLInputElement | null = null;
 	nameInputEl: HTMLInputElement | null = null;
-	uuidHiddenEl: HTMLInputElement;
+	editorUUID: HTMLInputElement;
 	enabledToggleEl: HTMLInputElement | null = null;
 	editorSection: HTMLElement | null = null;
 	currentEditingElement: HTMLElement | null = null;
@@ -55,7 +55,7 @@ export class CSSEditor {
 		this.editorSection = containerEl.createDiv('css-editor-section');
 
 		// UUID
-		this.uuidHiddenEl = this.editorSection.createEl('input', {
+		this.editorUUID = this.editorSection.createEl('input', {
 			cls: 'css-editor-uuid',
 			attr: {
 				type: 'hidden'
@@ -224,10 +224,10 @@ export class CSSEditor {
 		// Save button
 		saveButton.addEventListener('click', async () => {
 			const selector = this.selectorInputEl!.value.trim();
-			
+
 			// const existingIndex = this.plugin.settings.customElements.findIndex(el => el.selector === selector);
-			const existingIndex = this.plugin.settings.customElements.findIndex(el => el.uuid === this.uuidHiddenEl.value);
-			
+			const existingIndex = this.plugin.settings.customElements.findIndex(el => el.uuid === this.editorUUID.value);
+
 			const css = this.aceService.getValue();
 
 			// if (existingIndex >= 0 && !this.isEditingExisting) {
@@ -278,11 +278,11 @@ export class CSSEditor {
 	}
 
 	setSelector(uuid: string, selector: string, isEditingExisting: boolean): void {
-		if (!this.selectorInputEl || !this.uuidHiddenEl) return;
+		if (!this.selectorInputEl || !this.editorUUID) return;
 
 		this.currentSelector = selector;
 		this.selectorInputEl.value = selector;
-		this.uuidHiddenEl.value = uuid;
+		this.editorUUID.value = uuid;
 
 		// Try to find existing element with this selector
 		// const existingElement = this.plugin.settings.customElements.find(el => el.selector === selector);
@@ -294,7 +294,7 @@ export class CSSEditor {
 
 			// this.editor!.session.on('change', this.changeListener);
 
-			this.uuidHiddenEl!.value = existingElement.uuid;
+			this.editorUUID!.value = existingElement.uuid;
 			this.editorEl!.value = existingElement.css;
 			this.aceService.setValue(existingElement.css, 1);
 
@@ -332,24 +332,24 @@ export class CSSEditor {
 			css += `  /* Basic styling */\n`;
 			css += `  color: ${computedStyle.color};\n`;
 			css += `  background-color: ${computedStyle.backgroundColor};\n`;
-			
+
 			// Add border if it exists
 			if (computedStyle.borderWidth !== '0px') {
 				css += `  border: ${computedStyle.borderWidth} ${computedStyle.borderStyle} ${computedStyle.borderColor};\n`;
 			}
-			
+
 			css += `  \n  /* Spacing */\n`;
 			css += `  padding: ${computedStyle.padding};\n`;
 			css += `  margin: ${computedStyle.margin};\n`;
-			
+
 			css += `  \n  /* Typography */\n`;
 			css += `  font-family: ${computedStyle.fontFamily};\n`;
 			css += `  font-size: ${computedStyle.fontSize};\n`;
 			css += `  font-weight: ${computedStyle.fontWeight};\n`;
-			
+
 			css += `}\n`;
 			css += `\n`;
-			
+
 			// Add hover state template
 			css += `${selector}:hover {\n`;
 			css += `  /* Hover state styling */\n`;
@@ -361,7 +361,6 @@ export class CSSEditor {
 			css += `}`;
 		}
 
-		
 		this.aceService.setValue(css, 1);
 
 		// Clear name input
@@ -383,7 +382,7 @@ export class CSSEditor {
 		if (!this.editorEl || !this.selectorInputEl) return;
 
 		const selector = this.selectorInputEl.value.trim();
-		const uuid = this.uuidHiddenEl.value;
+		const uuid = this.editorUUID.value;
 
 		if (!uuid || !selector || !css) {
 			new Notice('Please enter both a selector and CSS rules');
@@ -393,8 +392,6 @@ export class CSSEditor {
 		// Update the custom CSS
 		this.updateCustomCSS(uuid, selector, css);
 
-
-
 		// Apply the changes
 		if (this.plugin.settings.themeEnabled) {
 			this.plugin.themeManager.applyCustomTheme();
@@ -402,7 +399,6 @@ export class CSSEditor {
 	}
 
 	clearAppliedChanges(): void {
-
 		// Update the custom CSS
 		this.updateCustomCSS(generateUniqueId(), '', '');
 
@@ -413,10 +409,9 @@ export class CSSEditor {
 	}
 
 	saveElement(): boolean {
-
 		if (!this.editorEl || !this.selectorInputEl || !this.nameInputEl) return false;
 
-		const uuid = this.uuidHiddenEl.value;
+		const uuid = this.editorUUID.value;
 		const name = this.nameInputEl.value.trim();
 		const selector = this.selectorInputEl.value.trim();
 		const css = this.aceService.getValue();
@@ -460,7 +455,6 @@ export class CSSEditor {
 		if (this.plugin.settings.themeEnabled) {
 			this.plugin.themeManager.applyCustomTheme();
 		}
-
 
 		this.editorEl.value = '';
 
@@ -516,7 +510,7 @@ export class CSSEditor {
 		if (!this.editorEl || !this.selectorInputEl || !this.nameInputEl) return;
 
 		// Clear inputs
-		this.uuidHiddenEl.value = generateUniqueId();
+		this.editorUUID.value = generateUniqueId();
 		this.selectorInputEl.value = '';
 		this.aceService.setValue('');
 		this.nameInputEl.value = '';
