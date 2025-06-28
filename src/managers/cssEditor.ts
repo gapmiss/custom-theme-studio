@@ -221,6 +221,17 @@ export class CSSEditor {
 			this.currentSelector = this.selectorInputEl!.value;
 		});
 
+		this.selectorInputEl.addEventListener('change', () => {
+			this.currentSelector = this.selectorInputEl!.value;
+			if (this.plugin.settings.autoApplyChanges) {
+				const css = this.aceService.getValue();
+				if (css !== '') {
+					this.applyChanges(css);
+				}
+				
+			}
+		});
+
 		// Save button
 		saveButton.addEventListener('click', async () => {
 			const selector = this.selectorInputEl!.value.trim();
@@ -385,7 +396,7 @@ export class CSSEditor {
 		const uuid = this.editorUUID.value;
 
 		if (!uuid || !selector || !css) {
-			new Notice('Please enter both a selector and CSS rules');
+			new Notice('Please enter both a selector and CSS rules to auto apply your CSS changes');
 			return;
 		}
 
@@ -477,7 +488,7 @@ export class CSSEditor {
 
 				existingElements.forEach(el => {
 					// if (el.getAttribute('data-selector') === selector) {
-					if (el.getAttribute('') === uuid) {
+					if (el.getAttribute('data-cts-uuid') === uuid) {
 						elementExists = true;
 					}
 				});
@@ -521,6 +532,8 @@ export class CSSEditor {
 		// Reset editing state
 		this.isEditingExisting = false;
 		this.currentEditingElement = null;
+
+		this.editor!.session.on('change', this.changeListener);
 	}
 
 	removeInlineEditor(): void {
