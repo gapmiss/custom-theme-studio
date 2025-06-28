@@ -115,7 +115,6 @@ export function freezeTimer(delay: number): void {
 	}, 100);
 
 	setTimeout(() => {
-		// biome-ignore lint/suspicious/noDebugger: actual feature
 		debugger;
 		clearInterval(timer);
 	}, delay * 1000);

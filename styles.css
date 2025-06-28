@@ -536,8 +536,8 @@ a[class*="tag-filter"]:focus {
 }
 
 .css-editor-section-show {
-    border: 2px solid var(--background-modifier-border);
-    border-radius: var(--size-4-2);
+    /* border: 2px solid var(--background-modifier-border); */
+    /* border-radius: var(--size-4-2); */
     padding: var(--size-4-2);
     margin-block: var(--size-4-4);
     display: block;
@@ -559,6 +559,7 @@ a[class*="tag-filter"]:focus {
     display: flex;
     flex-wrap: wrap;
     align-content: flex-start;
+    align-items: center;
     gap: .3em;
 
     &>span {
@@ -636,14 +637,16 @@ a[class*="tag-filter"]:focus {
 
 .cts-view .inline-element-editor {
     display: block;
-}
-
-.cts-view .inline-element-editor {
     width: 100%;
 }
 
 .cts-view .element-item:hover {
     background-color: var(--background-primary);
+}
+
+.cts-view .element-item:has(.css-editor-section-show) .element-item-title {
+    font-size: var(--font-ui-medium) !important;
+    color: var(--text-accent);
 }
 
 .cts-view .element-item-actions {
