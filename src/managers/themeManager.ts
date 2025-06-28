@@ -1,7 +1,7 @@
 import { Notice, setIcon } from 'obsidian';
 import CustomThemeStudioPlugin from '../main';
 import { CSSVariableManager } from './cssVariabManager';
-import { CSSVariable, CustomThemeStudioSettings } from '../settings';
+import { CSSVariable, CustomThemeStudioSettings, DEFAULT_SETTINGS } from '../settings';
 import { saveAs } from 'file-saver';
 import * as prettier from 'prettier';
 import * as css from 'prettier/plugins/postcss';
@@ -164,9 +164,9 @@ export class ThemeManager {
 			// Generate theme.css content
 			const variablesCSS: string = this.generateVariablesCSS();
 			const elementsCSS: string = this.plugin.settings.customCSS || '';
-			const themeCSS: string = `/* ${this.plugin.settings.exportThemeName} for Obsidian */
-/* by ${this.plugin.settings.exportAuthor || 'Anonymous'} */
-/* ${this.plugin.settings.exportURL || 'https://github.com/obsidianmd'} */
+			const themeCSS: string = `/* ${this.plugin.settings.exportThemeName || DEFAULT_SETTINGS.exportThemeName} for Obsidian */
+/* by ${this.plugin.settings.exportThemeAuthor || DEFAULT_SETTINGS.exportThemeAuthor} */
+/* ${this.plugin.settings.exportThemeURL || DEFAULT_SETTINGS.exportThemeURL} */
 
 ${variablesCSS}
 
@@ -184,7 +184,7 @@ ${elementsCSS}`;
 	exportThemeManifest(): void {
 		try {
 			// Generate manifest.json content
-			const themeId: string = this.plugin.settings.exportThemeName
+			const themeId: string = (this.plugin.settings.exportThemeName || DEFAULT_SETTINGS.exportThemeName)
 				.toLowerCase()
 				.replace(/[^a-z0-9]+/g, '-');
 
@@ -192,8 +192,8 @@ ${elementsCSS}`;
 				name: themeId,
 				version: '1.0.0',
 				minAppVersion: '0.15.0',
-				author: this.plugin.settings.exportAuthor,
-				authorUrl: this.plugin.settings.exportURL
+				author: this.plugin.settings.exportThemeAuthor || DEFAULT_SETTINGS.exportThemeAuthor,
+				authorUrl: this.plugin.settings.exportThemeURL || DEFAULT_SETTINGS.exportThemeURL
 			};
 
 			const manifestJSON: string = JSON.stringify(manifest, null, 2);
@@ -211,9 +211,9 @@ ${elementsCSS}`;
 		try {
 			const variablesCSS: string = this.generateVariablesCSS();
 			const elementsCSS: string = this.plugin.settings.customCSS || '';
-			const themeCSS: string = `/* ${this.plugin.settings.exportThemeName} for Obsidian */
-/* by ${this.plugin.settings.exportAuthor || 'Anonymous'} */
-/* ${this.plugin.settings.exportURL || 'https://github.com/obsidianmd'} */
+			const themeCSS: string = `/* ${this.plugin.settings.exportThemeName || DEFAULT_SETTINGS.exportThemeName} for Obsidian */
+/* by ${this.plugin.settings.exportThemeAuthor || DEFAULT_SETTINGS.exportThemeAuthor} */
+/* ${this.plugin.settings.exportThemeURL || DEFAULT_SETTINGS.exportThemeURL} */
 
 ${variablesCSS}
 
@@ -232,7 +232,7 @@ ${elementsCSS}`;
 	copyManifestToClipboard(): void {
 		try {
 			// Generate manifest.json content
-			const themeId: string = this.plugin.settings.exportThemeName
+			const themeId: string = (this.plugin.settings.exportThemeName || DEFAULT_SETTINGS.exportThemeName)
 				.toLowerCase()
 				.replace(/[^a-z0-9]+/g, '-');
 
@@ -240,8 +240,8 @@ ${elementsCSS}`;
 				name: themeId,
 				version: '1.0.0',
 				minAppVersion: '0.15.0',
-				author: this.plugin.settings.exportAuthor,
-				authorUrl: this.plugin.settings.exportURL
+				author: this.plugin.settings.exportThemeAuthor || DEFAULT_SETTINGS.exportThemeAuthor,
+				authorUrl: this.plugin.settings.exportThemeURL || DEFAULT_SETTINGS.exportThemeURL
 			};
 
 			navigator.clipboard.writeText(JSON.stringify(manifest, null, 2)).then(() => {

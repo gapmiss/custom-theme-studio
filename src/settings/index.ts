@@ -24,8 +24,8 @@ export interface CustomThemeStudioSettings {
 	customVariables: CSSVariable[];
 	customElements: CustomElement[];
 	exportThemeName: string;
-	exportAuthor: string;
-	exportURL: string;
+	exportThemeAuthor: string;
+	exportThemeURL: string;
 	exportPrettierFormat: boolean;
 	lastSelectedSelector: string;
 	collapsedCSSVariables: boolean;
@@ -53,8 +53,8 @@ export const DEFAULT_SETTINGS: CustomThemeStudioSettings = {
 	customVariables: [],
 	customElements: [],
 	exportThemeName: 'My Custom Theme',
-	exportAuthor: '',
-	exportURL: '',
+	exportThemeAuthor: 'Anonymous',
+	exportThemeURL: 'https://github.com/obsidianmd',
 	exportPrettierFormat: true,
 	lastSelectedSelector: '',
 	collapsedCSSVariables: false,
@@ -351,9 +351,9 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 			.setName('Author name')
 			.setDesc('Your name as the theme author.')
 			.addText(text => text
-				.setValue(this.plugin.settings.exportAuthor)
+				.setValue(this.plugin.settings.exportThemeAuthor)
 				.onChange(async (value) => {
-					this.plugin.settings.exportAuthor = value;
+					this.plugin.settings.exportThemeAuthor = value;
 					await this.plugin.saveSettings();
 					let varInput: HTMLInputElement | null = window.document.querySelector('.cts-view .export-form-theme-author');
 					if (varInput) {
@@ -365,9 +365,9 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 			.setName('Author URL')
 			.setDesc('URL to your github profile page (e.g. https://github.com/username).')
 			.addText(text => text
-				.setValue(this.plugin.settings.exportURL)
+				.setValue(this.plugin.settings.exportThemeURL)
 				.onChange(async (value) => {
-					this.plugin.settings.exportURL = value;
+					this.plugin.settings.exportThemeURL = value;
 					await this.plugin.saveSettings();
 					let varInput: HTMLInputElement | null = window.document.querySelector('.cts-view .export-form-theme-url');
 					if (varInput) {

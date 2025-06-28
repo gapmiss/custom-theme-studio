@@ -5,7 +5,7 @@ import { ElementSelector } from './managers/elementSelector';
 import { CSSEditor } from './managers/cssEditor';
 import { ICodeEditorConfig } from './interfaces/types';
 import { confirm } from './modals/confirmModal';
-import { CSSVariable, CustomThemeStudioSettings } from './settings';
+import { CSSVariable, CustomThemeStudioSettings, DEFAULT_SETTINGS } from './settings';
 import { copyStringToClipboard, getCurrentTheme } from './utils';
 
 export const VIEW_TYPE_CTS = 'cts-view';
@@ -852,7 +852,7 @@ export class CustomThemeStudioView extends ItemView {
 		const nameInput: HTMLInputElement = nameContainer.createEl('input', {
 			attr: {
 				type: 'text',
-				value: this.plugin.settings.exportThemeName,
+				value: this.plugin.settings.exportThemeName || DEFAULT_SETTINGS.exportThemeName,
 				class: 'export-form-theme-name'
 			}
 		});
@@ -863,7 +863,7 @@ export class CustomThemeStudioView extends ItemView {
 		const authorInput: HTMLInputElement = authorContainer.createEl('input', {
 			attr: {
 				type: 'text',
-				value: this.plugin.settings.exportAuthor || '',
+				value: this.plugin.settings.exportThemeAuthor || DEFAULT_SETTINGS.exportThemeAuthor,
 				class: 'export-form-theme-author'
 			}
 		});
@@ -874,7 +874,7 @@ export class CustomThemeStudioView extends ItemView {
 		const urlInput: HTMLInputElement = urlContainer.createEl('input', {
 			attr: {
 				type: 'text',
-				value: this.plugin.settings.exportURL || '',
+				value: this.plugin.settings.exportThemeURL || DEFAULT_SETTINGS.exportThemeURL,
 				class: 'export-form-theme-url'
 			}
 		});
@@ -886,12 +886,12 @@ export class CustomThemeStudioView extends ItemView {
 		});
 
 		authorInput.addEventListener('change', () => {
-			this.plugin.settings.exportAuthor = authorInput.value;
+			this.plugin.settings.exportThemeAuthor = authorInput.value;
 			this.plugin.saveSettings();
 		});
 
 		urlInput.addEventListener('change', () => {
-			this.plugin.settings.exportURL = urlInput.value;
+			this.plugin.settings.exportThemeURL = urlInput.value;
 			this.plugin.saveSettings();
 		});
 
