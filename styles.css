@@ -469,6 +469,7 @@ a[class*="tag-filter"]:focus {
     --swatch-height: 16px !important;
 }
 
+/* element picker */
 .cts-element-picker-highlight {
     outline: 1px dashed var(--interactive-accent) !important;
     background-color: hsla(var(--interactive-accent-hsl), .1) !important;
@@ -488,8 +489,11 @@ a[class*="tag-filter"]:focus {
     border-radius: 4px;
     font-size: 12px;
     z-index: 10000000;
-    max-width: 350px;
+    max-width: 500px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    & .keys {
+        line-height: 1.75em;
+    }
 }
 
 .cts-element-picker-tooltip-show {
@@ -522,6 +526,16 @@ a[class*="tag-filter"]:focus {
     padding-left: 20px;
     font-family: monospace;
     font-size: 0.9em;
+}
+
+.cts-element-picker-tooltip kbd {
+    font-family: var(--font-monospace-default);
+    background-color: var(--background-secondary);
+    color: var(--text-normal);
+    border-radius: var(--size-2-2);
+    border: 1px solid var(--color-base-35);
+    box-shadow: 0 1px 0 1px var(--color-base-50);
+    margin-inline: .25em;
 }
 
 /* css editor */

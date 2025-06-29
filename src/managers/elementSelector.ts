@@ -223,6 +223,7 @@ export class ElementSelector {
 		// Get element info
 		const defaultSelector = this.generateSelector(element, false);
 		const specificSelector = this.generateSelector(element, true);
+		const parentSelector = this.generateSelector(element, true, true);
 		const tagName = element.tagName.toLowerCase();
 		const classes = Array.from(element.classList).filter(cls =>
 			!cls.includes('cts-element-picker-highlight')
@@ -237,7 +238,7 @@ export class ElementSelector {
 		// Set tooltip content
 		let tooltipContent: string = ''
 		tooltipContent += `
-			<div><strong>Tag:</strong> ${tagName}</div>
+			<div><strong>Tag:</strong> <code>${tagName}</code></div>
 		`;
 
 		// Add aria-label if present (highlight it prominently)
@@ -266,11 +267,13 @@ export class ElementSelector {
 
 		// Add both selector options
 		tooltipContent += `
-			<div><strong>Default Selector:</strong> <span class="selector-highlight">${defaultSelector}</span></div>
-			<div><strong>Specific Selector:</strong> <span class="selector-highlight">${specificSelector}</span></div>
-			<div><em>Click to select with default selector</em></div>
-			<div><em>Alt+Click to select with specific selector</em></div>
-			<div><em>Shift+Click to copy the specific selector to your clipboard</em></div>
+			<div><strong>Default selector:</strong> <span class="selector-highlight">${defaultSelector}</span></div>
+			<div><strong>Specific selector:</strong> <span class="selector-highlight">${specificSelector}</span></div>
+			<div><strong>Specific selector with parent:</strong> <span class="selector-highlight">${parentSelector}</span></div>
+			<div class="keys"><kbd>Click</kbd> to select with default selector</div>
+			<div class="keys"><kbd>Alt</kbd> + <kbd>Click</kbd> to select with specific selector</div>
+			<div class="keys"><kbd>Command</kbd>+<kbd>Click</kbd> to select the specific selector with parent</div>
+			<div class="keys"><kbd>Shift</kbd>+<kbd>Click</kbd> to copy the specific selector with parent to your clipboard</div>
 		`;
 
 		this.tooltip.insertAdjacentHTML('afterbegin', tooltipContent);
@@ -338,7 +341,7 @@ export class ElementSelector {
 		}
 
 		// Generate selector based on whether alt key is pressed
-		const selector = this.generateSelector(element, evt.altKey);
+		const selector = this.generateSelector(element, evt.altKey, evt.metaKey);
 
 		// Save the selector
 		this.plugin.settings.lastSelectedSelector = selector;
@@ -359,7 +362,7 @@ export class ElementSelector {
 		// new Notice(`Element selected: ${selector}`);
 	}
 
-	generateSelector(element: HTMLElement, useSpecific: boolean = false): string {
+	generateSelector(element: HTMLElement, useSpecific: boolean = false, includeParent: boolean = false): string {
 		// Start with the tag name
 		let selector = element.tagName.toLowerCase();
 
@@ -367,6 +370,13 @@ export class ElementSelector {
 		if (element.id) {
 			selector = `${selector}#${element.id}`;
 			return selector; // ID is unique, so we can return immediately
+		}
+
+		if (includeParent) {
+			const classes = Array.from(element.parentElement!.classList).filter(cls =>
+				!cls.includes('cts-element-picker-highlight')
+			).join('.');
+			selector = `${element.parentElement?.tagName.toLowerCase()}${(classes.length > 0) ? '.' + classes : ''} > ${selector}`;
 		}
 
 		if (useSpecific) {
@@ -451,6 +461,12 @@ export class ElementSelector {
 	copySelectorToClipboard(element: HTMLElement): void {
 		// Start with the tag name
 		let selector = element.tagName.toLowerCase();
+
+		// Parent
+		const classes = Array.from(element.parentElement!.classList).filter(cls =>
+			!cls.includes('cts-element-picker-highlight')
+		).join('.');
+		selector = `${element.parentElement?.tagName.toLowerCase()}${(classes.length > 0) ? '.' + classes : ''} > ${selector}`;
 
 		// Add id if present (highest priority for both modes)
 		if (element.id) {
