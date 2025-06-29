@@ -109,8 +109,8 @@ export class AceService {
 			wrap: this.plugin.settings.EditorWordWrap,
 			mode: `ace/mode/${languageMode}`,
 			enableBasicAutocompletion: true,
-			enableLiveAutocompletion: true,
-			enableSnippets: true,
+			enableLiveAutocompletion: this.plugin.settings.enableAceAutoCompletion,
+			enableSnippets: this.plugin.settings.enableAceSnippets,
 			enableMultiselect: true
 		};
 	}

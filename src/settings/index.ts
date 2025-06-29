@@ -35,6 +35,8 @@ export interface CustomThemeStudioSettings {
 	generateComputedCSS: boolean;
 	showConfirmation: boolean;
 	enableColorPicker: boolean;
+	enableAceAutoCompletion: boolean;
+	enableAceSnippets: boolean;
 	enableAceColorPicker: boolean;
 	EditorLineNumbers: boolean;
 	EditorWordWrap: boolean;
@@ -64,6 +66,8 @@ export const DEFAULT_SETTINGS: CustomThemeStudioSettings = {
 	generateComputedCSS: false,
 	showConfirmation: true,
 	enableColorPicker: false,
+	enableAceAutoCompletion: false,
+	enableAceSnippets: false,
 	enableAceColorPicker: true,
 	EditorLineNumbers: true,
 	EditorWordWrap: false,
@@ -180,11 +184,48 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Color picker')
-			.setDesc('For custom elements, enable an inline color picker in the CSS editor.')
+			.setDesc('Enable an inline color picker in the CSS editor.')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.enableAceColorPicker)
 				.onChange(async (value) => {
 					this.plugin.settings.enableAceColorPicker = value;
+					await this.plugin.saveSettings();
+				})
+			);
+
+		let liveAutoCompletiongsToggle = new Setting(containerEl)
+			.setName('Live auto completion')
+			.setDesc('Enable auto completion of keywords and text including snippets.')
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.enableAceAutoCompletion)
+				.onChange(async (value) => {
+					if (!value) {
+						console.log(snippetsToggle.settingEl);
+						if (snippetsToggle.settingEl.querySelector('.checkbox-container')?.hasClass('is-enabled')) {
+							new Notice('Snippets are enabled and require that "Live auto completion" be enabled. Please disable the below "Snippets" toggle before disabling this setting.', 10000);
+							toggle.setValue(true);
+							return;
+						}
+					}
+					this.plugin.settings.enableAceAutoCompletion = value;
+					await this.plugin.saveSettings();
+				})
+			);
+
+		let snippetsToggle = new Setting(containerEl)
+			.setName('Snippets')
+			.setDesc('Enable inline snippets in the CSS editor. These auto-complete snippets include every CSS variable within Obaidian. Requires the above "Live auto completion" toggle to be enabled.')
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.enableAceSnippets)
+				.onChange(async (value) => {
+					this.plugin.settings.enableAceSnippets = value;
+					if (value) {
+						if (!liveAutoCompletiongsToggle.settingEl.querySelector('.checkbox-container')?.hasClass('is-enabled')) {
+							new Notice('Please enable the above "Live auto completion" toggle before enabling this setting.', 10000);
+							toggle.setValue(false);
+							this.plugin.settings.enableAceSnippets = false;
+						}
+					}
 					await this.plugin.saveSettings();
 				})
 			);

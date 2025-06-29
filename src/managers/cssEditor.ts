@@ -97,12 +97,13 @@ export class CSSEditor {
 		// Snippet manager
 		// https://stackoverflow.com/questions/26089258/ace-editor-manually-adding-snippets/66923593#66923593
 		// https://ace.c9.io/build/kitchen-sink.html
-		this.editor.setOption('enableSnippets', true);
-		const snippetManager = ace.require('ace/snippets').snippetManager;
-		const snippetContent = this.cssVarManager.snippetManagerVars();
-		const snippets = snippetManager.parseSnippetFile(snippetContent);
-		snippetManager.register(snippets, 'css');
-
+		if (this.plugin.settings.enableAceSnippets) {
+			this.editor.setOption('enableSnippets', true);
+			const snippetManager = ace.require('ace/snippets').snippetManager;
+			const snippetContent = this.cssVarManager.snippetManagerVars();
+			const snippets = snippetManager.parseSnippetFile(snippetContent);
+			snippetManager.register(snippets, 'css');
+		}
 		// Editor options
 		const editorOptions = this.editorSection.createDiv('editor-options-container', (el) => {
 			el.addClass('editor-options-container-hide');
