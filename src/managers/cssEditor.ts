@@ -574,11 +574,15 @@ export class CSSEditor {
 		if (existingIndex >= 0) {
 			if (this.plugin.settings.customElements[existingIndex].enabled) {
 				// First add the current element
-				fullCSS += `/* ${selector} */\n${css}\n\n`;
+				if (css !== '') {
+					fullCSS += `/* ${selector} */\n${css}\n\n`;
+				}
 			}
 		} else {
 			// New custom element
-			fullCSS += `/* ${selector} */\n${css}\n\n`;
+			if (css !== '') {
+				fullCSS += `/* ${selector} */\n${css}\n\n`;
+			}
 		}
 
 		// Then add all other elements
