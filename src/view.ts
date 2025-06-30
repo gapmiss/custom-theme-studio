@@ -19,6 +19,7 @@ export class CustomThemeStudioView extends ItemView {
 	cssEditor: CSSEditor;
 	workspace: Workspace;
 	varSearch: string;
+	eltSearch: string;
 	activeTag: string | null;
 	editorScope: Scope;
 
@@ -31,6 +32,7 @@ export class CustomThemeStudioView extends ItemView {
 		this.workspace = this.app.workspace;
 		this.settings = settings;
 		this.varSearch = '';
+		this.eltSearch = '';
 		this.activeTag = 'all';
 		this.editorScope = new Scope();
 	}
@@ -55,7 +57,7 @@ export class CustomThemeStudioView extends ItemView {
 		// Render main sections
 		this.renderHeader();
 		this.renderCSSVariables();
-		this.renderElementCustomization();
+		this.renderCustomElements();
 		this.renderExportSection();
 
 		// Make filters <a> tags act as buttons for "Enter" key and "Spacebar"
@@ -157,6 +159,25 @@ export class CustomThemeStudioView extends ItemView {
 				// Empty search - show all variables
 				item.addClass('variable-item-show');
 				item.removeClass('variable-item-hide');
+			}
+		});
+	}
+
+	async filterCustomElements(query: string) {
+		const elementListEls: NodeListOf<Element> = this.containerEl.querySelectorAll('.element-item');
+		elementListEls.forEach((elt: HTMLElement) => {
+			elt.addClass('element-item-hide');
+			elt.removeClass('element-item-show');
+		});
+
+		this.plugin.settings.customElements.forEach((el) => {
+			if (
+				el.name?.toLowerCase().contains(query) ||
+				el.selector?.toLowerCase().contains(query) ||
+				el.css?.toLowerCase().contains(query)
+			) {
+				this.containerEl.querySelector('[data-cts-uuid="' + el.uuid + '"]')?.addClass('element-item-show');
+				this.containerEl.querySelector('[data-cts-uuid="' + el.uuid + '"]')?.removeClass('element-item-hide');
 			}
 		});
 	}
@@ -496,12 +517,12 @@ export class CustomThemeStudioView extends ItemView {
 			if (category.help) {
 				const variableListHelp = variableListEl.createDiv({
 					cls: 'variable-category-help-container',
-				});			
+				});
 				setIcon(variableListHelp, 'info')
 				variableListHelp.createEl('span', {
 					cls: 'variable-category-help',
 					text: category.help,
-				});				
+				});
 			}
 
 			// Make header title clickable to toggle visibility
@@ -657,7 +678,7 @@ export class CustomThemeStudioView extends ItemView {
 		});
 	}
 
-	private renderElementCustomization(): void {
+	private renderCustomElements(): void {
 		const section: HTMLDivElement = this.containerEl.createDiv('element-section')
 		const header: HTMLDivElement = section.createDiv('collapsible');
 		const headerTitle: HTMLDivElement = header.createDiv('collapsible-header');
@@ -674,7 +695,7 @@ export class CustomThemeStudioView extends ItemView {
 
 		const content: HTMLDivElement = header.createDiv('collapsible-content');
 
-		if (this.plugin.settings.collapsedElementCustomization === true) {
+		if (this.plugin.settings.collapsedCustomElements === true) {
 			content.addClass('collapsible-content-show');
 			content.removeClass('collapsible-content-hide');
 			setIcon(toggleIcon, 'chevron-down');
@@ -695,7 +716,7 @@ export class CustomThemeStudioView extends ItemView {
 				setIcon(toggleIcon, 'chevron-down');
 				toggleIcon.setAttr('aria-label', 'Collapse section');
 				toggleIcon.setAttr('data-tooltip-position', 'top');
-				this.plugin.settings.collapsedElementCustomization = true;
+				this.plugin.settings.collapsedCustomElements = true;
 				this.plugin.saveSettings();
 			} else {
 				content.addClass('collapsible-content-hide');
@@ -703,7 +724,7 @@ export class CustomThemeStudioView extends ItemView {
 				setIcon(toggleIcon, 'chevron-right');
 				toggleIcon.setAttr('aria-label', 'Expand section');
 				toggleIcon.setAttr('data-tooltip-position', 'top');
-				this.plugin.settings.collapsedElementCustomization = false;
+				this.plugin.settings.collapsedCustomElements = false;
 				this.plugin.saveSettings();
 			}
 		});
@@ -777,6 +798,51 @@ export class CustomThemeStudioView extends ItemView {
 		// CSS Editor section - initially hidden when not adding a new element
 		this.cssEditor.createEditorSection(content);
 		this.cssEditor.showEditorSection(false);
+
+		// Custom custom elements search
+		const searchContainer: HTMLDivElement = content.createDiv('search-elements-container');
+		const clearInputContainer: HTMLDivElement = searchContainer.createDiv('clear-search-elements-input');
+
+		const searchInput: HTMLInputElement = clearInputContainer.createEl('input', {
+			attr: {
+				type: 'text',
+				placeholder: 'Search custom elements…',
+				class: 'search-elements-input'
+			}
+		});
+
+		searchInput.addEventListener('input', async (e) => {
+			const searchTerm: string = (e.target as HTMLInputElement).value.toLowerCase().trim();
+			this.eltSearch = searchTerm;
+
+			await this.filterCustomElements(searchTerm);
+
+			if ((e.currentTarget! as HTMLInputElement).value && !searchInput.classList.contains('clear-search-elements-input--touched')) {
+				searchInput.classList.add('clear-search-elements-input--touched')
+			} else if (!(e.currentTarget! as HTMLInputElement).value && searchInput.classList.contains('clear-search-elements-input--touched')) {
+				searchInput.classList.remove('clear-search-elements-input--touched')
+			}
+		});
+
+		// Clear search button
+		const clearSearchButton: HTMLButtonElement = clearInputContainer.createEl('button', {
+			attr: {
+				class: 'clear-search-elements-input-button',
+				'aria-label': 'Clear search',
+				'data-tooltip-position': 'top'
+			}
+		});
+
+		clearSearchButton.addEventListener('click', (evt) => {
+			searchInput.value = '';
+			searchInput.focus();
+			searchInput.classList.remove('clear-search-elements-input--touched');
+			const elementListEls: NodeListOf<Element> = this.containerEl.querySelectorAll('.element-item');
+			elementListEls.forEach((elt: HTMLElement) => {
+				elt.addClass('element-item-show');
+				elt.removeClass('element-item-hide');
+			});
+		})
 
 		// Element list
 		const elementListContainer = content.createDiv('element-list-container');

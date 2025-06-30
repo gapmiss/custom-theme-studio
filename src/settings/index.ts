@@ -29,7 +29,7 @@ export interface CustomThemeStudioSettings {
 	exportPrettierFormat: boolean;
 	lastSelectedSelector: string;
 	collapsedCSSVariables: boolean;
-	collapsedElementCustomization: boolean;
+	collapsedCustomElements: boolean;
 	collapsedExportTheme: boolean;
 	autoApplyChanges: boolean;
 	generateComputedCSS: boolean;
@@ -60,7 +60,7 @@ export const DEFAULT_SETTINGS: CustomThemeStudioSettings = {
 	exportPrettierFormat: true,
 	lastSelectedSelector: '',
 	collapsedCSSVariables: false,
-	collapsedElementCustomization: false,
+	collapsedCustomElements: false,
 	collapsedExportTheme: false,
 	autoApplyChanges: false,
 	generateComputedCSS: false,

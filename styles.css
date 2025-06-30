@@ -67,7 +67,8 @@
 }
 
 /* search section */
-.cts-view .search-container {
+.cts-view .search-container,
+.cts-view .search-elements-container {
     margin-bottom: .75em;
     margin-inline: 0;
     transform: scale(1);
@@ -78,7 +79,8 @@
     box-sizing: border-box;
 }
 
-.cts-view .search-input {
+.cts-view .search-input,
+.cts-view .search-elements-input {
     width: 100%;
     padding: 8px;
     border-radius: 4px;
@@ -86,13 +88,15 @@
 }
 
 /* clear search button */
-.cts-view .clear-search-input {
+.cts-view .clear-search-input,
+.cts-view .clear-search-elements-input {
     position: relative;
     display: inline-block;
     width: 100%;
 }
 
-.cts-view .clear-search-input-button {
+.cts-view .clear-search-input-button,
+.cts-view .clear-search-elements-input-button {
     position: absolute;
     background: transparent;
     border-radius: 50%;
@@ -115,7 +119,8 @@
     display: none;
 }
 
-.cts-view .clear-search-input-button:after {
+.cts-view .clear-search-input-button:after,
+.cts-view .clear-search-elements-input-button:after {
     content: '';
     height: var(--search-clear-button-size);
     width: var(--search-clear-button-size);
@@ -128,14 +133,19 @@
 }
 
 .cts-view .clear-search-input-button:hover,
-.cts-view .clear-search-input-button:active {
+.cts-view .clear-search-input-button:active,
+.cts-view .clear-search-elements-input-button:hover,
+.cts-view .clear-search-elements-input-button:active {
     color: var(--text-normal);
     transition: color 0.15s ease-in-out;
 }
 
 .cts-view .clear-search-input--touched:focus+.clear-search-input-button,
 .cts-view .clear-search-input--touched:hover+.clear-search-input-button,
-.cts-view .clear-search-input--touched+.clear-search-input-button:hover {
+.cts-view .clear-search-input--touched+.clear-search-input-button:hover,
+.cts-view .clear-search-elements-input--touched:focus+.clear-search-elements-input-button,
+.cts-view .clear-search-elements-input--touched:hover+.clear-search-elements-input-button,
+.cts-view .clear-search-elements-input--touched+.clear-search-elements-input-button:hover {
     display: inline-flex;
 }
 
@@ -595,6 +605,14 @@ a[class*="tag-filter"]:focus {
     &>input {
         flex-grow: 2;
     }
+}
+
+.cst-view .element-item-show {
+    display: block;
+}
+
+.cts-view .element-item-hide {
+    display: none;
 }
 
 .cts-view .element-item-header {

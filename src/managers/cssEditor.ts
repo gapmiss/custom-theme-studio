@@ -235,18 +235,6 @@ export class CSSEditor {
 
 		// Save button
 		saveButton.addEventListener('click', async () => {
-			const selector = this.selectorInputEl!.value.trim();
-
-			// const existingIndex = this.plugin.settings.customElements.findIndex(el => el.selector === selector);
-			const existingIndex = this.plugin.settings.customElements.findIndex(el => el.uuid === this.editorUUID.value);
-
-			const css = this.aceService.getValue();
-
-			// if (existingIndex >= 0 && !this.isEditingExisting) {
-			// 	if (!await confirm('Their is a custom selector for "'+selector+'" already. Saving this new selector will overwrite the current one. Continue?', this.plugin.app)) {
-			// 		return;
-			// 	}
-			// }
 			if (this.saveElement()) {
 				// Hide the editor section after saving
 				if (!this.isEditingExisting) {
@@ -255,6 +243,10 @@ export class CSSEditor {
 					// If editing an existing element, remove the inline editor
 					this.removeInlineEditor();
 				}
+			}
+
+			if (this.view.eltSearch) {
+				this.view.filterCustomElements(this.view.eltSearch);
 			}
 		});
 
