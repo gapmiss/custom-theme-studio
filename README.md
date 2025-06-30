@@ -59,17 +59,15 @@ An Obsidian.md plugin to create and customize themes with a built-in CSS editor.
 
 ### Manual Installation
 
-Manually:
-
-1. download `main.js`, `manifest.json` & `styles.css` from the latest [release](https://github.com/gapmiss/custom-theme-studio/releases/)
-2. create a new folder `/path/to/vault/.obsidian/plugins/custom-theme-studio`
-3. move all 3 files to `/path/to/vault/.obsidian/plugins/custom-theme-studio`
-4. Settings > Community plugins > reload **Installed plugins**
-5. enable plugin
+1. Download `main.js`, `manifest.json` & `styles.css` from the latest [release](https://github.com/gapmiss/custom-theme-studio/releases/)
+2. Create a new folder `/path/to/vault/.obsidian/plugins/custom-theme-studio`
+3. Move all 3 files to `/path/to/vault/.obsidian/plugins/custom-theme-studio`
+4. Settings > Community plugins > Reload plugins
+5. Enable the "Custom Theme Studio" plugin in the community plugin list
 
 ### Via BRAT (Beta Reviewer's Auto-update Tool):
 
-1. Ensure [BRAT](https://github.com/TfTHacker/obsidian42-brat) is installed
+1. Ensure the [BRAT](https://github.com/TfTHacker/obsidian42-brat) plugin is installed
 2. Trigger the command Obsidian42 - BRAT: Add a beta plugin for testing
 3. Enter this repository, gapmiss/custom-theme-studio
 4. Enable the "Custom Theme Studio" plugin in the community plugin list
