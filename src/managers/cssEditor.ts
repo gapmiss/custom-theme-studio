@@ -751,7 +751,9 @@ export class CSSEditor {
 				// Update custom CSS
 				let fullCSS = '';
 				this.plugin.settings.customElements.forEach(el => {
-					fullCSS += `/* ${el.name || el.selector} */\n${el.css}\n\n`;
+					if (el.enabled) {
+						fullCSS += `/* ${el.name || el.selector} */\n${el.css}\n\n`;
+					}
 				});
 
 				this.plugin.settings.customCSS = fullCSS;

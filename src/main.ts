@@ -67,6 +67,16 @@ export default class CustomThemeStudioPlugin extends Plugin {
 		// Add settings tab
 		this.addSettingTab(new CustomThemeStudioSettingTab(this.app, this));
 
+		// Update custom CSS
+		let fullCSS = '';
+		this.settings.customElements.forEach(el => {
+			if (el.enabled) {
+				fullCSS += `/* ${el.name || el.selector} */\n${el.css}\n\n`;
+			}
+		});
+		this.settings.customCSS = fullCSS;
+		this.saveSettings();
+
 		// Apply saved theme if enabled
 		if (this.settings.themeEnabled && this.settings.customCSS) {
 			this.themeManager.applyCustomTheme();
