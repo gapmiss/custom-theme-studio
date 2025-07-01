@@ -56,14 +56,14 @@ export const DEFAULT_SETTINGS: CustomThemeStudioSettings = {
 	customVariables: [],
 	customElements: [
 		{
-			"uuid": "4cc4d4db-c18e-4719-a7ad-8242cd39b576",
+			"uuid": generateUniqueId(),
 			"selector": "div.clickable-icon.side-dock-ribbon-action[aria-label=\"Custom Theme Studio\"]",
 			"css": "div.clickable-icon.side-dock-ribbon-action[aria-label=\"Custom Theme Studio\"] {\n\tbackground: linear-gradient(\n        to bottom,\n        rgba(var(--color-red-rgb), .4),\n        rgba(var(--color-orange-rgb), .4),\n        rgba(var(--color-yellow-rgb), .4),\n        rgba(var(--color-green-rgb), .4),\n        rgba(var(--color-blue-rgb), .4),\n        rgba(var(--color-cyan-rgb), .4),\n        rgba(var(--color-purple-rgb), .4)\n    );\n}",
 			"name": "🎨 CTS Ribbon Icon",
 			"enabled": true
 		},
 		{
-			"uuid": "d5c0ccbf-95dc-448a-8a23-6a456a4c5287",
+			"uuid": generateUniqueId(),
 			"selector": "div.workspace-tab-header.tappable[aria-label=\"Custom Theme Studio\"]",
 			"css": "div.workspace-tab-header.tappable[aria-label=\"Custom Theme Studio\"] {\n\tbackground: linear-gradient(\n        to bottom,\n        rgba(var(--color-purple-rgb), .5),\n        rgba(var(--color-cyan-rgb), .5),\n        rgba(var(--color-blue-rgb), .5),\n        rgba(var(--color-green-rgb), .5),\n        rgba(var(--color-yellow-rgb), .5),\n        rgba(var(--color-orange-rgb), .5),\n        rgba(var(--color-red-rgb), .5)\n    );\n}",
 			"name": "🎨 CTS Tab Icon Button",
@@ -480,14 +480,14 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 						this.plugin.settings.customVariables = [];
 						this.plugin.settings.customElements = [
 							{
-								"uuid": "4cc4d4db-c18e-4719-a7ad-8242cd39b576",
+								"uuid": generateUniqueId(),
 								"selector": "div.clickable-icon.side-dock-ribbon-action[aria-label=\"Custom Theme Studio\"]",
 								"css": "div.clickable-icon.side-dock-ribbon-action[aria-label=\"Custom Theme Studio\"] {\n\tbackground: linear-gradient(\n        to bottom,\n        rgba(var(--color-red-rgb), .4),\n        rgba(var(--color-orange-rgb), .4),\n        rgba(var(--color-yellow-rgb), .4),\n        rgba(var(--color-green-rgb), .4),\n        rgba(var(--color-blue-rgb), .4),\n        rgba(var(--color-cyan-rgb), .4),\n        rgba(var(--color-purple-rgb), .4)\n    );\n}",
 								"name": "🎨 CTS Ribbon Icon",
 								"enabled": true
 							},
 							{
-								"uuid": "d5c0ccbf-95dc-448a-8a23-6a456a4c5287",
+								"uuid": generateUniqueId(),
 								"selector": "div.workspace-tab-header.tappable[aria-label=\"Custom Theme Studio\"]",
 								"css": "div.workspace-tab-header.tappable[aria-label=\"Custom Theme Studio\"] {\n\tbackground: linear-gradient(\n        to bottom,\n        rgba(var(--color-purple-rgb), .5),\n        rgba(var(--color-cyan-rgb), .5),\n        rgba(var(--color-blue-rgb), .5),\n        rgba(var(--color-green-rgb), .5),\n        rgba(var(--color-yellow-rgb), .5),\n        rgba(var(--color-orange-rgb), .5),\n        rgba(var(--color-red-rgb), .5)\n    );\n}",
 								"name": "🎨 CTS Tab Icon Button",
