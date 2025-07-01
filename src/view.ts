@@ -841,6 +841,7 @@ export class CustomThemeStudioView extends ItemView {
 			searchInput.value = '';
 			searchInput.focus();
 			searchInput.classList.remove('clear-search-elements-input--touched');
+			this.eltSearch = '';
 			const elementListEls: NodeListOf<Element> = this.containerEl.querySelectorAll('.element-item');
 			elementListEls.forEach((elt: HTMLElement) => {
 				elt.addClass('element-item-show');

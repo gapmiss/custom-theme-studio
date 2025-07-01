@@ -216,7 +216,6 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				.setValue(this.plugin.settings.enableAceAutoCompletion)
 				.onChange(async (value) => {
 					if (!value) {
-						console.log(snippetsToggle.settingEl);
 						if (snippetsToggle.settingEl.querySelector('.checkbox-container')?.hasClass('is-enabled')) {
 							new Notice('Snippets are enabled and require that "Live auto completion" be enabled. Please disable the below "Snippets" toggle before disabling this setting.', 10000);
 							toggle.setValue(true);
