@@ -53,54 +53,20 @@ export interface CustomThemeStudioSettings {
 export const DEFAULT_SETTINGS: CustomThemeStudioSettings = {
 	themeEnabled: false,
 	customCSS: '',
-	customVariables: [
-		{
-			"parent": "cts",
-			"variable": "--picker-highlight-outline",
-			"value": "1px dashed var(--interactive-accent)"
-		},
-		{
-			"parent": "cts",
-			"variable": "--picker-highlight-background-color",
-			"value": "hsla(var(--interactive-accent-hsl), .1)"
-		},
-		{
-			"parent": "cts",
-			"variable": "--picker-tooltip-background-color",
-			"value": "var(--background-primary)"
-		},
-		{
-			"parent": "cts",
-			"variable": "--picker-tooltip-border",
-			"value": "1px solid var(--background-modifier-border)"
-		},
-		{
-			"parent": "cts",
-			"variable": "--picker-tooltip-border-radius",
-			"value": "var(--size-4-2)"
-		},
-		{
-			"parent": "cts",
-			"variable": "--picker-tooltip-font-size",
-			"value": "var(--font-smaller)"
-		},
-		{
-			"parent": "cts",
-			"variable": "--picker-tooltip-padding",
-			"value": "1em"
-		},
-		{
-			"parent": "cts",
-			"variable": "--picker-tooltip-max-width",
-			"value": "400px"
-		}
-	],
+	customVariables: [],
 	customElements: [
 		{
-			"uuid": generateUniqueId(),
+			"uuid": "4cc4d4db-c18e-4719-a7ad-8242cd39b576",
 			"selector": "div.clickable-icon.side-dock-ribbon-action[aria-label=\"Custom Theme Studio\"]",
-			"css": "div.clickable-icon.side-dock-ribbon-action[aria-label=\"Custom Theme Studio\"] {\n\tbackground: linear-gradient(\n        to bottom,\n        rgba(var(--color-red-rgb), .25),\n        rgba(var(--color-orange-rgb), .25),\n        rgba(var(--color-yellow-rgb), .25),\n        rgba(var(--color-green-rgb), .25),\n        rgba(var(--color-blue-rgb), .25),\n        rgba(var(--color-cyan-rgb), .25),\n        rgba(var(--color-purple-rgb), .25)\n    );\n}",
+			"css": "div.clickable-icon.side-dock-ribbon-action[aria-label=\"Custom Theme Studio\"] {\n\tbackground: linear-gradient(\n        to bottom,\n        rgba(var(--color-red-rgb), .4),\n        rgba(var(--color-orange-rgb), .4),\n        rgba(var(--color-yellow-rgb), .4),\n        rgba(var(--color-green-rgb), .4),\n        rgba(var(--color-blue-rgb), .4),\n        rgba(var(--color-cyan-rgb), .4),\n        rgba(var(--color-purple-rgb), .4)\n    );\n}",
 			"name": "🎨 CTS Ribbon Icon",
+			"enabled": true
+		},
+		{
+			"uuid": "d5c0ccbf-95dc-448a-8a23-6a456a4c5287",
+			"selector": "div.workspace-tab-header.tappable[aria-label=\"Custom Theme Studio\"]",
+			"css": "div.workspace-tab-header.tappable[aria-label=\"Custom Theme Studio\"] {\n\tbackground: linear-gradient(\n        to bottom,\n        rgba(var(--color-purple-rgb), .5),\n        rgba(var(--color-cyan-rgb), .5),\n        rgba(var(--color-blue-rgb), .5),\n        rgba(var(--color-green-rgb), .5),\n        rgba(var(--color-yellow-rgb), .5),\n        rgba(var(--color-orange-rgb), .5),\n        rgba(var(--color-red-rgb), .5)\n    );\n}",
+			"name": "🎨 CTS Tab Icon Button",
 			"enabled": true
 		}
 	],
@@ -511,48 +477,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				.onClick(async () => {
 					if (await confirm('Are you sure you want to reset all theme customizations? This cannot be undone.', this.plugin.app)) {
 						this.plugin.settings.customCSS = '';
-						this.plugin.settings.customVariables = [
-							{
-								"parent": "cts",
-								"variable": "--picker-highlight-background-color",
-								"value": "hsla(var(--interactive-accent-hsl), .1)"
-							},
-							{
-								"parent": "cts",
-								"variable": "--picker-tooltip-background-color",
-								"value": "var(--background-primary)"
-							},
-							{
-								"parent": "cts",
-								"variable": "--picker-tooltip-border",
-								"value": "1px solid var(--background-modifier-border)"
-							},
-							{
-								"parent": "cts",
-								"variable": "--picker-tooltip-border-radius",
-								"value": "var(--size-4-4)"
-							},
-							{
-								"parent": "cts",
-								"variable": "--picker-tooltip-font-size",
-								"value": "var(--font-smaller)"
-							},
-							{
-								"parent": "cts",
-								"variable": "--picker-tooltip-padding",
-								"value": "1em"
-							},
-							{
-								"parent": "cts",
-								"variable": "--picker-tooltip-max-width",
-								"value": "400px"
-							},
-							{
-								"parent": "cts",
-								"variable": "--picker-highlight-outline",
-								"value": "1px dashed var(--interactive-accent)"
-							}
-						];
+						this.plugin.settings.customVariables = [];
 						this.plugin.settings.customElements = [
 							{
 								"uuid": "4cc4d4db-c18e-4719-a7ad-8242cd39b576",
