@@ -126,7 +126,6 @@ class SettingsIO {
                 return null;
             }
 
-            new Notice('Settings imported successfully');
             return importedSettings;
         } catch (error) {
             console.error('Failed to import settings:', error);

@@ -458,9 +458,12 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				button.onClick(async () => {
 					const importedSettings = await settingsIO.importSettings(this.app);
 					if (importedSettings) {
-						this.plugin.settings = importedSettings;
-						await this.plugin.saveData(this.plugin.settings);
-						this.reload();
+						if (await confirm('This will overwrite your current settings and cannot be undone. Continue?', this.plugin.app)) {
+							this.plugin.settings = importedSettings;
+							await this.plugin.saveData(this.plugin.settings);
+							new Notice('Settings imported successfully. The plugin will now be reloaded.');
+							this.reload();
+						}
 					}
 				});
 			});
