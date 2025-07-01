@@ -246,7 +246,7 @@ export class CSSEditor {
 			}
 
 			if (this.view.eltSearch) {
-				this.view.filterCustomElements(this.view.eltSearch);
+				await this.view.filterCustomElements(this.view.eltSearch);
 			}
 		});
 

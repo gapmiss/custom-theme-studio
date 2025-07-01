@@ -164,11 +164,11 @@ export class CustomThemeStudioView extends ItemView {
 	}
 
 	async filterCustomElements(query: string) {
-		const elementListEls: NodeListOf<Element> = this.containerEl.querySelectorAll('.element-item');
-		elementListEls.forEach((elt: HTMLElement) => {
-			elt.addClass('element-item-hide');
-			elt.removeClass('element-item-show');
-		});
+		// const elementListEls: NodeListOf<Element> = this.containerEl.querySelectorAll('.element-item');
+		// elementListEls.forEach((elt: HTMLElement) => {
+		// 	elt.addClass('element-item-hide');
+		// 	elt.removeClass('element-item-show');
+		// });
 
 		this.plugin.settings.customElements.forEach((el) => {
 			if (
@@ -178,6 +178,9 @@ export class CustomThemeStudioView extends ItemView {
 			) {
 				this.containerEl.querySelector('[data-cts-uuid="' + el.uuid + '"]')?.addClass('element-item-show');
 				this.containerEl.querySelector('[data-cts-uuid="' + el.uuid + '"]')?.removeClass('element-item-hide');
+			} else {
+				this.containerEl.querySelector('[data-cts-uuid="' + el.uuid + '"]')?.addClass('element-item-hide');
+				this.containerEl.querySelector('[data-cts-uuid="' + el.uuid + '"]')?.removeClass('element-item-show');
 			}
 		});
 	}
@@ -249,7 +252,8 @@ export class CustomThemeStudioView extends ItemView {
 			'plugins',
 			'window',
 			'theme-dark',
-			'theme-light'
+			'theme-light',
+			'CTS'
 		]
 		tags.forEach((tag: string) => {
 			tagsFiltering.createEl(

@@ -108,9 +108,9 @@ export class AceService {
 			tabSize: Number(this.plugin.settings.EditorTabWidth),
 			wrap: this.plugin.settings.EditorWordWrap,
 			mode: `ace/mode/${languageMode}`,
-			enableBasicAutocompletion: true,
-			enableLiveAutocompletion: this.plugin.settings.enableAceAutoCompletion,
+			enableBasicAutocompletion: this.plugin.settings.enableAceAutoCompletion,
 			enableSnippets: this.plugin.settings.enableAceSnippets,
+			enableLiveAutocompletion: this.plugin.settings.enableAceAutoCompletion,
 			enableMultiselect: true
 		};
 	}
