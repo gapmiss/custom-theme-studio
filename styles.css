@@ -1,3 +1,14 @@
+body {
+    --picker-highlight-outline: 1px dashed var(--interactive-accent);
+    --picker-highlight-background-color: hsla(var(--interactive-accent-hsl), 0.1);
+    --picker-tooltip-background-color: var(--background-primary);
+    --picker-tooltip-border: 1px solid var(--background-modifier-border);
+    --picker-tooltip-border-radius: var(--size-4-2);
+    --picker-tooltip-font-size: var(--font-smaller);
+    --picker-tooltip-padding: 1em;
+    --picker-tooltip-max-width: 400px;
+}
+
 .cts-view {
     padding: 10px;
     overflow-y: scroll;
@@ -480,9 +491,10 @@ a[class*="tag-filter"]:focus {
 }
 
 /* element picker */
-.cts-element-picker-highlight {
-    outline: 1px dashed var(--interactive-accent) !important;
-    background-color: hsla(var(--interactive-accent-hsl), .1) !important;
+.cts-element-picker-highlight, 
+.cts-element-picker-hover {
+    outline: var(--picker-highlight-outline) !important;
+    background-color: var(--picker-highlight-background-color) !important;
 }
 
 /* cursor while element picker is active */
@@ -493,15 +505,18 @@ a[class*="tag-filter"]:focus {
 /* Tooltip styles */
 .cts-element-picker-tooltip {
     position: absolute;
-    background-color: var(--background-primary);
-    border: 1px solid var(--background-modifier-border);
-    padding: 8px;
-    border-radius: 4px;
-    font-size: 12px;
+    background-color: var(--picker-tooltip-background-color);
+    border: var(--picker-tooltip-border);
+    padding: var(--picker-tooltip-padding);
+    border-radius: var(--picker-tooltip-border-radius);
+    font-size: var(--picker-tooltip-font-size);
     z-index: 10000000;
-    max-width: 500px;
+    max-width: var(--picker-tooltip-max-width);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    & .keys {
+    & div.keys.first {
+        margin-top: .5em;
+    }
+    & div {
         line-height: 1.75em;
     }
 }
@@ -521,23 +536,30 @@ a[class*="tag-filter"]:focus {
     border-radius: 3px;
     margin: 4px 0;
     border-left: 3px solid rgba(255, 200, 0, 0.5);
+    & .attribute-note {
+        font-weight: var(--font-bold);
+    }
 }
 
 .cts-element-picker-tooltip .selector-highlight {
     background-color: rgba(100, 255, 100, 0.2);
     padding: 2px 4px;
     border-radius: 3px;
-    font-family: monospace;
+    font-family: var(--font-monospace-default);
     border-left: 3px solid rgba(0, 200, 0, 0.5);
 }
 
 .cts-element-picker-tooltip .data-attributes-list {
     margin: 4px 0;
     padding-left: 20px;
-    font-family: monospace;
-    font-size: 0.9em;
+    font-family: var(--font-monospace-default);
+    font-size: var(--font-smaller);
 }
 
+.cts-element-picker-tooltip .tooltip-classes span {
+    font-family: var(--font-monospace-default);
+    font-size: var(--font-smaller);
+}
 .cts-element-picker-tooltip kbd {
     font-family: var(--font-monospace-default);
     background-color: var(--background-secondary);

@@ -262,7 +262,7 @@ export class ElementSelector {
 
 		// Add classes if present
 		if (classes) {
-			tooltipContent += `<div><strong>Classes:</strong> ${classes.replace('.cts-element-picker-hover', '')}</div>`;
+			tooltipContent += `<div class="tooltip-classes"><strong>Classes:</strong> <span>${classes.replace('.cts-element-picker-hover', '')}</span></div>`;
 		}
 
 		// Add both selector options
@@ -270,7 +270,7 @@ export class ElementSelector {
 			<div><strong>Default selector:</strong> <span class="selector-highlight">${defaultSelector}</span></div>
 			<div><strong>Specific selector:</strong> <span class="selector-highlight">${specificSelector}</span></div>
 			<div><strong>Specific selector with parent:</strong> <span class="selector-highlight">${parentSelector}</span></div>
-			<div class="keys"><kbd>Click</kbd> to select with default selector</div>
+			<div class="keys first"><kbd>Click</kbd> to select with default selector</div>
 			<div class="keys"><kbd>Alt</kbd> + <kbd>Click</kbd> to select with specific selector</div>
 			<div class="keys"><kbd>Command</kbd>+<kbd>Click</kbd> to select the specific selector with parent</div>
 			<div class="keys"><kbd>Shift</kbd>+<kbd>Click</kbd> to copy the specific selector with parent to your clipboard</div>
