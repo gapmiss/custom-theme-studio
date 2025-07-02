@@ -9,7 +9,7 @@ import { confirm } from '../modals/confirmModal';
 import { CSSVariableManager } from './cssVariabManager';
 import { generateUniqueId } from "../utils";
 
-export class CSSEditor {
+export class CSSEditorManager {
 	plugin: CustomThemeStudioPlugin;
 	view: CustomThemeStudioView;
 	currentSelector: string = '';
@@ -26,7 +26,7 @@ export class CSSEditor {
 	workspace: Workspace;
 	private aceService: AceService;
 	editor: ace.Ace.Editor;
-	cssVarManager: CSSVariableManager;
+	cssVariableManager: CSSVariableManager;
 
 
 	constructor(workspace: Workspace, plugin: CustomThemeStudioPlugin, view: CustomThemeStudioView, private config: ICodeEditorConfig) {
@@ -36,7 +36,7 @@ export class CSSEditor {
 		this.workspace = workspace;
 		this.settings = this.settings;
 		this.aceService = new AceService(this.plugin);
-		this.cssVarManager = new CSSVariableManager(this.plugin);
+		this.cssVariableManager = new CSSVariableManager(this.plugin);
 	}
 
 	showEditorSection(show: boolean): void {
@@ -100,7 +100,7 @@ export class CSSEditor {
 		if (this.plugin.settings.enableAceSnippets) {
 			this.editor.setOption('enableSnippets', true);
 			const snippetManager = ace.require('ace/snippets').snippetManager;
-			const snippetContent = this.cssVarManager.snippetManagerVars();
+			const snippetContent = this.cssVariableManager.snippetManagerVars();
 			const snippets = snippetManager.parseSnippetFile(snippetContent);
 			snippetManager.register(snippets, 'css');
 		}
@@ -245,8 +245,8 @@ export class CSSEditor {
 				}
 			}
 
-			if (this.view.eltSearch) {
-				await this.view.filterCustomElements(this.view.eltSearch);
+			if (this.view.elementSearch) {
+				await this.view.filterCustomElements(this.view.elementSearch);
 			}
 		});
 

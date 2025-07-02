@@ -4,7 +4,7 @@ import { CustomThemeStudioView } from '../view';
 import { generateUniqueId } from '../utils';
 import { copyStringToClipboard, getCurrentTheme } from '../utils';
 
-export class ElementSelector {
+export class ElementSelectorManager {
 	plugin: CustomThemeStudioPlugin;
 	view: CustomThemeStudioView;
 	isSelecting: boolean = false;
@@ -348,15 +348,15 @@ export class ElementSelector {
 		this.plugin.saveSettings();
 
 		// Update the CSS editor in the view
-		if (this.view.cssEditor) {
+		if (this.view.cssEditorManager) {
 			// First, make sure any existing inline editors are removed
-			this.view.cssEditor.removeInlineEditor();
+			this.view.cssEditorManager.removeInlineEditor();
 
 			// Set the selector in the editor
-			this.view.cssEditor.setSelector(generateUniqueId(), selector, false);
+			this.view.cssEditorManager.setSelector(generateUniqueId(), selector, false);
 
 			// Show the editor section
-			this.view.cssEditor.showEditorSection(true);
+			this.view.cssEditorManager.showEditorSection(true);
 		}
 
 		// new Notice(`Element selected: ${selector}`);

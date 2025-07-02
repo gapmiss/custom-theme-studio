@@ -8,13 +8,13 @@ import * as css from 'prettier/plugins/postcss';
 
 export class ThemeManager {
 	plugin: CustomThemeStudioPlugin;
-	cssVarManager: CSSVariableManager;
+	cssVariableManager: CSSVariableManager;
 	styleEl: HTMLStyleElement | null = null;
 	settings: CustomThemeStudioSettings;
 
 	constructor(plugin: CustomThemeStudioPlugin) {
 		this.plugin = plugin;
-		this.cssVarManager = new CSSVariableManager(plugin);
+		this.cssVariableManager = new CSSVariableManager(plugin);
 	}
 
 	applyCustomTheme(): void {

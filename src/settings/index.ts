@@ -265,7 +265,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 			.addDropdown((dropdown) => {
 				AceLightThemesList.forEach((theme) => {
 					dropdown
-						.addOption(theme.value, theme.display)
+						.addOption(theme.value, theme.name)
 				})
 				dropdown
 					.setValue(this.plugin.settings.EditorLightTheme)
@@ -281,7 +281,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 			.addDropdown((dropdown) => {
 				AceDarkThemesList.forEach((theme) => {
 					dropdown
-						.addOption(theme.value, theme.display)
+						.addOption(theme.value, theme.name)
 				})
 				dropdown
 					.setValue(this.plugin.settings.EditorDarkTheme)

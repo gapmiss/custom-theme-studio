@@ -1,8 +1,8 @@
 import { ItemView, WorkspaceLeaf, setIcon, Workspace, ColorComponent, Scope } from 'obsidian';
 import CustomThemeStudioPlugin from './main';
 import { type cssVariable, CSSVariableManager, allCategories, cssCategory, cssVariableDefaults } from './managers/cssVariabManager';
-import { ElementSelector } from './managers/elementSelector';
-import { CSSEditor } from './managers/cssEditor';
+import { ElementSelectorManager } from './managers/elementSelectorManager';
+import { CSSEditorManager } from './managers/cssEditorManager';
 import { ICodeEditorConfig } from './interfaces/types';
 import { confirm } from './modals/confirmModal';
 import { CSSVariable, CustomThemeStudioSettings, DEFAULT_SETTINGS } from './settings';
@@ -14,25 +14,25 @@ export class CustomThemeStudioView extends ItemView {
 
 	plugin: CustomThemeStudioPlugin;
 	settings: CustomThemeStudioSettings;
-	cssVarManager: CSSVariableManager;
-	elementSelector: ElementSelector;
-	cssEditor: CSSEditor;
+	cssVariableManager: CSSVariableManager;
+	elementSelectorManager: ElementSelectorManager;
+	cssEditorManager: CSSEditorManager;
 	workspace: Workspace;
-	varSearch: string;
-	eltSearch: string;
+	variableSearch: string;
+	elementSearch: string;
 	activeTag: string | null;
 	editorScope: Scope;
 
 	constructor(settings: CustomThemeStudioSettings, leaf: WorkspaceLeaf, plugin: CustomThemeStudioPlugin, private config: ICodeEditorConfig) {
 		super(leaf);
 		this.plugin = plugin;
-		this.cssVarManager = new CSSVariableManager(this.plugin);
-		this.elementSelector = new ElementSelector(this.plugin, this);
-		this.cssEditor = new CSSEditor(this.app.workspace, this.plugin, this, this.config);
+		this.cssVariableManager = new CSSVariableManager(this.plugin);
+		this.elementSelectorManager = new ElementSelectorManager(this.plugin, this);
+		this.cssEditorManager = new CSSEditorManager(this.app.workspace, this.plugin, this, this.config);
 		this.workspace = this.app.workspace;
 		this.settings = settings;
-		this.varSearch = '';
-		this.eltSearch = '';
+		this.variableSearch = '';
+		this.elementSearch = '';
 		this.activeTag = 'all';
 		this.editorScope = new Scope();
 	}
@@ -78,7 +78,7 @@ export class CustomThemeStudioView extends ItemView {
 		});
 
 		this.registerDomEvent(
-			(this.cssEditor.editor as unknown as HTMLElement),
+			(this.cssEditorManager.editor as unknown as HTMLElement),
 			"focus",
 			() => {
 				this.app.keymap.pushScope(this.editorScope);
@@ -87,7 +87,7 @@ export class CustomThemeStudioView extends ItemView {
 		);
 
 		this.registerDomEvent(
-			(this.cssEditor.editor as unknown as HTMLElement),
+			(this.cssEditorManager.editor as unknown as HTMLElement),
 			"blur",
 			() => {
 				this.app.keymap.popScope(this.editorScope);
@@ -306,7 +306,7 @@ export class CustomThemeStudioView extends ItemView {
 							}
 						});
 
-						if (this.varSearch !== '') {
+						if (this.variableSearch !== '') {
 							let variableLists: NodeListOf<Element> = this.containerEl.querySelectorAll('.variable-list');
 							variableLists.forEach((el: HTMLElement) => {
 								let dataVarTag: string | null = el.getAttr('data-var-tag');
@@ -359,11 +359,11 @@ export class CustomThemeStudioView extends ItemView {
 			const searchTerm: string = (e.target as HTMLInputElement).value.toLowerCase().trim();
 			let activeTagFilter: string | null | undefined = this.containerEl.querySelector('.tag-filter-active')?.getAttr('data-tag-filter');
 
-			this.varSearch = searchTerm;
+			this.variableSearch = searchTerm;
 			this.filterItems(searchTerm);
 
 			const variableListEls: NodeListOf<Element> = this.containerEl.querySelectorAll('.variable-list');
-			if (this.varSearch === '') {
+			if (this.variableSearch === '') {
 				variableListEls.forEach((el: HTMLElement) => {
 					el.addClass('variable-list-hide');
 					el.removeClass('variable-list-show');
@@ -655,7 +655,7 @@ export class CustomThemeStudioView extends ItemView {
 		// Listen for input changes and update theme
 		valueInput.addEventListener('input', (e) => {
 			const newValue = (e.target as HTMLInputElement).value;
-			this.cssVarManager.updateVariable(variable.name as string, newValue, category);
+			this.cssVariableManager.updateVariable(variable.name as string, newValue, category);
 			if (this.plugin.settings.themeEnabled) {
 				this.plugin.themeManager.applyCustomTheme();
 			}
@@ -758,10 +758,10 @@ export class CustomThemeStudioView extends ItemView {
 			inlineEditors.forEach(editor => editor.remove());
 
 			// Show the editor section and reset it
-			this.cssEditor.resetEditor();
-			this.cssEditor.showEditorSection(false);
+			this.cssEditorManager.resetEditor();
+			this.cssEditorManager.showEditorSection(false);
 
-			this.elementSelector.startElementSelection();
+			this.elementSelectorManager.startElementSelection();
 		});
 
 		// "Add element" button
@@ -786,10 +786,10 @@ export class CustomThemeStudioView extends ItemView {
 			inlineEditors.forEach(editor => editor.remove());
 
 			// Show the editor section and reset it
-			this.cssEditor.resetEditor();
-			this.cssEditor.showEditorSection(true);
+			this.cssEditorManager.resetEditor();
+			this.cssEditorManager.showEditorSection(true);
 			setTimeout(async () => {
-				this.cssEditor.nameInputEl!.focus();
+				this.cssEditorManager.nameInputEl!.focus();
 			}, 25);
 
 			// Ensure the new form appears below the buttons
@@ -800,8 +800,8 @@ export class CustomThemeStudioView extends ItemView {
 		});
 
 		// CSS Editor section - initially hidden when not adding a new element
-		this.cssEditor.createEditorSection(content);
-		this.cssEditor.showEditorSection(false);
+		this.cssEditorManager.createEditorSection(content);
+		this.cssEditorManager.showEditorSection(false);
 
 		// Custom custom elements search
 		const searchContainer: HTMLDivElement = content.createDiv('search-elements-container');
@@ -817,7 +817,7 @@ export class CustomThemeStudioView extends ItemView {
 
 		searchInput.addEventListener('input', async (e) => {
 			const searchTerm: string = (e.target as HTMLInputElement).value.toLowerCase().trim();
-			this.eltSearch = searchTerm;
+			this.elementSearch = searchTerm;
 
 			await this.filterCustomElements(searchTerm);
 
@@ -841,7 +841,7 @@ export class CustomThemeStudioView extends ItemView {
 			searchInput.value = '';
 			searchInput.focus();
 			searchInput.classList.remove('clear-search-elements-input--touched');
-			this.eltSearch = '';
+			this.elementSearch = '';
 			const elementListEls: NodeListOf<Element> = this.containerEl.querySelectorAll('.element-item');
 			elementListEls.forEach((elt: HTMLElement) => {
 				elt.addClass('element-item-show');
@@ -855,7 +855,7 @@ export class CustomThemeStudioView extends ItemView {
 
 		// Populate with saved elements
 		this.plugin.settings.customElements.forEach(element => {
-			this.cssEditor.createElementItem(elementList, element);
+			this.cssEditorManager.createElementItem(elementList, element);
 		});
 
 	}
@@ -1017,8 +1017,8 @@ export class CustomThemeStudioView extends ItemView {
 
 	async onClose(): Promise<void> {
 		// Clean up any active element selection
-		this.elementSelector.stopElementSelection();
-		this.cssEditor.clearAppliedChanges();
+		this.elementSelectorManager.stopElementSelection();
+		this.cssEditorManager.clearAppliedChanges();
 	}
 
 }
