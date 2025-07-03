@@ -4,6 +4,7 @@ import { ThemeManager } from './managers/themeManager';
 import { DEFAULT_SETTINGS, CustomThemeStudioSettings, CustomThemeStudioSettingTab } from './settings';
 import { ICodeEditorConfig } from './interfaces/types';
 import { freezeTimer } from "./utils";
+import { CssSnippetFuzzySuggestModal } from "./modals/CssSnippetFuzzySuggestModal";
 
 export default class CustomThemeStudioPlugin extends Plugin {
 	settings: CustomThemeStudioSettings;
@@ -62,6 +63,14 @@ export default class CustomThemeStudioPlugin extends Plugin {
 			callback: () => {
 				freezeTimer(this.freezeDelaySecs);
 			},
+		});
+
+		this.addCommand({
+			id: "import-css-snippet",
+			name: "Import CSS snippet",
+			callback: () => {
+				new CssSnippetFuzzySuggestModal(this.app, this, this.config).open();
+			}
 		});
 
 		// Add settings tab
