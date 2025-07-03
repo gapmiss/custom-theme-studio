@@ -11,6 +11,7 @@ interface Snippets {
     name: string
 }
 
+// https://github.com/Zachatoo/obsidian-css-editor/blob/main/src/modals/CssSnippetFuzzySuggestModal.ts
 export class CssSnippetFuzzySuggestModal extends FuzzySuggestModal<Snippets> {
     plugin: CustomThemeStudioPlugin;
     view: CustomThemeStudioView;
@@ -36,9 +37,7 @@ export class CssSnippetFuzzySuggestModal extends FuzzySuggestModal<Snippets> {
     }
 
     getItems(): Snippets[] {
-        // @ts-ignore
         if (this.app.customCss?.snippets) {
-            // @ts-ignore
             return this.app.customCss.snippets.map((x) => new CssFile(x));
         }
         return [];
