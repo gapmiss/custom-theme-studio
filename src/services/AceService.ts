@@ -42,28 +42,28 @@ export class AceService {
 			}
 		})
 
-		if (this.plugin.settings.EditorKeyboard === 'default') {
+		if (this.plugin.settings.editorKeyboard === 'default') {
 			this.editor.setKeyboardHandler(null);
 		} else {
-			this.editor.setKeyboardHandler(`ace/keyboard/${this.plugin.settings.EditorKeyboard}`);
+			this.editor.setKeyboardHandler(`ace/keyboard/${this.plugin.settings.editorKeyboard}`);
 		}
 		this.updateTheme();
 	}
 
 	async updateTheme() {
 		if (!this.editor) return;
-		let themeName = this.plugin.settings.EditorDarkTheme;
+		let themeName = this.plugin.settings.editorDarkTheme;
 		let isObsidianThemeDark = () => document.body.classList.contains('theme-dark');
 
-		if (this.plugin.settings.EditorTheme === 'Auto') {
+		if (this.plugin.settings.editorTheme === 'Auto') {
 			themeName = isObsidianThemeDark()
-				? this.plugin.settings.EditorDarkTheme
-				: this.plugin.settings.EditorLightTheme;
+				? this.plugin.settings.editorDarkTheme
+				: this.plugin.settings.editorLightTheme;
 		} else {
-			if (this.plugin.settings.EditorTheme === 'Dark') {
-				themeName = this.plugin.settings.EditorDarkTheme;
+			if (this.plugin.settings.editorTheme === 'Dark') {
+				themeName = this.plugin.settings.editorDarkTheme;
 			} else {
-				themeName = this.plugin.settings.EditorLightTheme;
+				themeName = this.plugin.settings.editorLightTheme;
 			}
 		}
 		this.editor.setTheme(`ace/theme/${themeName}`);
@@ -101,12 +101,12 @@ export class AceService {
 
 	private getEditorSettings(languageMode: string, config: ICodeEditorConfig, plugin: CustomThemeStudioPlugin) {
 		return {
-			showLineNumbers: this.plugin.settings.EditorLineNumbers,
-			fontSize: this.plugin.settings.EditorFontSize,
-			fontFamily: this.plugin.settings.EditorFontFamily,
+			showLineNumbers: this.plugin.settings.editorLineNumbers,
+			fontSize: this.plugin.settings.editorFontSize,
+			fontFamily: this.plugin.settings.editorFontFamily,
 			useWorker: false,
-			tabSize: Number(this.plugin.settings.EditorTabWidth),
-			wrap: this.plugin.settings.EditorWordWrap,
+			tabSize: Number(this.plugin.settings.editorTabWidth),
+			wrap: this.plugin.settings.editorWordWrap,
 			mode: `ace/mode/${languageMode}`,
 			enableBasicAutocompletion: this.plugin.settings.enableAceAutoCompletion,
 			enableSnippets: this.plugin.settings.enableAceSnippets,

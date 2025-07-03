@@ -259,7 +259,7 @@ ${elementsCSS}`;
 		return prettier.format(code, {
 			parser: 'css',
 			plugins: [css],
-			tabWidth: Number(this.plugin.settings.EditorTabWidth)
+			tabWidth: Number(this.plugin.settings.editorTabWidth)
 		});
 	}
 

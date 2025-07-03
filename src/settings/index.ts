@@ -39,15 +39,15 @@ export interface CustomThemeStudioSettings {
 	enableAceAutoCompletion: boolean;
 	enableAceSnippets: boolean;
 	enableAceColorPicker: boolean;
-	EditorLineNumbers: boolean;
-	EditorWordWrap: boolean;
-	EditorFontSize: number;
-	EditorFontFamily: string;
-	EditorTabWidth: any;
-	EditorTheme: string;
-	EditorLightTheme: string;
-	EditorDarkTheme: string;
-	EditorKeyboard: string;
+	editorLineNumbers: boolean;
+	editorWordWrap: boolean;
+	editorFontSize: number;
+	editorFontFamily: string;
+	editorTabWidth: any;
+	editorTheme: string;
+	editorLightTheme: string;
+	editorDarkTheme: string;
+	editorKeyboard: string;
 }
 
 export const DEFAULT_SETTINGS: CustomThemeStudioSettings = {
@@ -85,15 +85,15 @@ export const DEFAULT_SETTINGS: CustomThemeStudioSettings = {
 	enableAceAutoCompletion: false,
 	enableAceSnippets: false,
 	enableAceColorPicker: true,
-	EditorLineNumbers: true,
-	EditorWordWrap: false,
-	EditorFontSize: 15,
-	EditorFontFamily: '',
-	EditorTabWidth: 4,
-	EditorTheme: 'Auto',
-	EditorLightTheme: 'github_light_default',
-	EditorDarkTheme: 'github_dark',
-	EditorKeyboard: 'default'
+	editorLineNumbers: true,
+	editorWordWrap: false,
+	editorFontSize: 15,
+	editorFontFamily: '',
+	editorTabWidth: 4,
+	editorTheme: 'Auto',
+	editorLightTheme: 'github_light_default',
+	editorDarkTheme: 'github_dark',
+	editorKeyboard: 'default'
 };
 
 const THEME_COLOR: any = {
@@ -153,7 +153,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 		containerEl.createEl('h3', { text: 'CSS variables options' });
 
 		new Setting(containerEl)
-			.setName('Enable color picker')
+			.setName('Color picker')
 			.setDesc('Enable a color picker for CSS variables that have a default HEX color value (requires the plugin\'s view to be reloaded to take effect).')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.enableColorPicker)
@@ -252,9 +252,9 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				for (const key in THEME_COLOR) {
 					dropdown.addOption(key, key);
 				}
-				dropdown.setValue(this.plugin.settings.EditorTheme);
+				dropdown.setValue(this.plugin.settings.editorTheme);
 				dropdown.onChange(async (option) => {
-					this.plugin.settings.EditorTheme = option;
+					this.plugin.settings.editorTheme = option;
 					await this.plugin.saveSettings();
 				});
 			});
@@ -268,9 +268,9 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 						.addOption(theme.value, theme.name)
 				})
 				dropdown
-					.setValue(this.plugin.settings.EditorLightTheme)
+					.setValue(this.plugin.settings.editorLightTheme)
 					.onChange(async (newValue) => {
-						this.plugin.settings.EditorLightTheme = newValue;
+						this.plugin.settings.editorLightTheme = newValue;
 						await this.plugin.saveSettings();
 					});
 			});
@@ -284,9 +284,9 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 						.addOption(theme.value, theme.name)
 				})
 				dropdown
-					.setValue(this.plugin.settings.EditorDarkTheme)
+					.setValue(this.plugin.settings.editorDarkTheme)
 					.onChange(async (newValue) => {
-						this.plugin.settings.EditorDarkTheme = newValue;
+						this.plugin.settings.editorDarkTheme = newValue;
 						await this.plugin.saveSettings();
 					});
 			});
@@ -299,9 +299,9 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 					dropdown.addOption(binding, binding)
 				})
 				dropdown
-					.setValue(this.plugin.settings.EditorKeyboard)
+					.setValue(this.plugin.settings.editorKeyboard)
 					.onChange(async (newValue) => {
-						this.plugin.settings.EditorKeyboard = newValue;
+						this.plugin.settings.editorKeyboard = newValue;
 						await this.plugin.saveSettings();
 					});
 			});
@@ -312,24 +312,24 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 			.setDesc('Set the font size of the CSS editor.')
 			.addSlider(slider => slider
 				.setLimits(5, 30, 1)
-				.setValue(this.plugin.settings.EditorFontSize)
+				.setValue(this.plugin.settings.editorFontSize)
 				.onChange(async (value) => {
 					fontSizeText.innerText = ' ' + value.toString();
-					this.plugin.settings.EditorFontSize = value;
+					this.plugin.settings.editorFontSize = value;
 					this.plugin.saveSettings();
 				}))
 			.settingEl.createDiv('cts-font-size-setting', (el) => {
 				fontSizeText = el;
-				el.innerText = ' ' + this.plugin.settings.EditorFontSize.toString();
+				el.innerText = ' ' + this.plugin.settings.editorFontSize.toString();
 			});
 
 		new Setting(containerEl)
 			.setName('Font family')
 			.setDesc('Custom font for the CSS editor.')
 			.addText(text => text
-				.setValue(this.plugin.settings.EditorFontFamily)
+				.setValue(this.plugin.settings.editorFontFamily)
 				.onChange(async (value) => {
-					this.plugin.settings.EditorFontFamily = value;
+					this.plugin.settings.editorFontFamily = value;
 					await this.plugin.saveSettings();
 				})
 			);
@@ -343,9 +343,9 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 						'2': '2',
 						'4': '4',
 					})
-					.setValue(this.plugin.settings.EditorTabWidth)
+					.setValue(this.plugin.settings.editorTabWidth)
 					.onChange(async (newValue) => {
-						this.plugin.settings.EditorTabWidth = newValue;
+						this.plugin.settings.editorTabWidth = newValue;
 						await this.plugin.saveSettings();
 					});
 			});
@@ -354,9 +354,9 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 			.setName('Wordwrap')
 			.setDesc('Enable word wrapping.')
 			.addToggle(toggle => toggle
-				.setValue(this.plugin.settings.EditorWordWrap)
+				.setValue(this.plugin.settings.editorWordWrap)
 				.onChange(async (value) => {
-					this.plugin.settings.EditorWordWrap = value;
+					this.plugin.settings.editorWordWrap = value;
 					await this.plugin.saveSettings();
 
 				}));
@@ -365,15 +365,15 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 			.setName('Line numbers')
 			.setDesc('Enable line numbers.')
 			.addToggle(toggle => toggle
-				.setValue(this.plugin.settings.EditorLineNumbers)
+				.setValue(this.plugin.settings.editorLineNumbers)
 				.onChange(async (value) => {
-					this.plugin.settings.EditorLineNumbers = value;
+					this.plugin.settings.editorLineNumbers = value;
 					await this.plugin.saveSettings();
 				}));
 
 		new Setting(containerEl)
 			.setName('Reload view')
-			.setDesc('CSS editor options require the plugin\'s view to be reloaded to take effect.')
+			.setDesc('Changed CSS editor options require the plugin\'s view to be reloaded to take effect.')
 			.addButton(button => button
 				.setButtonText('Reload')
 				.setClass('mod-destructive')

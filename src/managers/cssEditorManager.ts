@@ -125,7 +125,7 @@ export class CSSEditorManager {
 				type: 'checkbox',
 			}
 		});
-		if (this.plugin.settings.EditorWordWrap) {
+		if (this.plugin.settings.editorWordWrap) {
 			wordWrapCheckbox.checked = true;
 			wordWrapCheckboxContainer.addClass('is-enabled');
 		}
@@ -158,12 +158,12 @@ export class CSSEditorManager {
 				min: 5,
 				max: 30,
 				step: 1,
-				value: this.plugin.settings.EditorFontSize
+				value: this.plugin.settings.editorFontSize
 			}
 		});
 
 		const fontsizeDisplayValue = fontsizeOptionContainer.createDiv('slider-value', (el) => {
-			el.innerText = ' ' + this.plugin.settings.EditorFontSize.toString();
+			el.innerText = ' ' + this.plugin.settings.editorFontSize.toString();
 		});
 
 		fontsizeSlider.addEventListener('change', (e) => {
@@ -385,6 +385,7 @@ export class CSSEditorManager {
 	applyChanges(css: string): void {
 		if (!this.editorEl || !this.selectorInputEl) return;
 
+		const name = this.nameInputEl!.value.trim();
 		const selector = this.selectorInputEl.value.trim();
 		const uuid = this.editorUUID.value;
 
@@ -394,7 +395,7 @@ export class CSSEditorManager {
 		}
 
 		// Update the custom CSS
-		this.updateCustomCSS(uuid, selector, css);
+		this.updateCustomCSS(uuid, name, selector, css);
 
 		// Apply the changes
 		if (this.plugin.settings.themeEnabled) {
@@ -404,7 +405,7 @@ export class CSSEditorManager {
 
 	clearAppliedChanges(): void {
 		// Update the custom CSS
-		this.updateCustomCSS(generateUniqueId(), '', '');
+		this.updateCustomCSS(generateUniqueId(), '', '', '');
 
 		// Apply the changes
 		if (this.plugin.settings.themeEnabled) {
@@ -453,7 +454,7 @@ export class CSSEditorManager {
 		this.plugin.saveSettings();
 
 		// Update the custom CSS
-		this.updateCustomCSS(uuid, selector, css);
+		this.updateCustomCSS(uuid, name, selector, css);
 
 		// Apply the changes
 		if (this.plugin.settings.themeEnabled) {
@@ -559,7 +560,7 @@ export class CSSEditorManager {
 		}
 	}
 
-	async updateCustomCSS(uuid: string, selector: string, css: string): Promise<void> {
+	async updateCustomCSS(uuid: string, name: string, selector: string, css: string): Promise<void> {
 		// Get all custom elements CSS
 		let fullCSS = '';
 		const existingIndex = this.plugin.settings.customElements.findIndex(el => el.uuid === uuid);
@@ -567,13 +568,13 @@ export class CSSEditorManager {
 			if (this.plugin.settings.customElements[existingIndex].enabled) {
 				// First add the current element
 				if (css !== '') {
-					fullCSS += `/* ${selector} */\n${css}\n\n`;
+					fullCSS += `/* ${name || selector} */\n${css}\n\n`;
 				}
 			}
 		} else {
 			// New custom element
 			if (css !== '') {
-				fullCSS += `/* ${selector} */\n${css}\n\n`;
+				fullCSS += `/* ${name || selector} */\n${css}\n\n`;
 			}
 		}
 
