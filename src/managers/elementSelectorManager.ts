@@ -2,7 +2,7 @@ import { Notice, ButtonComponent } from 'obsidian';
 import CustomThemeStudioPlugin from '../main';
 import { CustomThemeStudioView } from '../view';
 import { generateUniqueId } from '../utils';
-import { copyStringToClipboard, getCurrentTheme } from '../utils';
+import { copyStringToClipboard } from '../utils';
 
 export class ElementSelectorManager {
 	plugin: CustomThemeStudioPlugin;
@@ -69,6 +69,9 @@ export class ElementSelectorManager {
 						.setButtonText(cancelText)
 						.setClass('cts-element-picker-cancel')
 						.setTooltip('Stop element selection');
+					this.cancelButton.onClick((e) => {
+						new Notice('Element selection cancelled');
+					});
 				});
 			}),
 			timeout
@@ -163,8 +166,11 @@ export class ElementSelectorManager {
 		// Immediately prevent default action and stop propagation if we're in selection mode
 		if (this.isSelecting) {
 			// Prevent buttons from activating, links from navigating, etc.
-			e.preventDefault();
-			e.stopPropagation();
+			// Skip the Notice "Cancel" button
+			if (!(e.target as HTMLElement).hasClass('cts-element-picker-cancel')) {
+				e.preventDefault();
+				e.stopPropagation();
+			}
 		} else {
 			return;
 		}
@@ -182,6 +188,7 @@ export class ElementSelectorManager {
 			return;
 		}
 
+		// Skip the Notice "Cancel" button
 		if (!target.classList.contains('cts-element-picker-cancel')) {
 			// Select the element
 			this.selectElement(target, e);
