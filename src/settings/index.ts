@@ -54,22 +54,7 @@ export const DEFAULT_SETTINGS: CustomThemeStudioSettings = {
 	themeEnabled: false,
 	customCSS: '',
 	customVariables: [],
-	customElements: [
-		{
-			"uuid": generateUniqueId(),
-			"selector": "div.clickable-icon.side-dock-ribbon-action[aria-label=\"Custom Theme Studio\"]",
-			"css": "div.clickable-icon.side-dock-ribbon-action[aria-label=\"Custom Theme Studio\"] {\n\tbackground: linear-gradient(\n        to bottom,\n        rgba(var(--color-red-rgb), .4),\n        rgba(var(--color-orange-rgb), .4),\n        rgba(var(--color-yellow-rgb), .4),\n        rgba(var(--color-green-rgb), .4),\n        rgba(var(--color-blue-rgb), .4),\n        rgba(var(--color-cyan-rgb), .4),\n        rgba(var(--color-purple-rgb), .4)\n    );\n}",
-			"name": "🎨 CTS Ribbon Icon",
-			"enabled": true
-		},
-		{
-			"uuid": generateUniqueId(),
-			"selector": "div.workspace-tab-header.tappable[aria-label=\"Custom Theme Studio\"]",
-			"css": "div.workspace-tab-header.tappable[aria-label=\"Custom Theme Studio\"] {\n\tbackground: linear-gradient(\n        to bottom,\n        rgba(var(--color-purple-rgb), .5),\n        rgba(var(--color-cyan-rgb), .5),\n        rgba(var(--color-blue-rgb), .5),\n        rgba(var(--color-green-rgb), .5),\n        rgba(var(--color-yellow-rgb), .5),\n        rgba(var(--color-orange-rgb), .5),\n        rgba(var(--color-red-rgb), .5)\n    );\n}",
-			"name": "🎨 CTS Tab Icon Button",
-			"enabled": true
-		}
-	],
+	customElements: [],
 	exportThemeName: 'My Custom Theme',
 	exportThemeAuthor: 'Anonymous',
 	exportThemeURL: 'https://github.com/obsidianmd',
@@ -480,22 +465,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 					if (await confirm('Are you sure you want to reset all theme customizations? This cannot be undone.', this.plugin.app)) {
 						this.plugin.settings.customCSS = '';
 						this.plugin.settings.customVariables = [];
-						this.plugin.settings.customElements = [
-							{
-								"uuid": generateUniqueId(),
-								"selector": "div.clickable-icon.side-dock-ribbon-action[aria-label=\"Custom Theme Studio\"]",
-								"css": "div.clickable-icon.side-dock-ribbon-action[aria-label=\"Custom Theme Studio\"] {\n\tbackground: linear-gradient(\n        to bottom,\n        rgba(var(--color-red-rgb), .4),\n        rgba(var(--color-orange-rgb), .4),\n        rgba(var(--color-yellow-rgb), .4),\n        rgba(var(--color-green-rgb), .4),\n        rgba(var(--color-blue-rgb), .4),\n        rgba(var(--color-cyan-rgb), .4),\n        rgba(var(--color-purple-rgb), .4)\n    );\n}",
-								"name": "🎨 CTS Ribbon Icon",
-								"enabled": true
-							},
-							{
-								"uuid": generateUniqueId(),
-								"selector": "div.workspace-tab-header.tappable[aria-label=\"Custom Theme Studio\"]",
-								"css": "div.workspace-tab-header.tappable[aria-label=\"Custom Theme Studio\"] {\n\tbackground: linear-gradient(\n        to bottom,\n        rgba(var(--color-purple-rgb), .5),\n        rgba(var(--color-cyan-rgb), .5),\n        rgba(var(--color-blue-rgb), .5),\n        rgba(var(--color-green-rgb), .5),\n        rgba(var(--color-yellow-rgb), .5),\n        rgba(var(--color-orange-rgb), .5),\n        rgba(var(--color-red-rgb), .5)\n    );\n}",
-								"name": "🎨 CTS Tab Icon Button",
-								"enabled": true
-							}
-						];
+						this.plugin.settings.customElements = [];
 						this.plugin.settings.themeEnabled = false;
 
 						// Apply changes
