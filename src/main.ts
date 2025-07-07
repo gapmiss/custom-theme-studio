@@ -10,7 +10,7 @@ export default class CustomThemeStudioPlugin extends Plugin {
 	settings: CustomThemeStudioSettings;
 	themeManager: ThemeManager;
 	config: ICodeEditorConfig;
-	freezeDelaySecs = 4; // CONFIG
+	freezeDelaySecs = 5;
 
 	async onload() {
 		await this.loadSettings();
@@ -56,6 +56,7 @@ export default class CustomThemeStudioPlugin extends Plugin {
 			}
 		});
 
+		// Add command to freeze Obsidian
 		// https://github.com/chrisgrieser/obsidian-theme-design-utilities/blob/main/src/main.ts#L19
 		this.addCommand({
 			id: "freeze-obsidian",
@@ -65,6 +66,7 @@ export default class CustomThemeStudioPlugin extends Plugin {
 			},
 		});
 
+		// Add command to import CSS snippet
 		this.addCommand({
 			id: "import-css-snippet",
 			name: "Import CSS snippet",
