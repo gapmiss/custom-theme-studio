@@ -18,7 +18,7 @@ export function copyStringToClipboard(text: string, topic: string | undefined = 
 		})
 }
 
-function showNotice(message: string, duration: number = 4000, type: string | undefined): void {
+export function showNotice(message: string, duration: number = 4000, type: string | undefined): void {
 
 	const fragment: DocumentFragment = document.createDocumentFragment();
 
@@ -58,7 +58,7 @@ function showNotice(message: string, duration: number = 4000, type: string | und
 	if (type === 'info') {
 		const header: HTMLDivElement = wrapper.createDiv({
 			attr: {
-				style: `color: var(--color-blue);`,
+				// style: `color: var(--color-blue);`,
 			},
 		});
 		setIcon(header, 'info');

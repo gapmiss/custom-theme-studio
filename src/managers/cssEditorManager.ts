@@ -1,4 +1,4 @@
-import { App, Notice, setIcon, Workspace } from 'obsidian';
+import { App, setIcon, Workspace } from 'obsidian';
 import CustomThemeStudioPlugin from '../main';
 import { CustomThemeStudioView } from '../view';
 import { CustomThemeStudioSettings, CustomElement } from '../settings';
@@ -7,7 +7,7 @@ import { ICodeEditorConfig } from '../interfaces/types';
 import * as ace from 'ace-builds';
 import { confirm } from '../modals/confirmModal';
 import { CSSVariableManager } from './cssVariabManager';
-import { generateUniqueId } from "../utils";
+import { generateUniqueId, showNotice } from "../utils";
 
 export class CSSEditorManager {
 	plugin: CustomThemeStudioPlugin;
@@ -310,14 +310,10 @@ export class CSSEditorManager {
 				this.nameInputEl!.value = '';
 			}
 
-			// if (!isEditingExisting) {
-			// 	new Notice('Their is a custom selector for "'+selector+'" already. The editor has been populated with the current CSS rule(s). Click this message to dismiss.', 0);
-			// }
-
 		} else {
 			// Generate default CSS template
 			this.generateDefaultCSS(selector);
-			new Notice(`Element selected: ${selector}`);
+			showNotice(`Element selected: ${selector}`, 5000, 'success');
 		}
 		this.editor!.session.on('change', this.changeListener);
 	}
@@ -389,8 +385,8 @@ export class CSSEditorManager {
 		const selector = this.selectorInputEl.value.trim();
 		const uuid = this.editorUUID.value;
 
-		if (!uuid || !selector || !css) {
-			new Notice('Please enter both a selector and CSS rules to auto apply your CSS changes');
+		if (!uuid || !css) {
+			showNotice('Please enter CSS rules to auto apply your CSS changes', 5000, 'error');
 			return;
 		}
 
@@ -422,7 +418,7 @@ export class CSSEditorManager {
 		const css = this.aceService.getValue();
 
 		if (!selector || !css) {
-			new Notice('Please enter both a selector and CSS rules');
+			showNotice('Please enter both a selector and CSS rules', 5000, 'error');
 			return false;
 		}
 
@@ -507,7 +503,7 @@ export class CSSEditorManager {
 			}
 		}
 
-		new Notice('Element saved successfully');
+		showNotice('Element saved successfully', 5000, 'success');
 		return true;
 	}
 
@@ -773,7 +769,7 @@ export class CSSEditorManager {
 				// Remove from DOM
 				item.remove();
 
-				new Notice('Element deleted');
+				showNotice('Element deleted', 5000, 'success');
 			}
 		});
 		return item;

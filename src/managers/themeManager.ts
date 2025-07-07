@@ -5,6 +5,7 @@ import { CSSVariable, CustomThemeStudioSettings, DEFAULT_SETTINGS } from '../set
 import { saveAs } from 'file-saver';
 import * as prettier from 'prettier';
 import * as css from 'prettier/plugins/postcss';
+import { showNotice } from "../utils";
 
 export class ThemeManager {
 	plugin: CustomThemeStudioPlugin;
@@ -52,10 +53,12 @@ export class ThemeManager {
 
 		if (this.plugin.settings.themeEnabled) {
 			this.applyCustomTheme();
-			new Notice('Custom theme enabled');
+			// new Notice('Custom theme enabled');
+			showNotice('Custom theme enabled', 5000, 'success');
 		} else {
 			this.removeCustomTheme();
-			new Notice('Custom theme disabled');
+			// new Notice('Custom theme disabled');
+			showNotice('Custom theme disabled', 5000, 'error');
 		}
 
 		this.plugin.saveSettings();
@@ -221,11 +224,13 @@ ${elementsCSS}`;
 
 			let prettierCSS: string = (this.plugin.settings.exportPrettierFormat) ? await this.formatCSS(themeCSS) : themeCSS;
 			navigator.clipboard.writeText(prettierCSS).then(() => {
-				new Notice('Theme CSS copied to clipboard');
+				// new Notice('Theme CSS copied to clipboard');
+				showNotice('Theme CSS copied to clipboard', 5000, 'success');
 			});
 		} catch (error) {
 			console.error('Failed to copy theme to clipboard:\n', error);
-			new Notice('Failed to copy theme to clipboard. Check the developer console for details.', 5000);
+			// new Notice('Failed to copy theme to clipboard. Check the developer console for details.', 5000);
+			showNotice('Failed to copy theme to clipboard. Check the developer console for details', 10000, 'error');
 		}
 	}
 
@@ -245,12 +250,14 @@ ${elementsCSS}`;
 			};
 
 			navigator.clipboard.writeText(JSON.stringify(manifest, null, 2)).then(() => {
-				new Notice('Manifest JSON copied to clipboard');
+				// new Notice('Manifest JSON copied to clipboard');
+				showNotice('Manifest JSON copied to clipboard', 5000, 'success');
 			});
 
 		} catch (error) {
 			console.error('Failed to copy manifest JSON to clipboard:', error);
-			new Notice('Failed to copy manifest JSON to clipboard');
+			// new Notice('Failed to copy manifest JSON to clipboard');
+			showNotice('Failed to copy manifest JSON to clipboard. Check the developer console for details', 10000, 'error');
 		}
 	}
 
