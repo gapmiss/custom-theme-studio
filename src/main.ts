@@ -98,9 +98,9 @@ export default class CustomThemeStudioPlugin extends Plugin {
 		const { workspace } = this.app;
 
 		// Check if view is already open
-		const existingLeaves = workspace.getLeavesOfType(VIEW_TYPE_CTS);
-		if (existingLeaves.length > 0) {
-			workspace.revealLeaf(existingLeaves[0]);
+		const leaf = workspace.getLeavesOfType(VIEW_TYPE_CTS).first();
+		if (leaf) {
+			await workspace.revealLeaf(leaf);
 			return;
 		}
 
@@ -111,7 +111,7 @@ export default class CustomThemeStudioPlugin extends Plugin {
 		});
 
 		workspace.revealLeaf(
-			workspace.getLeavesOfType(VIEW_TYPE_CTS)[0]
+			workspace.getLeavesOfType(VIEW_TYPE_CTS).first()!
 		);
 	}
 
