@@ -112,15 +112,8 @@ export class CustomThemeStudioView extends ItemView {
 			}
 		});
 		toggleSwitch.checked = this.plugin.settings.themeEnabled;
-		toggleSwitch.addEventListener('change', () => {
-			this.plugin.settings.themeEnabled = toggleSwitch.checked;
-			this.plugin.saveSettings();
-
-			if (toggleSwitch.checked) {
-				this.plugin.themeManager.applyCustomTheme();
-			} else {
-				this.plugin.themeManager.removeCustomTheme();
-			}
+		toggleSwitch.addEventListener('change', async () => {
+			this.plugin.themeManager.toggleCustomTheme();
 		});
 
 		// Light/dark theme toggle
