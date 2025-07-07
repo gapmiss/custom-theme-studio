@@ -1,6 +1,6 @@
-import { type App, normalizePath, FuzzySuggestModal } from "obsidian";
+import { type App, normalizePath, setIcon, FuzzySuggestModal } from "obsidian";
 import type CustomThemeStudioPlugin from "../main";
-import { generateUniqueId } from "../utils";
+import { generateUniqueId, showNotice } from "../utils";
 import { CustomThemeStudioView, VIEW_TYPE_CTS } from "../view";
 import { ICodeEditorConfig } from '../interfaces/types';
 import { confirm } from '../modals/confirmModal';
@@ -62,18 +62,34 @@ export class CssSnippetFuzzySuggestModal extends FuzzySuggestModal<Snippets> {
         });
         this.plugin.saveSettings();
 
-        if (!await confirm('The snippet has been saved as a new custom element. Click "OK" to reload the "Custom Theme Studio" view or if you have unsaved changes, click "Cancel" to reload the view manually at a later time.', this.plugin.app)) {
-            return;
-        }
-
-        const leaves = this.app.workspace.getLeavesOfType(VIEW_TYPE_CTS);
-        leaves.forEach((leaf) => {
-            if (leaf.view instanceof CustomThemeStudioView) {
-                this.view = (leaf.view as CustomThemeStudioView)
+        let leaf = this.app.workspace.getLeavesOfType(VIEW_TYPE_CTS).first();
+        if (leaf) {
+            if (!await confirm('The snippet has been saved as a new custom element. Click "OK" to reload the "Custom Theme Studio" view or if you have unsaved changes, click "Cancel" to reload the view manually at a later time.', this.plugin.app)) {
+                return;
             }
-        });
-        if (this.view) {
-            this.plugin.reloadView();
+            await this.app.workspace.revealLeaf(leaf);
+            if (leaf.view instanceof CustomThemeStudioView) {
+                let view = leaf.view;
+                const elementList = view.containerEl.querySelector('.element-list');
+                if (elementList) {
+                    elementList.empty();
+                    // Re-populate with all elements
+                    this.plugin.settings.customElements.forEach(element => {
+                        view.cssEditorManager.createElementItem(elementList as HTMLElement, element);
+                    });
+                    let elementSection = view.containerEl.querySelector('.element-section')?.querySelector('.collapsible-content');
+                    let toggleIcon: HTMLElement|null|undefined = view.containerEl.querySelector('.element-section')?.querySelector('.collapse-icon');
+                    if (elementSection && toggleIcon) {
+                        elementSection.addClass('collapsible-content-show');
+                        elementSection.removeClass('collapsible-content-hide');
+                        setIcon(toggleIcon, 'chevron-down');
+                        toggleIcon.setAttr('aria-label', 'Collapse section');
+                        toggleIcon.setAttr('data-tooltip-position', 'top');
+                    }
+                }
+            }
+        } else {
+            showNotice('The snippet has been saved as a new custom element', 5000, 'success');
         }
     }
 
