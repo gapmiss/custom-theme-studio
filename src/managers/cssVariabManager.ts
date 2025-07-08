@@ -28,7 +28,7 @@ function createHelpFragment(text: string, parent: string = '', category: string 
 
 export const allCategories: cssCategory[] = [
 	{ category: 'animation', title: 'Animation', tag: 'foundations', help: null },
-	{ category: 'bases', title: 'Bases', tag: 'plugins', help: createHelpFragment('Catalyst license feature – currently not released for PUBLIC availability. Subject to change as the core Bases plugin is in development.') },
+	{ category: 'bases', title: 'Bases', tag: 'plugins', help: createHelpFragment('Catalyst license feature – currently not released for PUBLIC availability. Subject to change as the Bases core plugin is in development.') },
 	{ category: 'blockquote', title: 'Blockquote', tag: 'editor', help: createHelpFragment('', 'Editor', 'Blockquote') },
 	{ category: 'borders', title: 'Borders', tag: 'foundations', help: createHelpFragment('', 'Foundations', 'Borders') },
 	{ category: 'button', title: 'Button', tag: 'components', help: createHelpFragment('', 'Components', 'Button') },
