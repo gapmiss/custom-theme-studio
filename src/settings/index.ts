@@ -1,5 +1,5 @@
 import { App, PluginSettingTab, Setting, Notice, setIcon } from 'obsidian';
-import { AceLightThemesList, AceDarkThemesList, AceKeyboardList } from '../services/AceThemes';
+import { AceLightThemesList, AceDarkThemesList, AceKeyboardList } from '../ace/AceThemes';
 import { confirm } from '../modals/confirmModal';
 import CustomThemeStudioPlugin from '../main';
 import { generateUniqueId } from '../utils';

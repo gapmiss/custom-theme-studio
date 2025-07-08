@@ -1,12 +1,12 @@
 import { ItemView, WorkspaceLeaf, setIcon, Workspace, ColorComponent, Scope } from 'obsidian';
-import CustomThemeStudioPlugin from './main';
-import { type cssVariable, CSSVariableManager, allCategories, cssCategory, cssVariableDefaults } from './managers/cssVariabManager';
-import { ElementSelectorManager } from './managers/elementSelectorManager';
-import { CSSEditorManager } from './managers/cssEditorManager';
-import { ICodeEditorConfig } from './interfaces/types';
-import { confirm } from './modals/confirmModal';
-import { CSSVariable, CustomThemeStudioSettings, DEFAULT_SETTINGS } from './settings';
-import { copyStringToClipboard, getCurrentTheme } from './utils';
+import CustomThemeStudioPlugin from '../main';
+import { type cssVariable, CSSVariableManager, allCategories, cssCategory, cssVariableDefaults } from '../managers/cssVariabManager';
+import { ElementSelectorManager } from '../managers/elementSelectorManager';
+import { CSSEditorManager } from '../managers/cssEditorManager';
+import { ICodeEditorConfig } from '../interfaces/types';
+import { confirm } from '../modals/confirmModal';
+import { CSSVariable, CustomThemeStudioSettings, DEFAULT_SETTINGS } from '../settings';
+import { copyStringToClipboard, getCurrentTheme } from '../utils';
 
 export const VIEW_TYPE_CTS = 'cts-view';
 
@@ -49,6 +49,7 @@ export class CustomThemeStudioView extends ItemView {
 		return 'paintbrush';
 	}
 
+	// On view open
 	async onOpen(): Promise<void> {
 		const { containerEl } = this;
 		containerEl.empty();
@@ -66,10 +67,8 @@ export class CustomThemeStudioView extends ItemView {
 			// Check if the target is an 'A' tag with role="button"
 			if (target && (target as HTMLElement).getAttribute('role') === 'button' && (target as HTMLElement).tagName === 'A') {
 				const key: string | number = e.key !== undefined ? e.key : e.keyCode;
-
 				const isEnter: boolean = key === 'Enter' || key === 13;
 				const isSpace: boolean = key === ' ' || key === 'Spacebar' || key === 32;
-
 				if (isEnter || isSpace) {
 					e.preventDefault(); // Prevent scrolling on space
 					(target as HTMLElement).click();
@@ -77,6 +76,7 @@ export class CustomThemeStudioView extends ItemView {
 			}
 		});
 
+		// Keymap scope
 		this.registerDomEvent(
 			(this.cssEditorManager.editor as unknown as HTMLElement),
 			"focus",
@@ -85,7 +85,6 @@ export class CustomThemeStudioView extends ItemView {
 			},
 			true
 		);
-
 		this.registerDomEvent(
 			(this.cssEditorManager.editor as unknown as HTMLElement),
 			"blur",
@@ -97,9 +96,10 @@ export class CustomThemeStudioView extends ItemView {
 
 	}
 
+	// Render header section
 	private renderHeader(): void {
 		const headerEl: HTMLDivElement = this.containerEl.createDiv('theme-studio-header');
-		headerEl.createEl('h4', { text: 'Custom Theme Studio' });
+		headerEl.createEl('h3', { text: 'Custom Theme Studio' });
 
 		// Theme enabled toggle
 		const toggleContainer: HTMLDivElement = headerEl.createDiv('theme-toggle-container');
@@ -133,51 +133,7 @@ export class CustomThemeStudioView extends ItemView {
 
 	}
 
-	private async filterItems(searchTerm: string): Promise<void> {
-		// Filter all variables
-		const varItems: NodeListOf<Element> = this.containerEl.querySelectorAll('.variable-item');
-		varItems.forEach((item: Element) => {
-			const varName: string = item.getAttribute('data-var-name')?.toLowerCase() || '';
-			const varValue: string = item.getAttribute('data-var-value')?.toLowerCase() || '';
-			if (searchTerm !== '') {
-				// Show matches or hide non-matches
-				if (varName.includes(searchTerm) || varValue.includes(searchTerm)) {
-					item.addClass('variable-item-show');
-					item.removeClass('variable-item-hide');
-				} else {
-					item.addClass('variable-item-hide');
-					item.removeClass('variable-item-show');
-				}
-			} else {
-				// Empty search - show all variables
-				item.addClass('variable-item-show');
-				item.removeClass('variable-item-hide');
-			}
-		});
-	}
-
-	async filterCustomElements(query: string) {
-		// const elementListEls: NodeListOf<Element> = this.containerEl.querySelectorAll('.element-item');
-		// elementListEls.forEach((elt: HTMLElement) => {
-		// 	elt.addClass('element-item-hide');
-		// 	elt.removeClass('element-item-show');
-		// });
-
-		this.plugin.settings.customElements.forEach((el) => {
-			if (
-				el.name?.toLowerCase().contains(query) ||
-				el.selector?.toLowerCase().contains(query) ||
-				el.css?.toLowerCase().contains(query)
-			) {
-				this.containerEl.querySelector('[data-cts-uuid="' + el.uuid + '"]')?.addClass('element-item-show');
-				this.containerEl.querySelector('[data-cts-uuid="' + el.uuid + '"]')?.removeClass('element-item-hide');
-			} else {
-				this.containerEl.querySelector('[data-cts-uuid="' + el.uuid + '"]')?.addClass('element-item-hide');
-				this.containerEl.querySelector('[data-cts-uuid="' + el.uuid + '"]')?.removeClass('element-item-show');
-			}
-		});
-	}
-
+	// Render CSS variables section
 	private renderCSSVariables(): void {
 		const section: HTMLDivElement = this.containerEl.createDiv('theme-section');
 
@@ -236,7 +192,7 @@ export class CustomThemeStudioView extends ItemView {
 		});
 
 		// Tags filtering
-		const tagsFiltering: HTMLDivElement = content.createDiv('tags-filtering');
+		const filterTags: HTMLDivElement = content.createDiv('filter-tags');
 		const tags: string[] = [
 			'all',
 			'components',
@@ -249,7 +205,7 @@ export class CustomThemeStudioView extends ItemView {
 			'CTS'
 		]
 		tags.forEach((tag: string) => {
-			tagsFiltering.createEl(
+			filterTags.createEl(
 				'a',
 				{
 					text: tag,
@@ -267,7 +223,7 @@ export class CustomThemeStudioView extends ItemView {
 						let filterTag: string | null = (ev.currentTarget as HTMLElement).getAttr('data-tag-filter');
 						this.activeTag = filterTag;
 						tags.forEach((tag: string) => {
-							let tagButton: Element | null = tagsFiltering.querySelector(`[data-tag-filter="${tag}"]`);
+							let tagButton: Element | null = filterTags.querySelector(`[data-tag-filter="${tag}"]`);
 							tagButton!.removeClass('tag-filter-active');
 						});
 						(ev.currentTarget as HTMLElement).addClass('tag-filter-active');
@@ -298,21 +254,22 @@ export class CustomThemeStudioView extends ItemView {
 								}
 							}
 						});
-
+						// Check for variable search
 						if (this.variableSearch !== '') {
 							let variableLists: NodeListOf<Element> = this.containerEl.querySelectorAll('.variable-list');
+							// Variable categories
 							variableLists.forEach((el: HTMLElement) => {
 								let dataVarTag: string | null = el.getAttr('data-var-tag');
 								let hasVisibleChildren: boolean = false;
 								var children: HTMLCollection = el.children;
-
+								// Check for visible children
 								for (var i = 0; i < children.length; i++) {
 									if (children[i].hasClass('variable-item-show')) {
 										hasVisibleChildren = true;
 										continue;
 									}
 								}
-
+								// Hide/show
 								if (hasVisibleChildren && ((filterTag === dataVarTag) || filterTag === 'all')) {
 									el?.addClass('variable-list-show');
 									el?.removeClass('variable-list-hide');
@@ -324,7 +281,7 @@ export class CustomThemeStudioView extends ItemView {
 									el?.parentElement!.addClass('variable-category-hide');
 									el?.parentElement!.removeClass('variable-category-show');
 								}
-
+								// Toggle icon
 								let variableListicon: HTMLElement | null = (el.previousSibling as HTMLElement)!.querySelector('.collapse-icon.clickable-icon');
 								setIcon(variableListicon!, 'chevron-down')
 								variableListicon?.setAttr('aria-label', 'Collapse category');
@@ -348,12 +305,13 @@ export class CustomThemeStudioView extends ItemView {
 			}
 		});
 
+		// Search on input event
 		searchInput.addEventListener('input', (e) => {
 			const searchTerm: string = (e.target as HTMLInputElement).value.toLowerCase().trim();
 			let activeTagFilter: string | null | undefined = this.containerEl.querySelector('.tag-filter-active')?.getAttr('data-tag-filter');
 
 			this.variableSearch = searchTerm;
-			this.filterItems(searchTerm);
+			this.filterVariables(searchTerm);
 
 			const variableListEls: NodeListOf<Element> = this.containerEl.querySelectorAll('.variable-list');
 			if (this.variableSearch === '') {
@@ -445,7 +403,7 @@ export class CustomThemeStudioView extends ItemView {
 
 				});
 			}
-
+			// Clear search
 			if ((e.currentTarget! as HTMLInputElement).value && !searchInput.classList.contains('clear-search-input--touched')) {
 				searchInput.classList.add('clear-search-input--touched')
 			} else if (!(e.currentTarget! as HTMLInputElement).value && searchInput.classList.contains('clear-search-input--touched')) {
@@ -462,7 +420,6 @@ export class CustomThemeStudioView extends ItemView {
 				'data-tooltip-position': 'top'
 			}
 		});
-
 		clearSearchButton.addEventListener('click', (evt) => {
 			searchInput.value = '';
 			searchInput.focus();
@@ -479,6 +436,7 @@ export class CustomThemeStudioView extends ItemView {
 			});
 		})
 
+		// Render all categories
 		allCategories.forEach((category: cssCategory) => {
 			const categoryEl: HTMLDivElement = content.createDiv({
 				cls: 'variable-category',
@@ -511,11 +469,15 @@ export class CustomThemeStudioView extends ItemView {
 			});
 			variableListEl.addClass('variable-list-hide');
 
+			// Category help hints
 			if (category.help) {
 				const variableListHelp = variableListEl.createDiv({
 					cls: 'variable-category-help-container',
 				});
-				setIcon(variableListHelp, 'info')
+				const variableListIcon = variableListHelp.createSpan({
+					cls: 'variable-category-help-icon',
+				});
+				setIcon(variableListIcon, 'info')
 				variableListHelp.createEl('span', {
 					cls: 'variable-category-help',
 					text: category.help,
@@ -550,6 +512,7 @@ export class CustomThemeStudioView extends ItemView {
 
 	}
 
+	// Create variable input elements
 	private createVariableItemInput(container: HTMLElement, variable: { name: string; value: string; }, category: string): void {
 		const item = container.createDiv({
 			cls: 'variable-item',
@@ -575,7 +538,6 @@ export class CustomThemeStudioView extends ItemView {
 				'data-tooltip-position': 'top'
 			}
 		});
-
 		nameEl.addEventListener('click', () => {
 			copyStringToClipboard('var(' + variable.name + ')', 'var(' + variable.name + ')');
 		});
@@ -592,10 +554,12 @@ export class CustomThemeStudioView extends ItemView {
 			}
 		});
 
+		// For clear input button
 		if (currentVarValue) {
 			valueInput.classList.add('clear-variable-input--touched');
 		}
 
+		// Hex color picker
 		if (this.plugin.settings.enableColorPicker) {
 
 			if (variable.value.startsWith('#')) {
@@ -628,6 +592,7 @@ export class CustomThemeStudioView extends ItemView {
 			}
 		}
 
+		// Clear input button
 		const clearInputButton: HTMLButtonElement = clearInputContainer.createEl('button', {
 			attr: {
 				class: 'clear-variable-input-button',
@@ -636,7 +601,6 @@ export class CustomThemeStudioView extends ItemView {
 				'tabindex': '0'
 			}
 		});
-
 		clearInputButton.addEventListener('click', (evt) => {
 			valueInput.value = '';
 			valueInput.focus();
@@ -646,6 +610,8 @@ export class CustomThemeStudioView extends ItemView {
 		})
 
 		// Listen for input changes and update theme
+		// TODO: how do deal with auto-apply changes with variables, maybe instead of on input save on change?
+		// or give option in settings
 		valueInput.addEventListener('input', (e) => {
 			const newValue = (e.target as HTMLInputElement).value;
 			this.cssVariableManager.updateVariable(variable.name as string, newValue, category);
@@ -675,12 +641,41 @@ export class CustomThemeStudioView extends ItemView {
 		});
 	}
 
+	// Filer variables
+	private async filterVariables(searchTerm: string): Promise<void> {
+		// Filter all variables
+		const varItems: NodeListOf<Element> = this.containerEl.querySelectorAll('.variable-item');
+		varItems.forEach((item: Element) => {
+			const varName: string = item.getAttribute('data-var-name')?.toLowerCase() || '';
+			const varDefaultValue: string = item.getAttribute('data-var-value')?.toLowerCase() || '';
+			const varValue: string = (item.querySelector('.variable-value-input') as HTMLInputElement).value || '';
+			if (searchTerm !== '') {
+				// Show matches or hide non-matches
+				if (
+					varName.includes(searchTerm) || 
+					varDefaultValue.includes(searchTerm) || 
+					varValue.includes(searchTerm)
+				) {
+					item.addClass('variable-item-show');
+					item.removeClass('variable-item-hide');
+				} else {
+					item.addClass('variable-item-hide');
+					item.removeClass('variable-item-show');
+				}
+			} else {
+				// Empty search - show all variables
+				item.addClass('variable-item-show');
+				item.removeClass('variable-item-hide');
+			}
+		});
+	}
+
+	// Render custom elements section
 	private renderCustomElements(): void {
 		const section: HTMLDivElement = this.containerEl.createDiv('element-section')
 		const header: HTMLDivElement = section.createDiv('collapsible');
 		const headerTitle: HTMLDivElement = header.createDiv('collapsible-header');
 		headerTitle.createSpan({ text: 'Custom elements' });
-
 		const toggleIcon: HTMLButtonElement = headerTitle.createEl('button', {
 			attr: {
 				'class': 'collapse-icon clickable-icon',
@@ -691,7 +686,8 @@ export class CustomThemeStudioView extends ItemView {
 		});
 
 		const content: HTMLDivElement = header.createDiv('collapsible-content');
-
+		
+		// Check saved toggle state
 		if (this.plugin.settings.collapsedCustomElements === true) {
 			content.addClass('collapsible-content-show');
 			content.removeClass('collapsible-content-hide');
@@ -706,6 +702,7 @@ export class CustomThemeStudioView extends ItemView {
 			toggleIcon.setAttr('data-tooltip-position', 'top');
 		}
 
+		// Make header title clickable to toggle visibility
 		headerTitle.addEventListener('click', () => {
 			if (content.hasClass('collapsible-content-hide')) {
 				content.addClass('collapsible-content-show');
@@ -734,7 +731,6 @@ export class CustomThemeStudioView extends ItemView {
 			text: 'Select element',
 			cls: 'mod-cta select-element-button'
 		});
-
 		selectElementButton.addEventListener('click', async () => {
 			// Check if editor section is already visible
 			const editorSection: Element | null = this.containerEl.querySelector('.css-editor-section');
@@ -762,7 +758,6 @@ export class CustomThemeStudioView extends ItemView {
 			text: 'New element',
 			cls: 'mod-cta add-element-button',
 		});
-
 		addElementButton.addEventListener('click', async () => {
 			// Check if editor section is already visible
 			const editorSection: Element | null = this.containerEl.querySelector('.css-editor-section');
@@ -799,7 +794,6 @@ export class CustomThemeStudioView extends ItemView {
 		// Custom custom elements search
 		const searchContainer: HTMLDivElement = content.createDiv('search-elements-container');
 		const clearInputContainer: HTMLDivElement = searchContainer.createDiv('clear-search-elements-input');
-
 		const searchInput: HTMLInputElement = clearInputContainer.createEl('input', {
 			attr: {
 				type: 'text',
@@ -807,7 +801,6 @@ export class CustomThemeStudioView extends ItemView {
 				class: 'search-elements-input'
 			}
 		});
-
 		searchInput.addEventListener('input', async (e) => {
 			const searchTerm: string = (e.target as HTMLInputElement).value.toLowerCase().trim();
 			this.elementSearch = searchTerm;
@@ -829,7 +822,6 @@ export class CustomThemeStudioView extends ItemView {
 				'data-tooltip-position': 'top'
 			}
 		});
-
 		clearSearchButton.addEventListener('click', (evt) => {
 			searchInput.value = '';
 			searchInput.focus();
@@ -853,6 +845,25 @@ export class CustomThemeStudioView extends ItemView {
 
 	}
 
+	// Filter custom elements
+	async filterCustomElements(query: string) {
+		// Filter all custom elements
+		this.plugin.settings.customElements.forEach((el) => {
+			if (
+				el.name?.toLowerCase().contains(query) ||
+				el.selector?.toLowerCase().contains(query) ||
+				el.css?.toLowerCase().contains(query)
+			) {
+				this.containerEl.querySelector('[data-cts-uuid="' + el.uuid + '"]')?.addClass('element-item-show');
+				this.containerEl.querySelector('[data-cts-uuid="' + el.uuid + '"]')?.removeClass('element-item-hide');
+			} else {
+				this.containerEl.querySelector('[data-cts-uuid="' + el.uuid + '"]')?.addClass('element-item-hide');
+				this.containerEl.querySelector('[data-cts-uuid="' + el.uuid + '"]')?.removeClass('element-item-show');
+			}
+		});
+	}
+
+	// Render export section
 	private renderExportSection(): void {
 		const section: HTMLDivElement = this.containerEl.createDiv('export-section');
 		const header: HTMLDivElement = section.createDiv('collapsible');
@@ -869,6 +880,7 @@ export class CustomThemeStudioView extends ItemView {
 		});
 
 		const content: HTMLDivElement = header.createDiv('collapsible-content');
+		// Check saved toggle state
 		if (this.plugin.settings.collapsedExportTheme === true) {
 			content.addClass('collapsible-content-show');
 			content.removeClass('collapsible-content-hide');
@@ -883,6 +895,7 @@ export class CustomThemeStudioView extends ItemView {
 			toggleIcon.setAttr('data-tooltip-position', 'top');
 		}
 
+		// Make header title clickable to toggle visibility
 		headerTitle.addEventListener('click', () => {
 			if (content.hasClass('collapsible-content-hide')) {
 				content.addClass('collapsible-content-show');
@@ -948,12 +961,10 @@ export class CustomThemeStudioView extends ItemView {
 			this.plugin.settings.exportThemeName = nameInput.value;
 			this.plugin.saveSettings();
 		});
-
 		authorInput.addEventListener('change', () => {
 			this.plugin.settings.exportThemeAuthor = authorInput.value;
 			this.plugin.saveSettings();
 		});
-
 		urlInput.addEventListener('change', () => {
 			this.plugin.settings.exportThemeURL = urlInput.value;
 			this.plugin.saveSettings();
@@ -966,12 +977,10 @@ export class CustomThemeStudioView extends ItemView {
 			text: 'Export CSS',
 			cls: 'mod-cta'
 		});
-
 		exportCSSButton.addEventListener('click', async () => {
 			this.plugin.themeManager.exportThemeCSS();
 
 		});
-
 		const copyCSSButton: HTMLButtonElement = buttonContainer.createEl('button', {
 			cls: 'copy-css-button clickable-icon'
 		});
@@ -979,7 +988,6 @@ export class CustomThemeStudioView extends ItemView {
 		copyCSSButton.setAttr('data-tooltip-position', 'top');
 		copyCSSButton.setAttr('tabindex', '0');
 		setIcon(copyCSSButton, 'copy');
-
 		copyCSSButton.addEventListener('click', () => {
 			this.plugin.themeManager.copyThemeToClipboard();
 		});
@@ -988,12 +996,10 @@ export class CustomThemeStudioView extends ItemView {
 			text: 'Export manifest',
 			cls: 'mod-cta'
 		});
-
 		exportManifestButton.addEventListener('click', async () => {
 			this.plugin.themeManager.exportThemeManifest();
 
 		});
-
 		const copyManifestButton: HTMLButtonElement = buttonContainer.createEl('button', {
 			cls: 'copy-css-button clickable-icon'
 		});
@@ -1001,7 +1007,6 @@ export class CustomThemeStudioView extends ItemView {
 		copyManifestButton.setAttr('data-tooltip-position', 'top');
 		copyManifestButton.setAttr('tabindex', '0');
 		setIcon(copyManifestButton, 'copy');
-
 		copyManifestButton.addEventListener('click', () => {
 			this.plugin.themeManager.copyManifestToClipboard();
 		});

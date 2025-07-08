@@ -1,5 +1,5 @@
 import { Plugin, WorkspaceLeaf } from 'obsidian';
-import { CustomThemeStudioView, VIEW_TYPE_CTS } from './view';
+import { CustomThemeStudioView, VIEW_TYPE_CTS } from './views/customThemeStudioView';
 import { ThemeManager } from './managers/themeManager';
 import { DEFAULT_SETTINGS, CustomThemeStudioSettings, CustomThemeStudioSettingTab } from './settings';
 import { ICodeEditorConfig } from './interfaces/types';

@@ -1,5 +1,4 @@
 import 'ace-builds/src-noconflict/ace';
-
 // light-theme
 import 'ace-builds/src-noconflict/theme-chrome';
 import 'ace-builds/src-noconflict/theme-cloud_editor';
@@ -20,7 +19,6 @@ import 'ace-builds/src-noconflict/theme-sqlserver';
 import 'ace-builds/src-noconflict/theme-textmate';
 import 'ace-builds/src-noconflict/theme-tomorrow';
 import 'ace-builds/src-noconflict/theme-xcode';
-
 // dark-theme
 import 'ace-builds/src-noconflict/theme-ambiance';
 import 'ace-builds/src-noconflict/theme-chaos';

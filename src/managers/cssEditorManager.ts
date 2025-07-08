@@ -1,8 +1,8 @@
 import { App, setIcon, Workspace } from 'obsidian';
 import CustomThemeStudioPlugin from '../main';
-import { CustomThemeStudioView } from '../view';
+import { CustomThemeStudioView } from '../views/customThemeStudioView';
 import { CustomThemeStudioSettings, CustomElement } from '../settings';
-import { AceService } from '../services/AceService';
+import { AceService } from '../ace/AceService';
 import { ICodeEditorConfig } from '../interfaces/types';
 import * as ace from 'ace-builds';
 import { confirm } from '../modals/confirmModal';
@@ -229,7 +229,6 @@ export class CSSEditorManager {
 				if (css !== '') {
 					this.applyChanges(css);
 				}
-				
 			}
 		});
 
@@ -288,16 +287,10 @@ export class CSSEditorManager {
 		this.selectorInputEl.value = selector;
 		this.editorUUID.value = uuid;
 
-		// Try to find existing element with this selector
-		// const existingElement = this.plugin.settings.customElements.find(el => el.selector === selector);
-
 		// Try to find existing element with this UUID
 		const existingElement = this.plugin.settings.customElements.find(el => el.uuid === uuid);
 
 		if (existingElement) {
-
-			// this.editor!.session.on('change', this.changeListener);
-
 			this.editorUUID!.value = existingElement.uuid;
 			this.editorEl!.value = existingElement.css;
 			this.aceService.setValue(existingElement.css, 1);
@@ -423,7 +416,6 @@ export class CSSEditorManager {
 		}
 
 		// Check if element already exists
-		// const existingIndex = this.plugin.settings.customElements.findIndex(el => el.selector === selector);
 		const existingIndex = this.plugin.settings.customElements.findIndex(el => el.uuid === uuid);
 
 		if (existingIndex >= 0) {
@@ -592,7 +584,6 @@ export class CSSEditorManager {
 		const item = containerEl.createDiv({
 			cls: 'element-item',
 			attr: {
-				// 'data-selector': element.selector,
 				'data-cts-uuid': element.uuid,
 				'data-tooltip-position': 'top'
 			}
@@ -644,7 +635,6 @@ export class CSSEditorManager {
 		// Edit button
 		editButton.addEventListener('click', async () => {
 			// Check if editor section is already visible
-			// const editorSection = window.document.querySelector('.css-editor-section');
 			const editorSection = containerEl.querySelector('.css-editor-section');
 			const isEditorVisible = editorSection && getComputedStyle(editorSection).display !== 'none';
 

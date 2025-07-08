@@ -9,8 +9,6 @@ import 'ace-builds/src-noconflict/keybinding-vscode';
 import { ICodeEditorConfig } from '../interfaces/types';
 import CustomThemeStudioPlugin from '../main';
 
-
-
 export class AceService {
 	private editor: ace.Ace.Editor | null = null;
 	plugin: CustomThemeStudioPlugin;

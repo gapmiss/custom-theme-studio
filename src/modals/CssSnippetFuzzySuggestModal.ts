@@ -1,7 +1,7 @@
 import { type App, normalizePath, setIcon, FuzzySuggestModal } from "obsidian";
 import type CustomThemeStudioPlugin from "../main";
 import { generateUniqueId, showNotice } from "../utils";
-import { CustomThemeStudioView, VIEW_TYPE_CTS } from "../view";
+import { CustomThemeStudioView, VIEW_TYPE_CTS } from "../views/customThemeStudioView";
 import { ICodeEditorConfig } from '../interfaces/types';
 import { confirm } from '../modals/confirmModal';
 

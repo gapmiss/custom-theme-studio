@@ -1,6 +1,6 @@
 import { Notice, ButtonComponent } from 'obsidian';
 import CustomThemeStudioPlugin from '../main';
-import { CustomThemeStudioView } from '../view';
+import { CustomThemeStudioView } from '../views/customThemeStudioView';
 import { generateUniqueId } from '../utils';
 import { copyStringToClipboard } from '../utils';
 
@@ -340,8 +340,7 @@ export class ElementSelectorManager {
 	}
 
 	selectElement(element: HTMLElement, evt: MouseEvent): void {
-
-		// if (evt.metaKey) {
+		// Shift key for copy 2 clipboard
 		if (evt.shiftKey) {
 			this.copySelectorToClipboard(element);
 			return;
@@ -365,8 +364,6 @@ export class ElementSelectorManager {
 			// Show the editor section
 			this.view.cssEditorManager.showEditorSection(true);
 		}
-
-		// new Notice(`Element selected: ${selector}`);
 	}
 
 	generateSelector(element: HTMLElement, useSpecific: boolean = false, includeParent: boolean = false): string {

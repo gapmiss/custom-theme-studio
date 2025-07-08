@@ -209,7 +209,7 @@ body {
     margin-top: 1em !important;
 }
 
-.tags-filtering {
+.filter-tags {
     padding: .5em;
     display: flex;
     gap: .5em;
