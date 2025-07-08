@@ -34,11 +34,7 @@ class SettingsIO {
             }
 
             const settingsData = JSON.stringify(settings, null, 2);
-
-            const electron = (window as any).require
-                ? (window as any).require('electron')
-                : null;
-            const remote = electron ? electron.remote : null;
+            const remote = window.require('electron').remote || null;
 
             if (!remote || !remote.dialog) {
                 // Fall back to saving in vault if Electron APIs are not available
