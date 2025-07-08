@@ -9,7 +9,7 @@ export interface cssCategory {
 	help: DocumentFragment | null;
 }
 
-function createHelpFragment(text: string, parent: string = '', category: string = '') {
+function createHelpFragment(text: string, parent: string = '', category: string = ''): DocumentFragment {
 	let helpFragment = document.createDocumentFragment();
 	if (text !== '') {
 		helpFragment.append(
@@ -17,13 +17,11 @@ function createHelpFragment(text: string, parent: string = '', category: string 
 		);
 	}
 	if (parent !== '' && category !== '') {
-		helpFragment.append(
-			helpFragment.createEl('a', {
-				href: 'https://docs.obsidian.md/Reference/CSS+variables/' + parent + '/' + category,
-				text: category + ' - Developer Documentation',
-				attr: { 'aria-label': 'https://docs.obsidian.md/Reference/' + parent + '/' + category, 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-			})
-		);
+		helpFragment.createEl('a', {
+			href: 'https://docs.obsidian.md/Reference/CSS+variables/' + parent + '/' + category,
+			text: category + ' - Developer Documentation',
+			attr: { 'aria-label': 'https://docs.obsidian.md/Reference/' + parent + '/' + category, 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
+		})
 	}
 	return helpFragment;
 }
