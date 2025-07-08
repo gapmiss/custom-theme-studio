@@ -156,7 +156,10 @@ export class ElementSelectorManager {
 
 		// Hide tooltip
 		if (this.tooltip) {
-			this.tooltip.innerHTML = '';
+			// Remove tooltip content
+			while (this.tooltip.hasChildNodes()) {
+				this.tooltip.removeChild(this.tooltip.lastChild!);
+			}
 			this.tooltip.removeClass('cts-element-picker-tooltip-show');
 			this.tooltip.addClass('cts-element-picker-tooltip-hide');
 		}
@@ -243,47 +246,65 @@ export class ElementSelectorManager {
 		const dataAttributes = this.getDataAttributes(element);
 
 		// Set tooltip content
-		let tooltipContent: string = ''
-		tooltipContent += `
-			<div><strong>Tag:</strong> <code>${tagName}</code></div>
-		`;
+		this.tooltip.createDiv()
+			.createEl('strong', {text: "Tag: "})
+			.createEl('code', {text: tagName});
 
 		// Add aria-label if present (highlight it prominently)
 		if (ariaLabel) {
-			tooltipContent += `
-				<div class="attribute-highlight aria-label-highlight">
-					<strong>Aria-Label:</strong> "${ariaLabel}"
-					<div class="attribute-note">(High priority selector)</div>
-				</div>`;
+			this.tooltip.createDiv({cls: 'attribute-highlight aria-label-highlight'})
+				.createEl('strong', {text: 'aria-label: '})
+				.createSpan({text: `"${ariaLabel}"`})
+				.createDiv({cls: 'attribute-note', text: '(High priority selector)'});
 		}
 
 		// Add data attributes (highlight them)
 		if (dataAttributes.length > 0) {
-			tooltipContent += `<div class="attribute-highlight"><strong>Data Attributes:</strong></div>`;
-			tooltipContent += `<ul class="data-attributes-list">`;
+			this.tooltip.createDiv({cls: 'attribute-highlight'})
+				.createEl('strong', {text: 'Data Attributes:'});
+			let attrList: HTMLElement = this.tooltip.createEl('ul', {cls: 'data-attributes-list'});
 			dataAttributes.forEach(attr => {
-				tooltipContent += `<li>${attr.name}="${attr.value}"</li>`;
+				attrList.appendChild(
+					attrList.createEl('li', {text: `${attr.name}="${attr.value}"`})
+				);
 			});
-			tooltipContent += `</ul>`;
 		}
 
 		// Add classes if present
 		if (classes) {
-			tooltipContent += `<div class="tooltip-classes"><strong>Classes:</strong> <span>${classes.replace('.cts-element-picker-hover', '')}</span></div>`;
+			this.tooltip.createDiv({cls: 'tooltip-classes'})
+				.createEl('strong', {text: 'Classes: '})
+				.createSpan({text: `${classes.replace('.cts-element-picker-hover', '')}`});
 		}
 
-		// Add both selector options
-		tooltipContent += `
-			<div><strong>Default selector:</strong> <span class="selector-highlight">${defaultSelector}</span></div>
-			<div><strong>Specific selector:</strong> <span class="selector-highlight">${specificSelector}</span></div>
-			<div><strong>Specific selector with parent:</strong> <span class="selector-highlight">${parentSelector}</span></div>
-			<div class="keys first"><kbd>Click</kbd> to select with default selector</div>
-			<div class="keys"><kbd>Alt</kbd> + <kbd>Click</kbd> to select with specific selector</div>
-			<div class="keys"><kbd>Command</kbd>+<kbd>Click</kbd> to select the specific selector with parent</div>
-			<div class="keys"><kbd>Shift</kbd>+<kbd>Click</kbd> to copy the specific selector with parent to your clipboard</div>
-		`;
-
-		this.tooltip.insertAdjacentHTML('afterbegin', tooltipContent);
+		// Add selector options
+		let defaultSelectorDiv: HTMLElement = this.tooltip.createDiv();
+		defaultSelectorDiv.createEl('strong', {text: 'Default selector: '});
+		defaultSelectorDiv.createSpan({cls: 'selector-highlight', text: `${defaultSelector}`});
+		let specificSelectorDiv: HTMLElement = this.tooltip.createDiv();
+		specificSelectorDiv.createEl('strong', {text: 'Specific selector: '});
+		specificSelectorDiv.createSpan({cls: 'selector-highlight', text: `${specificSelector}`});
+		let specificSelectorWithParentDiv: HTMLElement = this.tooltip.createDiv();
+		specificSelectorWithParentDiv.createEl('strong', {text: 'Specific selector with parent: '});
+		specificSelectorWithParentDiv.createSpan({cls: 'selector-highlight', text: `${parentSelector}`});
+		let kbdDefaultDiv: HTMLElement = this.tooltip.createDiv({cls: 'keys first'});
+		kbdDefaultDiv.createEl('kbd', {text: 'Click'});
+		kbdDefaultDiv.createSpan({text: ' to select with default selector'});
+		let kbdAltDiv: HTMLElement = this.tooltip.createDiv({cls: 'keys'});
+		kbdAltDiv.createEl('kbd', {text: 'Alt'});
+		kbdAltDiv.createSpan({text: ' + '});
+		kbdAltDiv.createEl('kbd', {text: 'Click'});
+		kbdAltDiv.createSpan({text: ' to select with specific selector'});
+		let kbdCtrlDiv: HTMLElement = this.tooltip.createDiv({cls: 'keys'});
+		kbdCtrlDiv.createEl('kbd', {text: 'Cmd/Ctrl'});
+		kbdCtrlDiv.createSpan({text: ' + '});
+		kbdCtrlDiv.createEl('kbd', {text: 'Click'});
+		kbdCtrlDiv.createSpan({text: ' to select the specific selector with parent'});
+		let kbdShiftDiv: HTMLElement = this.tooltip.createDiv({cls: 'keys'});
+		kbdShiftDiv.createEl('kbd', {text: 'Shift'});
+		kbdShiftDiv.createSpan({text: ' + '});
+		kbdShiftDiv.createEl('kbd', {text: 'Click'});
+		kbdShiftDiv.createSpan({text: ' to copy the specific selector with parent to your clipboard'});
 
 		// First display the tooltip to get its dimensions
 		this.tooltip.removeClass('cts-element-picker-tooltip-hide');

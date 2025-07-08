@@ -29,10 +29,10 @@ export default class CustomThemeStudioPlugin extends Plugin {
 			this.activateView();
 		});
 
-		// Add command to toggle the view
+		// Add command to open the view
 		this.addCommand({
 			id: 'open-theme-studio',
-			name: 'Open Custom Theme Studio',
+			name: 'Open view',
 			callback: () => {
 				this.activateView();
 			}

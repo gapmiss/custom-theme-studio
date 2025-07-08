@@ -539,6 +539,7 @@ a[class*="tag-filter"]:focus {
     & .attribute-note {
         font-weight: var(--font-bold);
     }
+    font-size: var(--font-smaller);
 }
 
 .cts-element-picker-tooltip .selector-highlight {
@@ -547,6 +548,7 @@ a[class*="tag-filter"]:focus {
     border-radius: 3px;
     font-family: var(--font-monospace-default);
     border-left: 3px solid rgba(0, 200, 0, 0.5);
+    font-size: var(--font-smaller);
 }
 
 .cts-element-picker-tooltip .data-attributes-list {

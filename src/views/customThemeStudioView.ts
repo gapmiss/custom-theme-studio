@@ -261,7 +261,7 @@ export class CustomThemeStudioView extends ItemView {
 							variableLists.forEach((el: HTMLElement) => {
 								let dataVarTag: string | null = el.getAttr('data-var-tag');
 								let hasVisibleChildren: boolean = false;
-								var children: HTMLCollection = el.children;
+								let children: HTMLCollection = el.children;
 								// Check for visible children
 								for (var i = 0; i < children.length; i++) {
 									if (children[i].hasClass('variable-item-show')) {
@@ -347,7 +347,7 @@ export class CustomThemeStudioView extends ItemView {
 			} else {
 				variableListEls.forEach((el: HTMLElement) => {
 					let hasVisibleChildren: boolean = false;
-					var children: HTMLCollection = el.children;
+					let children: HTMLCollection = el.children;
 					for (var i = 0; i < children.length; i++) {
 						if (children[i].hasClass('variable-item-show')) {
 							hasVisibleChildren = true;
