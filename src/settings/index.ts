@@ -33,6 +33,7 @@ export interface CustomThemeStudioSettings {
 	collapsedCustomElements: boolean;
 	collapsedExportTheme: boolean;
 	autoApplyChanges: boolean;
+	variableInputListener: string;
 	generateComputedCSS: boolean;
 	showConfirmation: boolean;
 	enableColorPicker: boolean;
@@ -64,6 +65,7 @@ export const DEFAULT_SETTINGS: CustomThemeStudioSettings = {
 	collapsedCustomElements: false,
 	collapsedExportTheme: false,
 	autoApplyChanges: false,
+	variableInputListener: 'input',
 	generateComputedCSS: false,
 	showConfirmation: true,
 	enableColorPicker: false,
@@ -125,21 +127,46 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 			);
 
 		new Setting(containerEl)
-			.setName('Show confirmations')
-			.setDesc('Show a confirmation dialog warning about unsaved changes when leaving a CSS editor.')
-			.addToggle(toggle => toggle
-				.setValue(this.plugin.settings.showConfirmation)
-				.onChange(async (value) => {
-					this.plugin.settings.showConfirmation = value;
-					await this.plugin.saveSettings();
-				})
-			);
+			.setName('Reload view')
+			.setDesc('Most settings under CSS variables & Custom Elements require the plugin\'s view to be reloaded to take effect.')
+			.addButton(button => button
+				.setButtonText('Reload')
+				.setClass('mod-destructive')
+				.onClick(async () => {
+					if (await confirm('You may have unsaved changes. Reloading the view will reload all forms. Continue?', this.plugin.app)) {
+						try {
+							await this.plugin.reloadView();
+							new Notice('The Custom Theme Studio view has been reloaded');
+						} catch (error) {
+							console.error(error);
+							new Notice('Failed to reload view. Check developer console for details.', 10000);
+						}
+					}
+				}));
 
-		containerEl.createEl('h3', { text: 'CSS variables options' });
+
+
+		containerEl.createEl('h3', { text: 'CSS variables' });
+
+		new Setting(containerEl)
+			.setName('Variable input listener')
+			.setDesc('When to listen for value changes to trigger a CSS update. "Input" will update the CSS on every keystroke. "Change" will update the CSS when the cursor leaves the text input form.')
+			.addDropdown((dropdown) => {
+				dropdown
+					.addOptions({
+						'input': 'input',
+						'change': 'change',
+					})
+					.setValue(this.plugin.settings.variableInputListener)
+					.onChange(async (newValue) => {
+						this.plugin.settings.variableInputListener = newValue;
+						await this.plugin.saveSettings();
+					});
+			});
 
 		new Setting(containerEl)
 			.setName('Color picker')
-			.setDesc('Enable a color picker for CSS variables that have a default HEX color value (requires the plugin\'s view to be reloaded to take effect).')
+			.setDesc('Enable a color picker for CSS variables that have a default HEX color value.')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.enableColorPicker)
 				.onChange(async (value) => {
@@ -148,7 +175,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				})
 			);
 
-		containerEl.createEl('h3', { text: 'CSS editor options' });
+		containerEl.createEl('h3', { text: 'Custom elements' });
 
 		new Setting(containerEl)
 			.setName('Auto-apply changes')
@@ -171,6 +198,16 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		this.containerEl.appendChild(noticeDiv);
 
+		new Setting(containerEl)
+			.setName('Show confirmations')
+			.setDesc('Show a confirmation dialog warning about unsaved changes when leaving a CSS editor.')
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.showConfirmation)
+				.onChange(async (value) => {
+					this.plugin.settings.showConfirmation = value;
+					await this.plugin.saveSettings();
+				})
+			);
 
 		new Setting(containerEl)
 			.setName('Generate CSS')
@@ -182,6 +219,8 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				})
 			);
+
+		containerEl.createEl('h3', { text: 'CSS editor' });
 
 		new Setting(containerEl)
 			.setName('Color picker')
@@ -214,7 +253,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		let snippetsToggle = new Setting(containerEl)
 			.setName('Snippets')
-			.setDesc('Enable inline snippets in the CSS editor. These auto-complete snippets include every CSS variable within Obaidian. Requires the above "Live auto completion" toggle to be enabled.')
+			.setDesc('Enable inline snippets in the CSS editor. These auto-complete snippets include every CSS variable within Obsidian. Requires the above "Live auto completion" toggle to be enabled.')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.enableAceSnippets)
 				.onChange(async (value) => {
@@ -356,25 +395,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				}));
 
-		new Setting(containerEl)
-			.setName('Reload view')
-			.setDesc('Changed CSS editor options require the plugin\'s view to be reloaded to take effect.')
-			.addButton(button => button
-				.setButtonText('Reload')
-				.setClass('mod-destructive')
-				.onClick(async () => {
-					if (await confirm('You may have unsaved changes. Reloading the view will reload all forms. Continue?', this.plugin.app)) {
-						try {
-							await this.plugin.reloadView();
-							new Notice('The Custom Theme Studio view has been reloaded');
-						} catch (error) {
-							console.error(error);
-							new Notice('Failed to reload view. Check developer console for details.', 10000);
-						}
-					}
-				}));
-
-		containerEl.createEl('h3', { text: 'Export options' });
+		containerEl.createEl('h3', { text: 'Theme export' });
 
 		new Setting(containerEl)
 			.setName('Theme name')
@@ -427,11 +448,11 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				})
 			);
 
-		containerEl.createEl('h3', { text: 'Backup options' });
+		containerEl.createEl('h3', { text: 'Settings backup' });
 
 		new Setting(containerEl)
-			.setName('Export/Import settings')
-			.setDesc('Import will replace the current settings. If you aren\'t prompted to choose a location, then the file will be exported to/imported from the vault root as CTS_settings.json (json files aren\'t visible in the vault by default).')
+			.setName('Export & import settings')
+			.setDesc('Import will replace the current settings. If you are not prompted to choose a location, then the file will be exported to/imported from the vault root as CTS_settings.json (json files aren\'t visible in the vault by default).')
 			.addButton((button) => {
 				button.setButtonText('Export');
 				button.onClick(async () => {
@@ -453,7 +474,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				});
 			});
 
-		containerEl.createEl('h3', { text: 'Reset options', cls: 'reset-options-heading' });
+		containerEl.createEl('h3', { text: 'Reset', cls: 'reset-options-heading' });
 
 		new Setting(containerEl)
 			.setName('Reset theme')

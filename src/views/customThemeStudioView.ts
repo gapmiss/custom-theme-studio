@@ -612,7 +612,7 @@ export class CustomThemeStudioView extends ItemView {
 		// Listen for input changes and update theme
 		// TODO: how do deal with auto-apply changes with variables, maybe instead of on input save on change?
 		// or give option in settings
-		valueInput.addEventListener('input', (e) => {
+		valueInput.addEventListener(this.plugin.settings.variableInputListener, (e) => {
 			const newValue = (e.target as HTMLInputElement).value;
 			this.cssVariableManager.updateVariable(variable.name as string, newValue, category);
 			if (this.plugin.settings.themeEnabled) {
