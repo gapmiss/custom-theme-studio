@@ -177,8 +177,7 @@ export class CSSEditorManager {
 
 		if (!this.plugin.settings.autoApplyChanges) {
 			const applyButton = buttonContainer.createEl('button', {
-				text: 'Apply Changes',
-				cls: 'mod-cta'
+				text: 'Apply Changes'
 			});
 			// Apply button
 			applyButton.addEventListener('click', () => {

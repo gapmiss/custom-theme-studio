@@ -729,7 +729,7 @@ export class CustomThemeStudioView extends ItemView {
 		// "Select element" button
 		const selectElementButton: HTMLButtonElement = selectElementButtonContainer.createEl('button', {
 			text: 'Select element',
-			cls: 'mod-cta select-element-button'
+			cls: 'select-element-button'
 		});
 		selectElementButton.addEventListener('click', async () => {
 			// Check if editor section is already visible
@@ -756,7 +756,7 @@ export class CustomThemeStudioView extends ItemView {
 		// "Add element" button
 		const addElementButton = selectElementButtonContainer.createEl('button', {
 			text: 'New element',
-			cls: 'mod-cta add-element-button',
+			cls: 'add-element-button',
 		});
 		addElementButton.addEventListener('click', async () => {
 			// Check if editor section is already visible
@@ -974,8 +974,7 @@ export class CustomThemeStudioView extends ItemView {
 		const buttonContainer: HTMLDivElement = content.createDiv('button-container');
 
 		const exportCSSButton: HTMLButtonElement = buttonContainer.createEl('button', {
-			text: 'Export CSS',
-			cls: 'mod-cta'
+			text: 'Export CSS'
 		});
 		exportCSSButton.addEventListener('click', async () => {
 			this.plugin.themeManager.exportThemeCSS();
@@ -993,8 +992,7 @@ export class CustomThemeStudioView extends ItemView {
 		});
 
 		const exportManifestButton: HTMLButtonElement = buttonContainer.createEl('button', {
-			text: 'Export manifest',
-			cls: 'mod-cta'
+			text: 'Export manifest'
 		});
 		exportManifestButton.addEventListener('click', async () => {
 			this.plugin.themeManager.exportThemeManifest();

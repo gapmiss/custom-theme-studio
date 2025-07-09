@@ -9,7 +9,7 @@ class ConfirmModal extends Modal {
         super(app);
         this.containerEl.addClass('mod-confirmation');
         this.containerEl.addClass('snippet-import-confirmation');
-        this.addButton('mod-cta', 'OK', () => this.resolve && this.resolve(true));
+        this.addButton('', 'OK', () => this.resolve && this.resolve(true));
         this.addCancelButton();
     }
     open(): Promise<boolean> {
