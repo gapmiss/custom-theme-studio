@@ -270,7 +270,7 @@ export const cssVariableDefaults: cssVariable[] = [
 	{ cat: 'divider', variable: '--divider-width-hover', default: '3px' },
 	{ cat: 'divider', variable: '--divider-vertical-height', default: 'calc(100% - var(--header-height))' },
 	{ cat: 'dragging', variable: '--drag-ghost-background', default: 'rgba(0, 0, 0, 0.85)' },
-	{ cat: 'dragging', variable: '--drag-ghost-text-color', default: '#fff' },
+	{ cat: 'dragging', variable: '--drag-ghost-text-color', default: '#ffffff' },
 	{ cat: 'dropdowns', variable: '--dropdown-background', default: 'var(--interactive-normal)' },
 	{ cat: 'dropdowns', variable: '--dropdown-background-blend-mode', default: 'hard-light' },
 	{ cat: 'dropdowns', variable: '--dropdown-background-hover', default: 'var(--interactive-hover)' },
