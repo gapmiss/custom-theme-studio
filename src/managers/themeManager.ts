@@ -123,8 +123,8 @@ export class ThemeManager {
 		const leaves = this.plugin.app.workspace.getLeavesOfType('cts-view');
 		if (leaves.length > 0) {
 			const view: any = leaves[0].view;
-			if (view && view.elementSelector) {
-				view.elementSelector.startElementSelection();
+			if (view && view.elementSelectorManager) {
+				view.elementSelectorManager.startElementSelection();
 				// Expand "Element customization" section
 				const section: HTMLDivElement | null = window.activeDocument.querySelector('.element-section');
 				const collapsibleIcon: HTMLDivElement | null | undefined = section?.querySelector('.collapse-icon');
@@ -142,8 +142,8 @@ export class ThemeManager {
 					const newLeaves = this.plugin.app.workspace.getLeavesOfType('cts-view');
 					if (newLeaves.length > 0) {
 						const view: any = newLeaves[0].view;
-						if (view && view.elementSelector) {
-							view.elementSelector.startElementSelection();
+						if (view && view.elementSelectorManager) {
+							view.elementSelectorManager.startElementSelection();
 							// Expand "Element customization" section
 							const section: HTMLDivElement | null = window.activeDocument.querySelector('.element-section');
 							const collapsibleIcon: HTMLDivElement | null | undefined = section?.querySelector('.collapse-icon');
