@@ -7,6 +7,7 @@ import { ICodeEditorConfig } from '../interfaces/types';
 import { confirm } from '../modals/confirmModal';
 import { CSSVariable, CustomThemeStudioSettings, DEFAULT_SETTINGS } from '../settings';
 import { copyStringToClipboard, getCurrentTheme } from '../utils';
+import { FontImportModal } from "../modals/fontImportModal";
 
 export const VIEW_TYPE_CTS = 'cts-view';
 
@@ -785,6 +786,15 @@ export class CustomThemeStudioView extends ItemView {
 			if (buttonContainer && editorSection) {
 				buttonContainer.after(editorSection);
 			}
+		});
+
+		// @font-face rule Modal
+		const addFontFaceButton = selectElementButtonContainer.createEl('button', {
+			text: 'Import font',
+			cls: 'add-font-face-button'
+		});
+		addFontFaceButton.addEventListener('click', async () => {
+			new FontImportModal(this.app, this.plugin).open();
 		});
 
 		// CSS Editor section - initially hidden when not adding a new element
