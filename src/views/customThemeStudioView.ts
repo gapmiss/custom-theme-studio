@@ -307,7 +307,7 @@ export class CustomThemeStudioView extends ItemView {
 
 		// Search on input event
 		searchInput.addEventListener('input', (e) => {
-			const searchTerm: string = (e.target as HTMLInputElement).value.toLowerCase().trim();
+			const searchTerm: string = (e.target as HTMLInputElement).value.trim();
 			let activeTagFilter: string | null | undefined = this.containerEl.querySelector('.tag-filter-active')?.getAttr('data-tag-filter');
 
 			this.variableSearch = searchTerm;
@@ -646,8 +646,8 @@ export class CustomThemeStudioView extends ItemView {
 		// Filter all variables
 		const varItems: NodeListOf<Element> = this.containerEl.querySelectorAll('.variable-item');
 		varItems.forEach((item: Element) => {
-			const varName: string = item.getAttribute('data-var-name')?.toLowerCase() || '';
-			const varDefaultValue: string = item.getAttribute('data-var-value')?.toLowerCase() || '';
+			const varName: string = item.getAttribute('data-var-name') || '';
+			const varDefaultValue: string = item.getAttribute('data-var-value') || '';
 			const varValue: string = (item.querySelector('.variable-value-input') as HTMLInputElement).value || '';
 			if (searchTerm !== '') {
 				// Show matches or hide non-matches
@@ -802,7 +802,7 @@ export class CustomThemeStudioView extends ItemView {
 			}
 		});
 		searchInput.addEventListener('input', async (e) => {
-			const searchTerm: string = (e.target as HTMLInputElement).value.toLowerCase().trim();
+			const searchTerm: string = (e.target as HTMLInputElement).value.trim();
 			this.elementSearch = searchTerm;
 
 			await this.filterCustomElements(searchTerm);
@@ -850,9 +850,9 @@ export class CustomThemeStudioView extends ItemView {
 		// Filter all custom elements
 		this.plugin.settings.customElements.forEach((el) => {
 			if (
-				el.name?.toLowerCase().contains(query) ||
-				el.selector?.toLowerCase().contains(query) ||
-				el.css?.toLowerCase().contains(query)
+				el.name?.includes(query) ||
+				el.selector?.includes(query) ||
+				el.css?.includes(query)
 			) {
 				this.containerEl.querySelector('[data-cts-uuid="' + el.uuid + '"]')?.addClass('element-item-show');
 				this.containerEl.querySelector('[data-cts-uuid="' + el.uuid + '"]')?.removeClass('element-item-hide');
