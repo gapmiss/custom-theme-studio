@@ -5,14 +5,12 @@ import { generateUniqueId, showNotice } from "../utils";
 import { confirm } from "./confirmModal";
 import fs from 'fs';
 import path from 'path';
-import { text } from "stream/consumers";
 
 export class FontImportModal extends Modal {
 	plugin: CustomThemeStudioPlugin;
 	view: CustomThemeStudioView;
 	private fontName: string = '';
 	private base64Content: string | null = '';
-	private fontFaceRule: string;
 	private fontExtensions: string[];
 	private fontFilePath: string;
 
@@ -21,7 +19,6 @@ export class FontImportModal extends Modal {
 		this.plugin = plugin;
 		this.fontExtensions = ['ttf', 'otf', 'woff', 'woff2'];
 		this.fontFilePath = '';
-		// this.fontFaceRule = '';
 	}
 
 	async onOpen() {
@@ -83,7 +80,6 @@ export class FontImportModal extends Modal {
 					}
 					this.base64Content = await this.importFontFile();
 					if (this.base64Content) {
-						// this.fontFaceRule = this.generateFontFaceRule();
 						let name = "@font-face: " + this.fontName;
 						let css = this.generateFontFaceRule();
 						let uuid = generateUniqueId();
@@ -165,7 +161,6 @@ export class FontImportModal extends Modal {
 				mimeType = 'application/octet-stream';
 				break;
 		}
-
 		return `@font-face {\n\tfont-family: "${this.fontName}";\n\tsrc: url(data:${mimeType};base64,${this.base64Content});\n}`;
 	}
 
