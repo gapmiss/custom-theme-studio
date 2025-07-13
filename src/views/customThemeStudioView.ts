@@ -653,8 +653,8 @@ export class CustomThemeStudioView extends ItemView {
 			if (searchTerm !== '') {
 				// Show matches or hide non-matches
 				if (
-					varName.includes(searchTerm) || 
-					varDefaultValue.includes(searchTerm) || 
+					varName.includes(searchTerm) ||
+					varDefaultValue.includes(searchTerm) ||
 					varValue.includes(searchTerm)
 				) {
 					item.addClass('variable-item-show');
@@ -687,7 +687,7 @@ export class CustomThemeStudioView extends ItemView {
 		});
 
 		const content: HTMLDivElement = header.createDiv('collapsible-content');
-		
+
 		// Check saved toggle state
 		if (this.plugin.settings.collapsedCustomElements === true) {
 			content.addClass('collapsible-content-show');
@@ -729,9 +729,10 @@ export class CustomThemeStudioView extends ItemView {
 
 		// "Select element" button
 		const selectElementButton: HTMLButtonElement = selectElementButtonContainer.createEl('button', {
-			text: 'Select element',
+			attr: { 'aria-label': 'Select element', 'data-tooltip-position': 'top' },
 			cls: 'select-element-button'
 		});
+		setIcon(selectElementButton, 'mouse-pointer-square-dashed');
 		selectElementButton.addEventListener('click', async () => {
 			// Check if editor section is already visible
 			const editorSection: Element | null = this.containerEl.querySelector('.css-editor-section');
@@ -756,9 +757,10 @@ export class CustomThemeStudioView extends ItemView {
 
 		// "Add element" button
 		const addElementButton = selectElementButtonContainer.createEl('button', {
-			text: 'New element',
+			attr: { 'aria-label': 'New custom element', 'data-tooltip-position': 'top' },
 			cls: 'add-element-button',
 		});
+		setIcon(addElementButton, 'square-pen');
 		addElementButton.addEventListener('click', async () => {
 			// Check if editor section is already visible
 			const editorSection: Element | null = this.containerEl.querySelector('.css-editor-section');
@@ -791,9 +793,10 @@ export class CustomThemeStudioView extends ItemView {
 		// @font-face rule Modal
 		if (this.plugin.settings.enableFontImport) {
 			const addFontFaceButton = selectElementButtonContainer.createEl('button', {
-				text: 'Import font',
+				attr: { 'aria-label': 'Import font', 'data-tooltip-position': 'top' },
 				cls: 'add-font-face-button'
 			});
+			setIcon(addFontFaceButton, 'import');
 			addFontFaceButton.addEventListener('click', async () => {
 				new FontImportModal(this.app, this.plugin).open();
 			});
@@ -985,37 +988,37 @@ export class CustomThemeStudioView extends ItemView {
 		// Export buttons
 		const buttonContainer: HTMLDivElement = content.createDiv('button-container');
 
+		buttonContainer.createSpan({text: 'CSS: '});
 		const exportCSSButton: HTMLButtonElement = buttonContainer.createEl('button', {
-			text: 'Export CSS'
+			attr: { 'aria-label': 'Export CSS', 'data-tooltip-position': 'top', 'tabindex': 0 }
 		});
+		setIcon(exportCSSButton, 'download');
 		exportCSSButton.addEventListener('click', async () => {
 			this.plugin.themeManager.exportThemeCSS();
 
 		});
 		const copyCSSButton: HTMLButtonElement = buttonContainer.createEl('button', {
-			cls: 'copy-css-button clickable-icon'
+			cls: 'copy-css-button',
+			attr: { 'aria-label': 'Copy CSS to clipboard', 'data-tooltip-position': 'top', 'tabindex': 0 }
 		});
-		copyCSSButton.setAttr('aria-label', 'Copy CSS to clipboard');
-		copyCSSButton.setAttr('data-tooltip-position', 'top');
-		copyCSSButton.setAttr('tabindex', '0');
 		setIcon(copyCSSButton, 'copy');
 		copyCSSButton.addEventListener('click', () => {
 			this.plugin.themeManager.copyThemeToClipboard();
 		});
 
+		buttonContainer.createSpan({text: 'Manifest: '});
 		const exportManifestButton: HTMLButtonElement = buttonContainer.createEl('button', {
-			text: 'Export manifest'
+			attr: { 'aria-label': 'Export manifest JSON', 'data-tooltip-position': 'top', 'tabindex': 0 }
 		});
+		setIcon(exportManifestButton, 'download');
 		exportManifestButton.addEventListener('click', async () => {
 			this.plugin.themeManager.exportThemeManifest();
 
 		});
 		const copyManifestButton: HTMLButtonElement = buttonContainer.createEl('button', {
-			cls: 'copy-css-button clickable-icon'
+			cls: 'copy-manifest-button',
+			attr: { 'aria-label': 'Copy manifest JSON to clipboard', 'data-tooltip-position': 'top', 'tabindex': 0 }
 		});
-		copyManifestButton.setAttr('aria-label', 'Copy JSON to clipboard');
-		copyManifestButton.setAttr('data-tooltip-position', 'top');
-		copyManifestButton.setAttr('tabindex', '0');
 		setIcon(copyManifestButton, 'copy');
 		copyManifestButton.addEventListener('click', () => {
 			this.plugin.themeManager.copyManifestToClipboard();
