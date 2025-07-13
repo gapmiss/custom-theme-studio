@@ -789,13 +789,15 @@ export class CustomThemeStudioView extends ItemView {
 		});
 
 		// @font-face rule Modal
-		const addFontFaceButton = selectElementButtonContainer.createEl('button', {
-			text: 'Import font',
-			cls: 'add-font-face-button'
-		});
-		addFontFaceButton.addEventListener('click', async () => {
-			new FontImportModal(this.app, this.plugin).open();
-		});
+		if (this.plugin.settings.enableFontImport) {
+			const addFontFaceButton = selectElementButtonContainer.createEl('button', {
+				text: 'Import font',
+				cls: 'add-font-face-button'
+			});
+			addFontFaceButton.addEventListener('click', async () => {
+				new FontImportModal(this.app, this.plugin).open();
+			});
+		}
 
 		// CSS Editor section - initially hidden when not adding a new element
 		this.cssEditorManager.createEditorSection(content);

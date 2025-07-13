@@ -36,6 +36,7 @@ export interface CustomThemeStudioSettings {
 	variableInputListener: string;
 	generateComputedCSS: boolean;
 	showConfirmation: boolean;
+	enableFontImport: boolean;
 	enableColorPicker: boolean;
 	enableAceAutoCompletion: boolean;
 	enableAceSnippets: boolean;
@@ -68,6 +69,7 @@ export const DEFAULT_SETTINGS: CustomThemeStudioSettings = {
 	variableInputListener: 'input',
 	generateComputedCSS: false,
 	showConfirmation: true,
+	enableFontImport: false,
 	enableColorPicker: false,
 	enableAceAutoCompletion: false,
 	enableAceSnippets: false,
@@ -197,6 +199,17 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 		setIcon((noticeIcon), 'alert-triangle');
 
 		this.containerEl.appendChild(noticeDiv);
+
+		new Setting(containerEl)
+			.setName('Font import')
+			.setDesc('Enable font imports to create @font-face custom element.')
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.enableFontImport)
+				.onChange(async (value) => {
+					this.plugin.settings.enableFontImport = value;
+					await this.plugin.saveSettings();
+				})
+			);
 
 		new Setting(containerEl)
 			.setName('Show confirmations')

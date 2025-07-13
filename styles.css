@@ -806,6 +806,14 @@ a[class*="tag-filter"]:focus {
     line-height: 1.5em;
 }
 
+.cts-font-import-modal {
+    width: 800px !important;
+    & .cts-font-import-modal-desc {
+        font-size: var(--font-smaller);
+        margin-bottom: 1em;
+    }
+}
+
 /* ================================================================================== */
 /* ================================ Ace Color Picker ================================ */
 /* ================================================================================== */

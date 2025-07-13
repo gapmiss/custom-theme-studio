@@ -5,13 +5,14 @@ import { generateUniqueId, showNotice } from "../utils";
 import { confirm } from "./confirmModal";
 import fs from 'fs';
 import path from 'path';
+import { text } from "stream/consumers";
 
 export class FontImportModal extends Modal {
 	plugin: CustomThemeStudioPlugin;
 	view: CustomThemeStudioView;
 	private fontName: string = '';
 	private base64Content: string | null = '';
-	private fontFaceRule: string = '';
+	private fontFaceRule: string;
 	private fontExtensions: string[];
 	private fontFilePath: string;
 
@@ -20,16 +21,24 @@ export class FontImportModal extends Modal {
 		this.plugin = plugin;
 		this.fontExtensions = ['ttf', 'otf', 'woff', 'woff2'];
 		this.fontFilePath = '';
+		this.fontFaceRule = '';
 	}
 
 	async onOpen() {
 		const { contentEl } = this;
+
+		contentEl.parentElement!.addClass('cts-font-import-modal');
 		
-		contentEl.createEl('h3', { text: 'Import font and create @font-face rule' });
+		contentEl.createEl('h3', { text: 'Import font' });
+		contentEl.createDiv({
+			text: 'Choose a font file to create a @font-face custom element',
+			cls: 'cts-font-import-modal-desc'
+		});
 		
 		// Font name input
 		const fontNameInput = new Setting(contentEl)
 			.setName('Font name')
+			.setDesc('Enter a font name which is used to identify this font in your CSS rules/variables.')
 			.addText(text => text
 				.setValue('')
 				.setPlaceholder('Enter font name')
@@ -40,9 +49,9 @@ export class FontImportModal extends Modal {
 
 		// Choose font file dialog
 		new Setting(contentEl)
-			.setName('Choose font')
+			.setName('Choose a font to import')
 			.addButton((button) => {
-				button.setButtonText('Import font');
+				button.setButtonText('Choose');
 				button.onClick(async () => {
 					this.fontName = fontNameInput.settingEl.querySelector('input')!.value;
 
