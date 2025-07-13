@@ -21,7 +21,7 @@ export class FontImportModal extends Modal {
 		this.plugin = plugin;
 		this.fontExtensions = ['ttf', 'otf', 'woff', 'woff2'];
 		this.fontFilePath = '';
-		this.fontFaceRule = '';
+		// this.fontFaceRule = '';
 	}
 
 	async onOpen() {
@@ -30,11 +30,32 @@ export class FontImportModal extends Modal {
 		contentEl.parentElement!.addClass('cts-font-import-modal');
 		
 		contentEl.createEl('h3', { text: 'Import font' });
+
+		// Help notice regarding performance
 		contentEl.createDiv({
-			text: 'Choose a font file to create a @font-face custom element',
-			cls: 'cts-font-import-modal-desc'
-		});
-		
+			text: 'Embedding assets increases the file size of your theme, which may lead to poor performance in the following situations:'
+		})
+		let listFragment = contentEl.createEl('ul');
+		listFragment.appendChild(contentEl.createEl('li', {
+			text: 'Downloading and updating your theme from the community theme directory.',
+		}))
+		listFragment.appendChild(contentEl.createEl('li', {
+			text: 'Loading and using your theme in the Obsidian app.',
+		}))
+		listFragment.appendChild(contentEl.createEl('li', {
+			text: 'Editing your theme in a code editor.',
+		}))
+		contentEl.appendChild(listFragment);
+		contentEl.createDiv('cts-font-import-modal-desc')
+			.createSpan({
+				text: 'See: '
+			})
+			.createEl('a', {
+				href: 'https://docs.obsidian.md/Themes/App+themes/Embed+fonts+and+images+in+your+theme#Consider+file+size',
+				text: 'Embed fonts and images in your theme - Developer Documentation',
+				attr: { 'aria-label': 'https://docs.obsidian.md/Themes/App+themes/Embed+fonts+and+images+in+your+theme#Consider+file+size', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
+			})
+
 		// Font name input
 		const fontNameInput = new Setting(contentEl)
 			.setName('Font name')
@@ -47,9 +68,9 @@ export class FontImportModal extends Modal {
 				})
 			);
 
-		// Choose font file dialog
+		// Choose font file
 		new Setting(contentEl)
-			.setName('Choose a font to import')
+			.setDesc('Choose a font file to create a @font-face custom element')
 			.addButton((button) => {
 				button.setButtonText('Choose');
 				button.onClick(async () => {
@@ -57,15 +78,17 @@ export class FontImportModal extends Modal {
 
 					if (!this.fontName) {
 						showNotice('Please enter a name for the font you want to import', 5000, 'error');
+						fontNameInput.settingEl.querySelector('input')?.focus();
 						return;
 					}
 					this.base64Content = await this.importFontFile();
 					if (this.base64Content) {
-						this.fontFaceRule = this.generateFontFaceRule();
+						// this.fontFaceRule = this.generateFontFaceRule();
 						let name = this.fontName;
 						let css = this.generateFontFaceRule();
 						let uuid = generateUniqueId();
 						let selector = name;
+
 						// Add new element
 						this.plugin.settings.customElements.push({
 							uuid,
@@ -92,15 +115,6 @@ export class FontImportModal extends Modal {
 									this.plugin.settings.customElements.forEach(element => {
 										view.cssEditorManager.createElementItem(elementList as HTMLElement, element);
 									});
-									let elementSection = view.containerEl.querySelector('.element-section')?.querySelector('.collapsible-content');
-									let toggleIcon: HTMLElement|null|undefined = view.containerEl.querySelector('.element-section')?.querySelector('.collapse-icon');
-									if (elementSection && toggleIcon) {
-										elementSection.addClass('collapsible-content-show');
-										elementSection.removeClass('collapsible-content-hide');
-										setIcon(toggleIcon, 'chevron-down');
-										toggleIcon.setAttr('aria-label', 'Collapse section');
-										toggleIcon.setAttr('data-tooltip-position', 'top');
-									}
 								}
 							}
 						} else {
