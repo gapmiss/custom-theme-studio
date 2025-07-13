@@ -70,7 +70,7 @@ export class FontImportModal extends Modal {
 
 		// Choose font file
 		new Setting(contentEl)
-			.setDesc('Choose a font file to create a @font-face custom element')
+			.setDesc('Choose a font file to create a new @font-face custom element')
 			.addButton((button) => {
 				button.setButtonText('Choose');
 				button.onClick(async () => {
@@ -84,17 +84,17 @@ export class FontImportModal extends Modal {
 					this.base64Content = await this.importFontFile();
 					if (this.base64Content) {
 						// this.fontFaceRule = this.generateFontFaceRule();
-						let name = this.fontName;
+						let name = "@font-face: " + this.fontName;
 						let css = this.generateFontFaceRule();
 						let uuid = generateUniqueId();
-						let selector = name;
+						let selector = "@font-face: " + this.fontName;
 
 						// Add new element
 						this.plugin.settings.customElements.push({
 							uuid,
 							selector,
 							css,
-							name: "@font-face: " + name || undefined,
+							name,
 							enabled: false
 						});
 						this.plugin.saveSettings();
