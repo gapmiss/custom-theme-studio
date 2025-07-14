@@ -73,7 +73,7 @@ export const DEFAULT_SETTINGS: CustomThemeStudioSettings = {
 	enableColorPicker: false,
 	enableAceAutoCompletion: false,
 	enableAceSnippets: false,
-	enableAceColorPicker: true,
+	enableAceColorPicker: false,
 	editorLineNumbers: true,
 	editorWordWrap: false,
 	editorFontSize: 15,
