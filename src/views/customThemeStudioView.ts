@@ -6,8 +6,9 @@ import { CSSEditorManager } from '../managers/cssEditorManager';
 import { ICodeEditorConfig } from '../interfaces/types';
 import { confirm } from '../modals/confirmModal';
 import { CSSVariable, CustomThemeStudioSettings, DEFAULT_SETTINGS } from '../settings';
-import { copyStringToClipboard, getCurrentTheme } from '../utils';
+import { copyStringToClipboard, getCurrentTheme, showNotice } from '../utils';
 import { FontImportModal } from "../modals/fontImportModal";
+import { AddVariableModal } from "../modals/addVariableModal";
 
 export const VIEW_TYPE_CTS = 'cts-view';
 
@@ -136,7 +137,7 @@ export class CustomThemeStudioView extends ItemView {
 
 	// Render CSS variables section
 	private renderCSSVariables(): void {
-		const section: HTMLDivElement = this.containerEl.createDiv('theme-section');
+		const section: HTMLDivElement = this.containerEl.createDiv('variables-section');
 
 		// Section header
 		const header: HTMLDivElement = section.createDiv('collapsible');
@@ -190,6 +191,20 @@ export class CustomThemeStudioView extends ItemView {
 				this.plugin.settings.collapsedCSSVariables = false;
 				this.plugin.saveSettings();
 			}
+		});
+
+		// Variables button container
+		const cssVariablesButtonContainer: HTMLDivElement = content.createDiv('css-variables-button-container');
+
+		// "New variable" button
+		const newVariableButton: HTMLButtonElement = cssVariablesButtonContainer.createEl('button', {
+			attr: { 'aria-label': 'Add CSS variable', 'data-tooltip-position': 'top' },
+			cls: 'new-variable-button'
+		});
+		setIcon(newVariableButton, 'square-pen');
+
+		newVariableButton.addEventListener('click', async () => {
+			new AddVariableModal(this.app, this.plugin).open();
 		});
 
 		// Tags filtering
@@ -503,12 +518,22 @@ export class CustomThemeStudioView extends ItemView {
 			});
 
 			// List variables
-			const items: cssVariable[] = cssVariableDefaults.filter(cat => cat.cat === category.category);
-			if (items.length) {
-				items.forEach((item) => {
-					this.createVariableItemInput(variableListEl, { name: item.variable, value: item.default }, category.category);
-				});
+			if (category.category === 'custom') {
+				const items = this.plugin.settings.customVariables.filter(v => v.parent === 'custom');
+				if (items.length) {
+					items.forEach((item) => {
+						this.createCustomVariableItemInput(variableListEl, { uuid: item.uuid!, name: item.variable, value: item.value }, category.category);
+					});
+				}
+			} else {
+				const items: cssVariable[] = cssVariableDefaults.filter(cat => cat.cat === category.category);
+				if (items.length) {
+					items.forEach((item) => {
+						this.createVariableItemInput(variableListEl, { name: item.variable, value: item.default }, category.category);
+					});
+				}
 			}
+
 		});
 
 	}
@@ -574,14 +599,14 @@ export class CustomThemeStudioView extends ItemView {
 							valueInput.value = value;
 							valueInput.classList.add('clear-variable-input--touched');
 							valueInput.focus();
-							valueInput.trigger('input');
+							valueInput.trigger(this.plugin.settings.variableInputListener);
 						}
 					}).then(() => {
 						colorPickerEl.setAttr('aria-label', 'Show color picker');
 						colorPickerEl.setAttr('data-tooltip-position', 'top');
 					});
 
-				valueInput.addEventListener('change', (e) => {
+				valueInput.addEventListener(this.plugin.settings.variableInputListener, (e) => {
 					const newValue = (e.target as HTMLInputElement).value;
 					if (newValue !== '') {
 						colorPicker.setValue(newValue);
@@ -605,8 +630,7 @@ export class CustomThemeStudioView extends ItemView {
 		clearInputButton.addEventListener('click', (evt) => {
 			valueInput.value = '';
 			valueInput.focus();
-			valueInput.trigger('input');
-			valueInput.trigger('change');
+			valueInput.trigger(this.plugin.settings.variableInputListener);
 			valueInput.classList.remove('clear-variable-input--touched');
 		})
 
@@ -615,7 +639,9 @@ export class CustomThemeStudioView extends ItemView {
 		// or give option in settings
 		valueInput.addEventListener(this.plugin.settings.variableInputListener, (e) => {
 			const newValue = (e.target as HTMLInputElement).value;
-			this.cssVariableManager.updateVariable(variable.name as string, newValue, category);
+			const existingVariable: CSSVariable | undefined = customVars.find(v => v.variable === variable.name && v.parent === category);
+			let existingUUID: string | undefined = existingVariable?.uuid;
+			this.cssVariableManager.updateVariable(newValue !== '' ? existingUUID : '', variable.name as string, newValue, category);
 			if (this.plugin.settings.themeEnabled) {
 				this.plugin.themeManager.applyCustomTheme();
 			}
@@ -639,6 +665,103 @@ export class CustomThemeStudioView extends ItemView {
 		setIcon(copyDefault, 'copy');
 		copyDefault.addEventListener('click', () => {
 			copyStringToClipboard(variable.value as string, variable.value as string);
+		});
+	}
+
+	// Create variable input elements
+	createCustomVariableItemInput(container: HTMLElement, variable: { uuid: string, name: string; value: string; }, category: string): void {
+		const item = container.createDiv({
+			cls: 'custom-variable-item',
+			attr: {
+				'data-var-name': variable.name,
+				'data-var-value': variable.value,
+			}
+		});
+
+		// Variable value input
+		const inputWrapper: HTMLDivElement = item.createDiv('custom-variable-input-wrapper');
+
+		const nameInput: HTMLInputElement = inputWrapper.createEl('input', {
+			cls: 'variable-name-input',
+			attr: {
+				type: 'text',
+				placeholder: 'Variable name',
+				value: variable.name
+			}
+		});
+
+		const inputButtonWrapper: HTMLDivElement = inputWrapper.createDiv('custom-variable-input-button-wrapper');
+
+		const valueInput: HTMLInputElement = inputButtonWrapper.createEl('input', {
+			cls: 'variable-value-input',
+			attr: {
+				type: 'text',
+				placeholder: 'Variable value',
+				value: variable.value
+			}
+		});
+
+		// Listen for input changes and update theme
+		nameInput.addEventListener(this.plugin.settings.variableInputListener, (e) => {
+			const newValue = (e.target as HTMLInputElement).value;
+			this.cssVariableManager.updateVariable(variable.uuid, newValue, valueInput.value, category);
+			if (this.plugin.settings.themeEnabled) {
+				this.plugin.themeManager.applyCustomTheme();
+			}
+		});
+		valueInput.addEventListener(this.plugin.settings.variableInputListener, (e) => {
+			const newValue = (e.target as HTMLInputElement).value;
+			this.cssVariableManager.updateVariable(variable.uuid, nameInput.value, newValue, category);
+			if (this.plugin.settings.themeEnabled) {
+				this.plugin.themeManager.applyCustomTheme();
+			}
+		});
+
+		// Delete button
+		const deleteVariableButton = inputButtonWrapper.createEl('button',
+			{
+				cls: 'delete-variable-button clickable-icon mod-destructive',
+				attr: {
+					'aria-label': 'Delete this variable',
+					'data-tooltip-position': 'top'
+				}
+			}
+		);
+		setIcon(deleteVariableButton, 'trash');
+		deleteVariableButton.addEventListener('click', async () => {
+			// copyStringToClipboard(variable.value as string, variable.value as string);
+			if (await confirm(`Are you sure you want to delete this variable?`, this.plugin.app)) {
+				// Remove from settings
+				this.plugin.settings.customVariables = this.plugin.settings.customVariables.filter(
+					el => el.uuid !== variable.uuid
+				);
+
+				// Update custom CSS
+				let fullCSS = '';
+				this.plugin.settings.customElements.forEach(el => {
+					if (el.enabled) {
+						fullCSS += `/* ${el.name || el.selector} */\n${el.css}\n\n`;
+					}
+				});
+
+				this.plugin.settings.customCSS = fullCSS;
+				this.plugin.saveSettings();
+
+				// Apply changes
+				if (this.plugin.settings.themeEnabled) {
+					this.plugin.themeManager.applyCustomTheme();
+				}
+
+				// remove editor
+				// NOT necessary ?
+				// this.removeInlineEditor();
+
+				// Remove from DOM
+				item.remove();
+
+				showNotice('Variable deleted', 5000, 'success');
+			}
+
 		});
 	}
 
@@ -852,7 +975,9 @@ export class CustomThemeStudioView extends ItemView {
 		// Element list
 		const elementListContainer = content.createDiv('element-list-container');
 		const elementList = elementListContainer.createDiv('element-list');
-
+		// Sort by "selector" value ASC
+		// https://www.javascripttutorial.net/array/javascript-sort-an-array-of-objects/
+		this.plugin.settings.customElements.sort((a, b) => a.selector!.localeCompare(b.selector!))
 		// Populate with saved elements
 		this.plugin.settings.customElements.forEach(element => {
 			this.cssEditorManager.createElementItem(elementList, element);
@@ -988,7 +1113,7 @@ export class CustomThemeStudioView extends ItemView {
 		// Export buttons
 		const buttonContainer: HTMLDivElement = content.createDiv('button-container');
 
-		buttonContainer.createSpan({text: 'CSS: '});
+		buttonContainer.createSpan({ text: 'CSS: ' });
 		const exportCSSButton: HTMLButtonElement = buttonContainer.createEl('button', {
 			attr: { 'aria-label': 'Export CSS', 'data-tooltip-position': 'top', 'tabindex': 0 }
 		});
@@ -1006,7 +1131,7 @@ export class CustomThemeStudioView extends ItemView {
 			this.plugin.themeManager.copyThemeToClipboard();
 		});
 
-		buttonContainer.createSpan({text: 'Manifest: '});
+		buttonContainer.createSpan({ text: 'Manifest: ' });
 		const exportManifestButton: HTMLButtonElement = buttonContainer.createEl('button', {
 			attr: { 'aria-label': 'Export manifest JSON', 'data-tooltip-position': 'top', 'tabindex': 0 }
 		});

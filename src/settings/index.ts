@@ -2,7 +2,6 @@ import { App, PluginSettingTab, Setting, Notice, setIcon } from 'obsidian';
 import { AceLightThemesList, AceDarkThemesList, AceKeyboardList } from '../ace/AceThemes';
 import { confirm } from '../modals/confirmModal';
 import CustomThemeStudioPlugin from '../main';
-import { generateUniqueId } from '../utils';
 import settingsIO from './settingsIO';
 
 export interface CustomElement {
@@ -14,6 +13,7 @@ export interface CustomElement {
 }
 
 export interface CSSVariable {
+	uuid: string | undefined;
 	parent: string;
 	variable: string;
 	value: string;

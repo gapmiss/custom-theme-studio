@@ -43,6 +43,7 @@ body {
 
 .auto-apply-changes-notice-icon {
     color: var(--color-red);
+
     & svg {
         width: 24px;
         height: 24px;
@@ -204,8 +205,8 @@ body {
     display: none;
 }
 
-/* theme section */
-.cts-view .theme-section {
+/* variables section */
+.cts-view .variables-section {
     margin-top: 1em !important;
 }
 
@@ -304,7 +305,6 @@ a[class*="tag-filter"]:focus {
 }
 
 @container (max-width: 350px) {
-
     .cts-view .variable-item {
         display: flex;
         flex-direction: column;
@@ -351,8 +351,34 @@ a[class*="tag-filter"]:focus {
     }
 }
 
-@container (min-width: 350px) {
+@container (max-width: 400px) {
 
+    .cts-view .custom-variable-item .custom-variable-input-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: .5em;
+        padding: .5em;
+
+        & .custom-variable-input-button-wrapper {
+            display: flex;
+            gap: .5em;
+
+            & input.variable-value-input {
+                flex-grow: 2;
+            }
+
+            & button.delete-variable-button {
+                max-width: 42px;
+            }
+
+            & button.delete-variable-button:hover {
+                color: var(--color-red)
+            }
+        }
+    }
+}
+
+@container (min-width: 350px) {
     .cts-view .variable-item {
         padding: .5em;
         max-width: 100%;
@@ -403,6 +429,43 @@ a[class*="tag-filter"]:focus {
 
     .cts-view .variable-item-hide {
         display: none;
+    }
+}
+
+@container (min-width: 400px) {
+
+    .cts-view .custom-variable-item .custom-variable-input-wrapper {
+        padding: .5em;
+        max-width: 100%;
+        display: grid;
+        grid-template: "name value delete" auto / 1.25fr 1.25fr auto;
+        align-items: center;
+
+        & input.variable-name-input {
+            grid-area: name;
+            margin-right: .5em;
+        }
+
+        & .custom-variable-input-button-wrapper {
+            grid-area: value;
+            display: flex;
+            flex-direction: row;
+            gap: .5em;
+
+            & input.variable-value-input {
+                flex-grow: 2;
+            }
+
+            & button.delete-variable-button {
+                max-width: 42px;
+
+            }
+
+            & button.delete-variable-button:hover {
+                color: var(--color-red)
+            }
+        }
+
     }
 }
 
@@ -491,7 +554,7 @@ a[class*="tag-filter"]:focus {
 }
 
 /* element picker */
-.cts-element-picker-highlight, 
+.cts-element-picker-highlight,
 .cts-element-picker-hover {
     outline: var(--picker-highlight-outline) !important;
     background-color: var(--picker-highlight-background-color) !important;
@@ -513,9 +576,11 @@ a[class*="tag-filter"]:focus {
     z-index: 10000000;
     max-width: var(--picker-tooltip-max-width);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
     & div.keys.first {
         margin-top: .5em;
     }
+
     & div {
         line-height: 1.75em;
     }
@@ -536,9 +601,11 @@ a[class*="tag-filter"]:focus {
     border-radius: 3px;
     margin: 4px 0;
     border-left: 3px solid rgba(255, 200, 0, 0.5);
+
     & .attribute-note {
         font-weight: var(--font-bold);
     }
+
     font-size: var(--font-smaller);
 }
 
@@ -562,6 +629,7 @@ a[class*="tag-filter"]:focus {
     font-family: var(--font-monospace-default);
     font-size: var(--font-smaller);
 }
+
 .cts-element-picker-tooltip kbd {
     font-family: var(--font-monospace-default);
     background-color: var(--background-secondary);
@@ -573,7 +641,7 @@ a[class*="tag-filter"]:focus {
 }
 
 /* css editor */
-:not(.inline-element-editor) > .css-editor-section.css-editor-section-show {
+:not(.inline-element-editor)>.css-editor-section.css-editor-section-show {
     border: 2px solid var(--background-modifier-border);
     border-radius: var(--size-4-2);
     padding: var(--size-4-2);
@@ -808,6 +876,7 @@ a[class*="tag-filter"]:focus {
 
 .cts-font-import-modal {
     width: 800px !important;
+
     & .cts-font-import-modal-desc {
         font-size: var(--font-smaller);
         margin-bottom: 1em;
@@ -1208,11 +1277,6 @@ a[class*="tag-filter"]:focus {
 
 .ace-colorpicker .colorpicker-body .information>.title {
     color: #a3a3a3;
-}
-
-.ace-colorpicker .colorpicker-body .information>.input {
-    /* @gapmiss */
-    /* color: #333;  */
 }
 
 .ace-colorpicker .colorpicker-body .colorsets {

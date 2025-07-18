@@ -1,6 +1,7 @@
 import { type App } from 'obsidian';
 import CustomThemeStudioPlugin from '../main';
 import { CSSVariable } from 'src/settings';
+import { generateUniqueId } from '../utils';
 
 export interface cssCategory {
 	category: string;
@@ -40,6 +41,7 @@ export const allCategories: cssCategory[] = [
 	{ category: 'colors', title: 'Colors', tag: 'foundations', help: createHelpFragment('', 'Foundations', 'Colors') },
 	{ category: 'cts', title: 'Custom Theme Studio plugin', tag: 'CTS', help: null },
 	{ category: 'cursor', title: 'Cursor', tag: 'foundations', help: createHelpFragment('', 'Foundations', 'Cursor') },
+	{ category: 'custom', title: 'Custom variables', tag: 'CTS', help: null },
 	{ category: 'dialog', title: 'Dialog', tag: 'components', help: createHelpFragment('', 'Components', 'Dialog') },
 	{ category: 'divider', title: 'Divider', tag: 'window', help: createHelpFragment('Dividers between panes') },
 	{ category: 'dragging', title: 'Dragging', tag: 'components', help: createHelpFragment('', 'Components', 'Dragging') },
@@ -131,7 +133,6 @@ export const cssVariableDefaults: cssVariable[] = [
 	{ cat: 'bases', variable: '--bases-table-cell-shadow-active', default: ' 0 0 0 2px var(--interactive-accent)' },
 	{ cat: 'bases', variable: '--bases-table-cell-background-active', default: ' var(--background-primary)' },
 	{ cat: 'bases', variable: '--bases-table-cell-background-disabled', default: ' var(--background-primary-alt)' },
-	{ cat: 'bases', variable: '--bases-table-white-space', default: ' nowrap' },
 	{ cat: 'bases', variable: '--bases-cards-container-background', default: ' var(--background-primary)' },
 	{ cat: 'bases', variable: '--bases-cards-background', default: ' var(--background-primary)' },
 	{ cat: 'bases', variable: '--bases-cards-cover-background', default: ' var(--background-primary-alt)' },
@@ -197,6 +198,7 @@ export const cssVariableDefaults: cssVariable[] = [
 	{ cat: 'code', variable: '--code-border-width', default: '0px' },
 	{ cat: 'code', variable: '--code-border-color', default: 'var(--background-modifier-border)' },
 	{ cat: 'code', variable: '--code-radius', default: 'var(--radius-s)' },
+	{ cat: 'code', variable: '--code-bracket-background', default: 'var(--background-modifier-hover)' },
 	{ cat: 'code', variable: '--code-size', default: 'var(--font-smaller)' },
 	{ cat: 'code', variable: '--code-background', default: 'var(--background-primary-alt)' },
 	{ cat: 'code', variable: '--code-normal', default: 'var(--text-normal)' },
@@ -211,8 +213,8 @@ export const cssVariableDefaults: cssVariable[] = [
 	{ cat: 'code', variable: '--code-tag', default: 'var(--color-red)' },
 	{ cat: 'code', variable: '--code-value', default: 'var(--color-purple)' },
 	{ cat: 'colorinput', variable: '--swatch-radius', default: '14px' },
-	{ cat: 'colorinput', variable: '--swatch-height', default: '24px' },
-	{ cat: 'colorinput', variable: '--swatch-width', default: '24px' },
+	{ cat: 'colorinput', variable: '--swatch-height', default: '22px' },
+	{ cat: 'colorinput', variable: '--swatch-width', default: '22px' },
 	{ cat: 'colorinput', variable: '--swatch-shadow', default: 'inset 0 0 0 1px rgba(var(--mono-rgb-100), 0.15)' },
 	{ cat: 'colors', variable: '--accent-h', default: '258' },
 	{ cat: 'colors', variable: '--accent-s', default: '88%' },
@@ -687,9 +689,11 @@ export const cssVariableDefaults: cssVariable[] = [
 	{ cat: 'tag', variable: '--tag-radius', default: '2em' },
 	{ cat: 'tag', variable: '--tag-weight', default: 'inherit' },
 	{ cat: 'textinput', variable: '--input-height', default: '30px' },
+	{ cat: 'textinput', variable: '--input-padding', default: 'var(--size-4-1) var(--size-4-2)' },
 	{ cat: 'textinput', variable: '--input-radius', default: '5px' },
 	{ cat: 'textinput', variable: '--input-font-weight', default: 'var(--font-normal)' },
 	{ cat: 'textinput', variable: '--input-border-width', default: '1px' },
+	{ cat: 'textinput', variable: '--input-border-width-focus', default: '2px' },
 	{ cat: 'textinput', variable: '--input-placeholder-color', default: 'var(--text-faint)' },
 	{ cat: 'textinput', variable: '--input-date-separator', default: 'var(--text-faint)' },
 	{ cat: 'toggle', variable: '--toggle-border-width', default: '2px' },
@@ -866,7 +870,7 @@ export class CSSVariableManager {
 	/**
 	 * Update a CSS variable value
 	 */
-	updateVariable(name: string, value: string, parent: string): void {
+	updateVariable(uuid: string | undefined, name: string, value: string, parent: string): void {
 
 		let customVars: CSSVariable[] = this.plugin.settings.customVariables;
 
@@ -875,32 +879,52 @@ export class CSSVariableManager {
 			this.plugin.settings.customVariables = [];
 		}
 
-		const existingVariable = customVars.find(el => el.variable === name && el.parent === parent);
-
-		if (existingVariable) {
-			if (value !== '') {
-				// Update
-				for (const obj of customVars) {
-					if (obj.variable === name && obj.parent === parent) {
-						obj.value = value;
-						break;
+		if (uuid) {
+			const existingVariable = customVars.find(el => el.uuid === uuid);
+			if (existingVariable) {
+				if (value !== '') {
+					// Update
+					for (const obj of customVars) {
+						if (obj.uuid === uuid) {
+							obj.value = value;
+							obj.variable = name;
+							break;
+						}
 					}
+				} else {
+					// Remove if empty value
+					const index = customVars.findIndex(el => el.uuid === uuid);
+					customVars.splice(index, 1);
 				}
-			} else {
-				// Remove if empty value
-				const index = customVars.findIndex(el => el.variable === name && el.parent === parent);
-				customVars.splice(index, 1);
 			}
 		} else {
-			// New
-			let obj: CSSVariable = {
-				'parent': parent,
-				'variable': name,
-				'value': value
+			const existingVariable = customVars.find(el => el.variable === name && el.parent === parent);
+			if (existingVariable) {
+				if (value !== '') {
+					// Update
+					for (const obj of customVars) {
+						if (obj.uuid === existingVariable.uuid) {
+							obj.value = value;
+							obj.variable = name;
+							break;
+						}
+					}
+				} else {
+					// Remove if empty value
+					const index = customVars.findIndex(el => el.uuid === existingVariable.uuid);
+					customVars.splice(index, 1);
+				}
+			} else {
+				// New
+				let obj: CSSVariable = {
+					'uuid': generateUniqueId(),
+					'parent': parent,
+					'variable': name,
+					'value': value
+				}
+				customVars.push(obj)
 			}
-			customVars.push(obj)
 		}
-
 		this.plugin.saveSettings();
 	}
 
