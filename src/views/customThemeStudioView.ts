@@ -919,7 +919,7 @@ export class CustomThemeStudioView extends ItemView {
 				attr: { 'aria-label': 'Import font', 'data-tooltip-position': 'top' },
 				cls: 'add-font-face-button'
 			});
-			setIcon(addFontFaceButton, 'import');
+			setIcon(addFontFaceButton, 'file-type');
 			addFontFaceButton.addEventListener('click', async () => {
 				new FontImportModal(this.app, this.plugin).open();
 			});

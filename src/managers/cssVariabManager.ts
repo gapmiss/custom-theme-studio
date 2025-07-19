@@ -136,7 +136,7 @@ export const cssVariableDefaults: cssVariable[] = [
 	{ cat: 'bases', variable: '--bases-cards-container-background', default: ' var(--background-primary)' },
 	{ cat: 'bases', variable: '--bases-cards-background', default: ' var(--background-primary)' },
 	{ cat: 'bases', variable: '--bases-cards-cover-background', default: ' var(--background-primary-alt)' },
-	{ cat: 'bases', variable: '--bases-cards-width', default: ' 200px' },
+	{ cat: 'bases', variable: '--bases-cards-scale', default: '1' },
 	{ cat: 'bases', variable: '--bases-cards-group-padding', default: ' var(--size-4-3)' },
 	{ cat: 'bases', variable: '--bases-cards-line-height', default: ' 24px' },
 	{ cat: 'bases', variable: '--bases-cards-border-width', default: ' 1px' },
