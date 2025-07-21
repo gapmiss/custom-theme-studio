@@ -1131,8 +1131,9 @@ export class CustomThemeStudioView extends ItemView {
 		// Export buttons
 		const buttonContainer: HTMLDivElement = content.createDiv('button-container');
 
-		buttonContainer.createSpan({ text: 'CSS: ' });
-		const exportCSSButton: HTMLButtonElement = buttonContainer.createEl('button', {
+		const exportCSSButtons = buttonContainer.createDiv('export-css-buttons');
+		exportCSSButtons.createSpan({ text: 'CSS: ' });
+		const exportCSSButton: HTMLButtonElement = exportCSSButtons.createEl('button', {
 			attr: { 'aria-label': 'Export CSS', 'data-tooltip-position': 'top', 'tabindex': 0 }
 		});
 		setIcon(exportCSSButton, 'download');
@@ -1140,7 +1141,7 @@ export class CustomThemeStudioView extends ItemView {
 			this.plugin.themeManager.exportThemeCSS();
 
 		});
-		const copyCSSButton: HTMLButtonElement = buttonContainer.createEl('button', {
+		const copyCSSButton: HTMLButtonElement = exportCSSButtons.createEl('button', {
 			cls: 'copy-css-button',
 			attr: { 'aria-label': 'Copy CSS to clipboard', 'data-tooltip-position': 'top', 'tabindex': 0 }
 		});
@@ -1149,8 +1150,9 @@ export class CustomThemeStudioView extends ItemView {
 			this.plugin.themeManager.copyThemeToClipboard();
 		});
 
-		buttonContainer.createSpan({ text: 'Manifest: ' });
-		const exportManifestButton: HTMLButtonElement = buttonContainer.createEl('button', {
+		const exportManifestButtons = buttonContainer.createDiv('export-manifest-buttons');
+		exportManifestButtons.createSpan({ text: 'Manifest: ' });
+		const exportManifestButton: HTMLButtonElement = exportManifestButtons.createEl('button', {
 			attr: { 'aria-label': 'Export manifest JSON', 'data-tooltip-position': 'top', 'tabindex': 0 }
 		});
 		setIcon(exportManifestButton, 'download');
@@ -1158,7 +1160,7 @@ export class CustomThemeStudioView extends ItemView {
 			this.plugin.themeManager.exportThemeManifest();
 
 		});
-		const copyManifestButton: HTMLButtonElement = buttonContainer.createEl('button', {
+		const copyManifestButton: HTMLButtonElement = exportManifestButtons.createEl('button', {
 			cls: 'copy-manifest-button',
 			attr: { 'aria-label': 'Copy manifest JSON to clipboard', 'data-tooltip-position': 'top', 'tabindex': 0 }
 		});

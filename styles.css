@@ -861,13 +861,19 @@ a[class*="tag-filter"]:focus {
 }
 
 .cts-view .export-section .button-container {
-    padding: .5em;
     display: flex;
-    gap: .5em;
     flex-wrap: wrap;
     align-content: flex-start;
     align-items: center;
     margin-block: .5em !important;
+    & div {
+        padding: .5em;
+        display: flex;
+        gap: .5em;
+        flex-wrap: wrap;
+        align-content: flex-start;
+        align-items: center;
+    }
 }
 
 .snippet-import-confirmation .modal-content {
