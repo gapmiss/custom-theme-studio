@@ -704,6 +704,15 @@ export class CustomThemeStudioView extends ItemView {
 		// Listen for input changes and update theme
 		nameInput.addEventListener(this.plugin.settings.variableInputListener, (e) => {
 			const newValue = (e.target as HTMLInputElement).value;
+			if (newValue === '' || valueInput.value === '') {
+				showNotice('Both fields are required', 5000, 'error');
+				return;
+			}
+			if (!newValue.match(/^--[a-zA-Z0-9-_\p{Emoji}]+/gui)) {
+				showNotice('Please enter a valid variable name', 5000, 'error');
+				nameInput.focus();
+				return;
+			}
 			this.cssVariableManager.updateVariable(variable.uuid, newValue, valueInput.value, category);
 			if (this.plugin.settings.themeEnabled) {
 				this.plugin.themeManager.applyCustomTheme();
@@ -711,6 +720,15 @@ export class CustomThemeStudioView extends ItemView {
 		});
 		valueInput.addEventListener(this.plugin.settings.variableInputListener, (e) => {
 			const newValue = (e.target as HTMLInputElement).value;
+			if (newValue === '' || nameInput.value === '') {
+				showNotice('Both fields are required', 5000, 'error');
+				return;
+			}
+			if (!nameInput.value.match(/^--[a-zA-Z0-9-_\p{Emoji}]+/gui)) {
+				showNotice('Please enter a valid variable name', 5000, 'error');
+				nameInput.focus();
+				return;
+			}
 			this.cssVariableManager.updateVariable(variable.uuid, nameInput.value, newValue, category);
 			if (this.plugin.settings.themeEnabled) {
 				this.plugin.themeManager.applyCustomTheme();
