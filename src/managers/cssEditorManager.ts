@@ -273,7 +273,8 @@ export class CSSEditorManager {
 		timeout ??= setTimeout(() => {
 
 			let css = this.aceService.getValue();
-			if (css && this.plugin.settings.autoApplyChanges) {
+			// if (css && this.plugin.settings.autoApplyChanges) {
+			if (this.plugin.settings.autoApplyChanges) {
 				this.applyChanges(css!);
 			}
 		}, 10);
@@ -377,11 +378,14 @@ export class CSSEditorManager {
 		const selector = this.selectorInputEl.value.trim();
 		const uuid = this.editorUUID.value;
 
-		if (!uuid || !css) {
-			showNotice('Please enter CSS rules to auto apply your CSS changes', 5000, 'error');
+		// if (!uuid || !css) {
+		// 	showNotice('Please enter CSS rules to auto apply your CSS changes', 5000, 'error');
+		// 	return;
+		// }
+
+		if (!uuid) {
 			return;
 		}
-
 		// Update the custom CSS
 		this.updateCustomCSS(uuid, name, selector, css);
 
