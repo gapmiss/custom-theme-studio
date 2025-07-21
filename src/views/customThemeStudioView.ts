@@ -1,4 +1,4 @@
-import { ItemView, WorkspaceLeaf, setIcon, Workspace, ColorComponent, Scope } from 'obsidian';
+import { ItemView, WorkspaceLeaf, setIcon, Workspace, ColorComponent, Scope, debounce } from 'obsidian';
 import CustomThemeStudioPlugin from '../main';
 import { type cssVariable, CSSVariableManager, allCategories, cssCategory, cssVariableDefaults } from '../managers/cssVariabManager';
 import { ElementSelectorManager } from '../managers/elementSelectorManager';
@@ -538,6 +538,17 @@ export class CustomThemeStudioView extends ItemView {
 
 	}
 
+	debounceUpdate = debounce(
+		() => {
+			if (this.plugin.settings.themeEnabled) {
+				this.plugin.themeManager.applyCustomTheme();
+			}
+			showNotice('Variable updated successfully', 5000, 'success');
+		}, 
+		500, 
+		true
+	);
+
 	// Create variable input elements
 	private createVariableItemInput(container: HTMLElement, variable: { name: string; value: string; }, category: string): void {
 		const item = container.createDiv({
@@ -642,9 +653,7 @@ export class CustomThemeStudioView extends ItemView {
 			const existingVariable: CSSVariable | undefined = customVars.find(v => v.variable === variable.name && v.parent === category);
 			let existingUUID: string | undefined = existingVariable?.uuid;
 			this.cssVariableManager.updateVariable(newValue !== '' ? existingUUID : '', variable.name as string, newValue, category);
-			if (this.plugin.settings.themeEnabled) {
-				this.plugin.themeManager.applyCustomTheme();
-			}
+			this.debounceUpdate();
 			if ((e.currentTarget! as HTMLInputElement).value && !valueInput.classList.contains('clear-variable-input--touched')) {
 				valueInput.classList.add('clear-variable-input--touched')
 			} else if (!(e.currentTarget! as HTMLInputElement).value && valueInput.classList.contains('clear-variable-input--touched')) {
@@ -714,9 +723,7 @@ export class CustomThemeStudioView extends ItemView {
 				return;
 			}
 			this.cssVariableManager.updateVariable(variable.uuid, newValue, valueInput.value, category);
-			if (this.plugin.settings.themeEnabled) {
-				this.plugin.themeManager.applyCustomTheme();
-			}
+			this.debounceUpdate();
 		});
 		valueInput.addEventListener(this.plugin.settings.variableInputListener, (e) => {
 			const newValue = (e.target as HTMLInputElement).value;
@@ -730,9 +737,7 @@ export class CustomThemeStudioView extends ItemView {
 				return;
 			}
 			this.cssVariableManager.updateVariable(variable.uuid, nameInput.value, newValue, category);
-			if (this.plugin.settings.themeEnabled) {
-				this.plugin.themeManager.applyCustomTheme();
-			}
+			this.debounceUpdate();
 		});
 
 		// Delete button
