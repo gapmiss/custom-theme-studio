@@ -66,7 +66,7 @@ export const DEFAULT_SETTINGS: CustomThemeStudioSettings = {
 	collapsedCustomElements: false,
 	collapsedExportTheme: false,
 	autoApplyChanges: false,
-	variableInputListener: 'input',
+	variableInputListener: 'change',
 	generateComputedCSS: false,
 	showConfirmation: true,
 	enableFontImport: false,
@@ -145,8 +145,6 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 						}
 					}
 				}));
-
-
 
 		containerEl.createEl('h3', { text: 'CSS variables' });
 
