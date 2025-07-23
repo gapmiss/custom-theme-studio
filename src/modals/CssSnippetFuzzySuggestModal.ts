@@ -20,20 +20,20 @@ export class CssSnippetFuzzySuggestModal extends FuzzySuggestModal<Snippets> {
         super(app);
         this.plugin = plugin;
         this.setPlaceholder("Search and choose a snippet to import");
-		this.setInstructions([
-			{
-				command: "↑↓",
-				purpose: "to navigate",
-			},
-			{
-				command: "↵",
-				purpose: "to choose a snippet",
-			},
-			{
-				command: "esc",
-				purpose: "to cancel",
-			},
-		]);
+        this.setInstructions([
+            {
+                command: "↑↓",
+                purpose: "to navigate",
+            },
+            {
+                command: "↵",
+                purpose: "to choose a snippet",
+            },
+            {
+                command: "esc",
+                purpose: "to cancel",
+            },
+        ]);
     }
 
     getItems(): Snippets[] {
@@ -78,7 +78,7 @@ export class CssSnippetFuzzySuggestModal extends FuzzySuggestModal<Snippets> {
                         view.cssEditorManager.createElementItem(elementList as HTMLElement, element);
                     });
                     let elementSection = view.containerEl.querySelector('.element-section')?.querySelector('.collapsible-content');
-                    let toggleIcon: HTMLElement|null|undefined = view.containerEl.querySelector('.element-section')?.querySelector('.collapse-icon');
+                    let toggleIcon: HTMLElement | null | undefined = view.containerEl.querySelector('.element-section')?.querySelector('.collapse-icon');
                     if (elementSection && toggleIcon) {
                         elementSection.addClass('collapsible-content-show');
                         elementSection.removeClass('collapsible-content-hide');

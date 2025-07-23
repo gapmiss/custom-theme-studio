@@ -25,7 +25,7 @@ export class FontImportModal extends Modal {
 		const { contentEl } = this;
 
 		contentEl.parentElement!.addClass('cts-font-import-modal');
-		
+
 		contentEl.createEl('h3', { text: 'Import font' });
 
 		// Help notice regarding performance
@@ -122,24 +122,24 @@ export class FontImportModal extends Modal {
 			});
 
 	}
-	
+
 	onClose() {
 		const { contentEl } = this;
 		contentEl.empty();
 	}
-	
+
 	private arrayBufferToBase64(buffer: ArrayBuffer): string {
 		let binary = '';
 		const bytes = new Uint8Array(buffer);
 		const len = bytes.byteLength;
-		
+
 		for (let i = 0; i < len; i++) {
 			binary += String.fromCharCode(bytes[i]);
 		}
-		
+
 		return window.btoa(binary);
 	}
-	
+
 	private generateFontFaceRule(): string {
 		let mimeType: string;
 		let ext = path.extname(this.fontFilePath)
@@ -182,7 +182,7 @@ export class FontImportModal extends Modal {
 
 		this.fontFilePath = filePaths[0];
 		const fileContent = fs.readFileSync(filePaths[0]);
-		
+
 		return this.arrayBufferToBase64(fileContent);
 	}
 

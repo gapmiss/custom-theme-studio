@@ -7,6 +7,7 @@ declare const electronWindow: {
 	toggleDevTools: () => void;
 };
 
+// Copy given string to clipboard
 export function copyStringToClipboard(text: string, topic: string | undefined = undefined): void {
 	navigator.clipboard
 		.writeText(text)
@@ -18,6 +19,7 @@ export function copyStringToClipboard(text: string, topic: string | undefined = 
 		})
 }
 
+// Show Notice with type & icon
 export function showNotice(message: string, duration: number = 4000, type: string | undefined): void {
 
 	const fragment: DocumentFragment = document.createDocumentFragment();

@@ -538,14 +538,15 @@ export class CustomThemeStudioView extends ItemView {
 
 	}
 
+	// debounce applyCustomTheme and showNotice
 	debounceUpdate = debounce(
 		() => {
 			if (this.plugin.settings.themeEnabled) {
 				this.plugin.themeManager.applyCustomTheme();
 			}
 			showNotice('Variable updated successfully', 5000, 'success');
-		}, 
-		500, 
+		},
+		500,
 		true
 	);
 
