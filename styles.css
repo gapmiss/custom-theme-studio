@@ -210,7 +210,7 @@ body {
     margin-top: 1em !important;
 }
 
-.filter-tags {
+.cts-view .filter-tags {
     padding: .5em;
     display: flex;
     gap: .5em;
@@ -220,17 +220,17 @@ body {
     margin-block: .5em !important;
 }
 
-a.tag-filter-active,
-a.tag-filter-active:hover {
+.cts-view a.tag-filter-active,
+.cts-view a.tag-filter-active:hover {
     color: var(--text-on-accent) !important;
     background-color: var(--interactive-accent);
 }
 
-a[class*="tag-filter"] {
+.cts-view a[class*="tag-filter"] {
     cursor: default;
 }
 
-a[class*="tag-filter"]:focus {
+.cts-view a[class*="tag-filter"]:focus {
     box-shadow: 0 0 0 3px var(--background-modifier-border-focus);
     border-radius: var(--tag-radius);
 }
@@ -351,33 +351,6 @@ a[class*="tag-filter"]:focus {
     }
 }
 
-@container (max-width: 400px) {
-
-    .cts-view .custom-variable-item .custom-variable-input-wrapper {
-        display: flex;
-        flex-direction: column;
-        gap: .5em;
-        padding: .5em;
-
-        & .custom-variable-input-button-wrapper {
-            display: flex;
-            gap: .5em;
-
-            & input.variable-value-input {
-                flex-grow: 2;
-            }
-
-            & button.delete-variable-button {
-                max-width: 42px;
-            }
-
-            & button.delete-variable-button:hover {
-                color: var(--color-red)
-            }
-        }
-    }
-}
-
 @container (min-width: 350px) {
     .cts-view .variable-item {
         padding: .5em;
@@ -429,6 +402,33 @@ a[class*="tag-filter"]:focus {
 
     .cts-view .variable-item-hide {
         display: none;
+    }
+}
+
+@container (max-width: 400px) {
+
+    .cts-view .custom-variable-item .custom-variable-input-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: .5em;
+        padding: .5em;
+
+        & .custom-variable-input-button-wrapper {
+            display: flex;
+            gap: .5em;
+
+            & input.variable-value-input {
+                flex-grow: 2;
+            }
+
+            & button.delete-variable-button {
+                max-width: 42px;
+            }
+
+            & button.delete-variable-button:hover {
+                color: var(--color-red)
+            }
+        }
     }
 }
 
