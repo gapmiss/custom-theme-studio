@@ -1,4 +1,4 @@
-import { type App, Setting, setIcon, Modal } from "obsidian";
+import { type App, Setting, debounce, Modal } from "obsidian";
 import type CustomThemeStudioPlugin from "../main";
 import { CustomThemeStudioView, VIEW_TYPE_CTS } from "../views/customThemeStudioView";
 import { generateUniqueId, showNotice } from "../utils";
@@ -120,6 +120,17 @@ export class FontImportModal extends Modal {
 					}
 				});
 			});
+
+		let debounceFocus = debounce(
+			() => {
+				console.log(fontNameInput.settingEl.querySelector('input')!);
+				fontNameInput.settingEl.querySelector('input')!.focus();
+			},
+			10,
+			true
+		);
+
+		debounceFocus();
 
 	}
 
