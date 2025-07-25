@@ -275,6 +275,8 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 							toggle.setValue(false);
 							this.plugin.settings.enableAceSnippets = false;
 						}
+					} else {
+						new Notice('Disabling this setting requires a reload of the Obsidian window. From the command pallete, run the command "Reload app without saving." … Click this message to dismiss.', 0);
 					}
 					await this.plugin.saveSettings();
 				})
