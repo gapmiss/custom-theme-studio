@@ -897,6 +897,7 @@ export class CustomThemeStudioView extends ItemView {
 
 			// Show the editor section and reset it
 			this.cssEditorManager.resetEditor();
+			this.cssEditorManager.clearAppliedChanges();
 			this.cssEditorManager.showEditorSection(false);
 
 			this.elementSelectorManager.startElementSelection();
@@ -925,6 +926,8 @@ export class CustomThemeStudioView extends ItemView {
 
 			// Show the editor section and reset it
 			this.cssEditorManager.resetEditor();
+			this.cssEditorManager.clearAppliedChanges();
+
 			this.cssEditorManager.showEditorSection(true);
 			setTimeout(async () => {
 				this.cssEditorManager.nameInputEl!.focus();
