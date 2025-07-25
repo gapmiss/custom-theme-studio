@@ -652,6 +652,8 @@ export class CSSEditorManager {
 
 			this.resetEditor();
 
+			this.clearAppliedChanges();
+
 			// Set editing state
 			this.isEditingExisting = true;
 			this.currentEditingElement = item;
