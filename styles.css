@@ -210,6 +210,16 @@ body {
     margin-top: 1em !important;
 }
 
+.cts-view .css-variables-button-container {
+    padding: .5em;
+    display: flex;
+    gap: .5em;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    align-items: center;
+    margin-block: .5em !important;
+}
+
 .cts-view .filter-tags {
     padding: .5em;
     display: flex;
@@ -412,6 +422,7 @@ body {
         flex-direction: column;
         gap: .5em;
         padding: .5em;
+        margin-bottom: .5em;
 
         & .custom-variable-input-button-wrapper {
             display: flex;
@@ -419,10 +430,6 @@ body {
 
             & input.variable-value-input {
                 flex-grow: 2;
-            }
-
-            & button.delete-variable-button {
-                max-width: 42px;
             }
 
             & button.delete-variable-button:hover {
@@ -456,16 +463,10 @@ body {
                 flex-grow: 2;
             }
 
-            & button.delete-variable-button {
-                max-width: 42px;
-
-            }
-
             & button.delete-variable-button:hover {
                 color: var(--color-red)
             }
         }
-
     }
 }
 
@@ -791,8 +792,8 @@ body {
     flex-wrap: wrap;
 }
 
-.cts-view .element-item-delete-button:hover svg {
-    stroke: var(--color-red);
+.cts-view .element-item-delete-button:hover {
+    color: var(--color-red);
 }
 
 /* editor options */
@@ -866,6 +867,7 @@ body {
     align-content: flex-start;
     align-items: center;
     margin-block: .5em !important;
+
     & div {
         padding: .5em;
         display: flex;
@@ -892,6 +894,12 @@ body {
 .cts-font-import-modal a:focus {
     box-shadow: 0 0 0 3px var(--background-modifier-border-focus);
     border-radius: var(--tag-radius);
+}
+
+.modal:has(.confirm-modal-cancel-button) {
+    & .confirm-modal-cancel-button:focus {
+        box-shadow: 0 0 0 3px var(--background-modifier-border-focus);
+    }
 }
 
 /* ================================================================================== */

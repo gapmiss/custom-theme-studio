@@ -628,7 +628,7 @@ export class CSSEditorManager {
 		}
 
 		const deleteButton = actionsEl.createEl('button', {
-			cls: 'clickable-icon element-item-delete-button'
+			cls: 'element-item-delete-button clickable-icon mod-destructive'
 		});
 		deleteButton.setAttr('aria-label', 'Delete this element');
 		deleteButton.setAttr('data-tooltip-position', 'top');
@@ -734,6 +734,7 @@ export class CSSEditorManager {
 
 		// Delete button
 		deleteButton.addEventListener('click', async () => {
+			deleteButton.addClass('mod-loading');
 			// Confirm deletion
 			if (await confirm(`Are you sure you want to delete the element "${element.name || element.selector}"?`, this.plugin.app)) {
 				// Remove from settings
@@ -766,6 +767,7 @@ export class CSSEditorManager {
 
 				showNotice('Element deleted', 5000, 'success');
 			}
+			deleteButton.removeClass('mod-loading');
 		});
 		return item;
 	}

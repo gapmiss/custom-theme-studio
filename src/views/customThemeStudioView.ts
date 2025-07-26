@@ -198,7 +198,7 @@ export class CustomThemeStudioView extends ItemView {
 
 		// "New variable" button
 		const newVariableButton: HTMLButtonElement = cssVariablesButtonContainer.createEl('button', {
-			attr: { 'aria-label': 'Add CSS variable', 'data-tooltip-position': 'top' },
+			attr: { 'aria-label': 'Add CSS variable', 'data-tooltip-position': 'top', 'tabindex': 0 },
 			cls: 'new-variable-button'
 		});
 		setIcon(newVariableButton, 'square-pen');
@@ -433,7 +433,8 @@ export class CustomThemeStudioView extends ItemView {
 			attr: {
 				class: 'clear-search-input-button',
 				'aria-label': 'Clear search',
-				'data-tooltip-position': 'top'
+				'data-tooltip-position': 'top', 
+				'tabindex': 0
 			}
 		});
 		clearSearchButton.addEventListener('click', (evt) => {
@@ -754,6 +755,7 @@ export class CustomThemeStudioView extends ItemView {
 		setIcon(deleteVariableButton, 'trash');
 		deleteVariableButton.addEventListener('click', async () => {
 			// copyStringToClipboard(variable.value as string, variable.value as string);
+			deleteVariableButton.addClass('mod-loading');
 			if (await confirm(`Are you sure you want to delete this variable?`, this.plugin.app)) {
 				// Remove from settings
 				this.plugin.settings.customVariables = this.plugin.settings.customVariables.filter(
@@ -785,7 +787,7 @@ export class CustomThemeStudioView extends ItemView {
 
 				showNotice('Variable deleted', 5000, 'success');
 			}
-
+			deleteVariableButton.removeClass('mod-loading');
 		});
 	}
 
@@ -876,7 +878,7 @@ export class CustomThemeStudioView extends ItemView {
 
 		// "Select element" button
 		const selectElementButton: HTMLButtonElement = selectElementButtonContainer.createEl('button', {
-			attr: { 'aria-label': 'Select element', 'data-tooltip-position': 'top' },
+			attr: { 'aria-label': 'Select element', 'data-tooltip-position': 'top', 'tabindex': 0 },
 			cls: 'select-element-button'
 		});
 		setIcon(selectElementButton, 'mouse-pointer-square-dashed');
@@ -984,7 +986,8 @@ export class CustomThemeStudioView extends ItemView {
 			attr: {
 				class: 'clear-search-elements-input-button',
 				'aria-label': 'Clear search',
-				'data-tooltip-position': 'top'
+				'data-tooltip-position': 'top', 
+				'tabindex': 0
 			}
 		});
 		clearSearchButton.addEventListener('click', (evt) => {
