@@ -461,7 +461,8 @@ export class CSSEditorManager {
 			if (this.isEditingExisting) {
 				// Clear the element list
 				elementList.empty();
-
+				// Sort by "selector" value ASC
+				this.plugin.settings.customElements.sort((a, b) => a.selector!.localeCompare(b.selector!));
 				// Re-populate with all elements
 				this.plugin.settings.customElements.forEach(element => {
 					this.createElementItem(elementList as HTMLElement, element);
@@ -490,7 +491,8 @@ export class CSSEditorManager {
 				}
 
 				elementList.empty();
-
+				// Sort by "selector" value ASC
+				this.plugin.settings.customElements.sort((a, b) => a.selector!.localeCompare(b.selector!));
 				// Re-populate with all elements
 				this.plugin.settings.customElements.forEach(element => {
 					this.createElementItem(elementList as HTMLElement, element);
@@ -671,9 +673,12 @@ export class CSSEditorManager {
 				// Move the editor section under this element
 				inlineEditor.appendChild(this.editorSection);
 				this.showEditorSection(true);
-				setTimeout(async () => {
+
+				// Scroll editor to the top of view
+				setTimeout(() => {
+					this.scrollToDivByUUID(element.uuid);
 					this.nameInputEl!.focus();
-				}, 25);
+				}, 100);
 			}
 		});
 
@@ -772,4 +777,18 @@ export class CSSEditorManager {
 		return item;
 	}
 
+	scrollToDivByUUID(uuid: string) {
+		const target = this.view.containerEl.querySelector(`[data-cts-uuid="${uuid}"]`);
+		if (target) {
+			const container = this.view.containerEl;
+			if (container && target) {
+				const top = (target as HTMLElement).offsetTop-10;
+				// container.scrollTop = top;
+				(container as HTMLElement).scrollTo({
+					top: top,
+					behavior: "smooth"
+				});
+			}
+		}
+	}
 }

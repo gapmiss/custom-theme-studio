@@ -107,6 +107,8 @@ export class FontImportModal extends Modal {
 								const elementList = view.containerEl.querySelector('.element-list');
 								if (elementList) {
 									elementList.empty();
+									// Sort by "selector" value ASC
+									this.plugin.settings.customElements.sort((a, b) => a.selector!.localeCompare(b.selector!));
 									// Re-populate with all elements
 									this.plugin.settings.customElements.forEach(element => {
 										view.cssEditorManager.createElementItem(elementList as HTMLElement, element);

@@ -380,10 +380,17 @@ export class ElementSelectorManager {
 			this.view.cssEditorManager.removeInlineEditor();
 
 			// Set the selector in the editor
-			this.view.cssEditorManager.setSelector(generateUniqueId(), selector, false);
+			let uuid = generateUniqueId();
+			this.view.cssEditorManager.setSelector(uuid, selector, false);
 
 			// Show the editor section
 			this.view.cssEditorManager.showEditorSection(true);
+
+			// Scroll editor to the top of view
+			setTimeout(() => {
+				this.scrollToDivByUUID(uuid);
+				this.view.cssEditorManager.nameInputEl!.focus();
+			}, 100);
 		}
 	}
 
@@ -571,4 +578,18 @@ export class ElementSelectorManager {
 		return value.replace(/["\\]/g, '\\$&');
 	}
 
+	scrollToDivByUUID(uuid: string) {
+		const target = this.view.containerEl.querySelector(`input[value="${uuid}"]`)?.parentElement;
+		if (target) {
+			const container = this.view.containerEl;
+			if (container && target) {
+				const top = (target as HTMLElement).offsetTop-10;
+				// container.scrollTop = top;
+				(container as HTMLElement).scrollTo({
+					top: top,
+					behavior: "smooth"
+				});
+			}
+		}
+	}
 }

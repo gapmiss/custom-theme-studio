@@ -302,6 +302,11 @@ export class CustomThemeStudioView extends ItemView {
 								setIcon(variableListicon!, 'chevron-down')
 								variableListicon?.setAttr('aria-label', 'Collapse category');
 								variableListicon?.setAttr('data-tooltip-position', 'top');
+
+								// Scroll editor to the top of view
+								setTimeout(() => {
+									this.scrollToDiv(el);
+								}, 100);
 							});
 						}
 					});
@@ -382,6 +387,10 @@ export class CustomThemeStudioView extends ItemView {
 							setIcon(variableListicon!, 'chevron-down')
 							variableListicon?.setAttr('aria-label', 'Collapse category');
 							variableListicon?.setAttr('data-tooltip-position', 'top');
+							// Scroll editor to the top of view
+							setTimeout(() => {
+								this.scrollToDiv(el);
+							}, 100);
 						} else {
 							el?.addClass('variable-list-hide');
 							el?.removeClass('variable-list-show');
@@ -401,6 +410,10 @@ export class CustomThemeStudioView extends ItemView {
 								setIcon(variableListicon!, 'chevron-down')
 								variableListicon?.setAttr('aria-label', 'Collapse category');
 								variableListicon?.setAttr('data-tooltip-position', 'top');
+								// Scroll editor to the top of view
+								setTimeout(() => {
+									this.scrollToDiv(el);
+								}, 100);
 							} else {
 								el?.addClass('variable-list-hide');
 								el?.removeClass('variable-list-show');
@@ -509,6 +522,10 @@ export class CustomThemeStudioView extends ItemView {
 					setIcon(catToggleIcon, 'chevron-down');
 					catToggleIcon.setAttr('aria-label', 'Collapse category');
 					catToggleIcon.setAttr('data-tooltip-position', 'top');
+					// Scroll editor to the top of view
+					setTimeout(() => {
+						this.scrollToDiv(categoryEl);
+					}, 100);
 				} else {
 					variableListEl.addClass('variable-list-hide');
 					variableListEl.removeClass('variable-list-show');
@@ -931,15 +948,18 @@ export class CustomThemeStudioView extends ItemView {
 			this.cssEditorManager.clearAppliedChanges();
 
 			this.cssEditorManager.showEditorSection(true);
-			setTimeout(async () => {
-				this.cssEditorManager.nameInputEl!.focus();
-			}, 25);
 
 			// Ensure the new form appears below the buttons
 			const buttonContainer: Element | null = this.containerEl.querySelector('.selector-button-container');
 			if (buttonContainer && editorSection) {
 				buttonContainer.after(editorSection);
 			}
+
+			// Scroll editor to the top of view
+			setTimeout(() => {
+				this.scrollToDiv(editorSection as HTMLElement);
+				this.cssEditorManager.nameInputEl!.focus();
+			}, 100);
 		});
 
 		// @font-face rule Modal
@@ -1007,7 +1027,7 @@ export class CustomThemeStudioView extends ItemView {
 		const elementList = elementListContainer.createDiv('element-list');
 		// Sort by "selector" value ASC
 		// https://www.javascripttutorial.net/array/javascript-sort-an-array-of-objects/
-		this.plugin.settings.customElements.sort((a, b) => a.selector!.localeCompare(b.selector!))
+		this.plugin.settings.customElements.sort((a, b) => a.selector!.localeCompare(b.selector!));
 		// Populate with saved elements
 		this.plugin.settings.customElements.forEach(element => {
 			this.cssEditorManager.createElementItem(elementList, element);
@@ -1189,4 +1209,17 @@ export class CustomThemeStudioView extends ItemView {
 		this.cssEditorManager.clearAppliedChanges();
 	}
 
+	scrollToDiv(target: HTMLElement) {
+		if (target) {
+			const container = this.containerEl;
+			if (container && target) {
+				const top = (target as HTMLElement).offsetTop-10;
+				// container.scrollTop = top;
+				(container as HTMLElement).scrollTo({
+					top: top,
+					behavior: "smooth"
+				});
+			}
+		}
+	}
 }
