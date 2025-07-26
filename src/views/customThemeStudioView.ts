@@ -1,4 +1,4 @@
-import { ItemView, WorkspaceLeaf, setIcon, Workspace, ColorComponent, Scope, debounce } from 'obsidian';
+import { ItemView, WorkspaceLeaf, setIcon, Workspace, ColorComponent, Scope, debounce, Setting } from 'obsidian';
 import CustomThemeStudioPlugin from '../main';
 import { type cssVariable, CSSVariableManager, allCategories, cssCategory, cssVariableDefaults } from '../managers/cssVariabManager';
 import { ElementSelectorManager } from '../managers/elementSelectorManager';
@@ -1145,6 +1145,18 @@ export class CustomThemeStudioView extends ItemView {
 				class: 'export-form-theme-url'
 			}
 		});
+
+		// Toggle for option to include disabled custom elements
+		const includeDisabledContainer: HTMLDivElement = formContainer.createDiv('export-form-item include-disabled-toggle');
+		new Setting(includeDisabledContainer)
+			.setDesc('Include disabled custom elements')
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.exportThemeIncludeDisabled)
+				.onChange(async (value) => {
+					this.plugin.settings.exportThemeIncludeDisabled = value;
+					await this.plugin.saveSettings();
+				})
+			);
 
 		// Save export settings when changed
 		nameInput.addEventListener('change', () => {

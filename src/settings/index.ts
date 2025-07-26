@@ -27,6 +27,7 @@ export interface CustomThemeStudioSettings {
 	exportThemeName: string;
 	exportThemeAuthor: string;
 	exportThemeURL: string;
+	exportThemeIncludeDisabled: boolean;
 	exportPrettierFormat: boolean;
 	lastSelectedSelector: string;
 	collapsedCSSVariables: boolean;
@@ -60,6 +61,7 @@ export const DEFAULT_SETTINGS: CustomThemeStudioSettings = {
 	exportThemeName: 'My Custom Theme',
 	exportThemeAuthor: 'Anonymous',
 	exportThemeURL: 'https://github.com/obsidianmd',
+	exportThemeIncludeDisabled: false,
 	exportPrettierFormat: true,
 	lastSelectedSelector: '',
 	collapsedCSSVariables: false,
@@ -412,7 +414,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Theme name')
-			.setDesc('The name or title for your exported theme.')
+			.setDesc('The name or title for your exported theme. (Can also be changed at time of export)')
 			.addText(text => text
 				.setValue(this.plugin.settings.exportThemeName)
 				.onChange(async (value) => {
@@ -424,7 +426,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Author name')
-			.setDesc('Your name as the theme author.')
+			.setDesc('Your name as the theme author. (Can also be changed at time of export)')
 			.addText(text => text
 				.setValue(this.plugin.settings.exportThemeAuthor)
 				.onChange(async (value) => {
@@ -438,7 +440,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Author URL')
-			.setDesc('URL to your github profile page (e.g. https://github.com/username).')
+			.setDesc('URL to your github profile page (e.g. https://github.com/username). (Can also be changed at time of export)')
 			.addText(text => text
 				.setValue(this.plugin.settings.exportThemeURL)
 				.onChange(async (value) => {
@@ -449,6 +451,17 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 						varInput!.value = value;
 					}
 				}));
+
+		new Setting(containerEl)
+			.setName('Include disabled custom elements when exporting.')
+			.setDesc('(Can also be changed at time of export)')
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.exportThemeIncludeDisabled)
+				.onChange(async (value) => {
+					this.plugin.settings.exportThemeIncludeDisabled = value;
+					await this.plugin.saveSettings();
+				})
+			);
 
 		new Setting(containerEl)
 			.setName('Prettier formatting')

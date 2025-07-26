@@ -164,7 +164,16 @@ export class ThemeManager {
 		try {
 			// Generate theme.css content
 			const variablesCSS: string = this.generateVariablesCSS();
-			const elementsCSS: string = this.plugin.settings.customCSS || '';
+
+			// Optional "include disabled custom elements" when exporting
+			let fullCSS = '';
+			if (this.plugin.settings.exportThemeIncludeDisabled) {
+				this.plugin.settings.customElements.forEach(element => {
+					fullCSS += `/* ${element.name || element.selector} */\n${element.css}\n\n`;
+				});
+			}
+
+			const elementsCSS: string = fullCSS !== '' ? fullCSS : this.plugin.settings.customCSS;
 			const themeCSS: string = `/* ${this.plugin.settings.exportThemeName || DEFAULT_SETTINGS.exportThemeName} for Obsidian */
 /* by ${this.plugin.settings.exportThemeAuthor || DEFAULT_SETTINGS.exportThemeAuthor} */
 /* ${this.plugin.settings.exportThemeURL || DEFAULT_SETTINGS.exportThemeURL} */
@@ -211,7 +220,16 @@ ${elementsCSS}`;
 	async copyThemeToClipboard(): Promise<void> {
 		try {
 			const variablesCSS: string = this.generateVariablesCSS();
-			const elementsCSS: string = this.plugin.settings.customCSS || '';
+			
+			// Optional "include disabled custom elements" when exporting
+			let fullCSS = '';
+			if (this.plugin.settings.exportThemeIncludeDisabled) {
+				this.plugin.settings.customElements.forEach(element => {
+					fullCSS += `/* ${element.name || element.selector} */\n${element.css}\n\n`;
+				});
+			}
+
+			const elementsCSS: string = fullCSS !== '' ? fullCSS : this.plugin.settings.customCSS;
 			const themeCSS: string = `/* ${this.plugin.settings.exportThemeName || DEFAULT_SETTINGS.exportThemeName} for Obsidian */
 /* by ${this.plugin.settings.exportThemeAuthor || DEFAULT_SETTINGS.exportThemeAuthor} */
 /* ${this.plugin.settings.exportThemeURL || DEFAULT_SETTINGS.exportThemeURL} */

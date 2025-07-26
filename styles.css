@@ -861,6 +861,10 @@ body {
     }
 }
 
+.cts-view .include-disabled-toggle {
+    margin-top: 1em;
+}
+
 .cts-view .export-section .button-container {
     display: flex;
     flex-wrap: wrap;
