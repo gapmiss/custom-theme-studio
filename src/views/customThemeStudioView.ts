@@ -835,6 +835,29 @@ export class CustomThemeStudioView extends ItemView {
 				item.removeClass('variable-item-hide');
 			}
 		});
+
+		const CustomVarItems: NodeListOf<Element> = this.containerEl.querySelectorAll('.custom-variable-item');
+		CustomVarItems.forEach((item: Element) => {
+			const varName: string = item.getAttribute('data-var-name') || '';
+			const varValue: string = item.getAttribute('data-var-value') || '';
+			if (searchTerm !== '') {
+				// Show matches or hide non-matches
+				if (
+					varName.includes(searchTerm) ||
+					varValue.includes(searchTerm)
+				) {
+					item.addClass('variable-item-show');
+					item.removeClass('variable-item-hide');
+				} else {
+					item.addClass('variable-item-hide');
+					item.removeClass('variable-item-show');
+				}
+			} else {
+				// Empty search - show all variables
+				item.addClass('variable-item-show');
+				item.removeClass('variable-item-hide');
+			}
+		});
 	}
 
 	// Render custom elements section
