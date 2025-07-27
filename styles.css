@@ -338,6 +338,7 @@ body {
             &>span {
                 color: var(--color-base-60) !important;
                 font-size: var(--font-smallest) !important;
+                margin-right: .5em;
             }
 
             &>span:hover {
@@ -385,11 +386,11 @@ body {
 
         &>div.variable-name {
             grid-area: name;
+            padding-right: .2em;
 
             &>span {
                 color: var(--color-base-60) !important;
                 font-size: var(--font-smallest) !important;
-                padding-right: .2em;
             }
 
             &>span:hover {
