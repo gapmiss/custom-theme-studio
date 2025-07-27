@@ -95,12 +95,30 @@ export class AddVariableModal extends Modal {
                             const elementList: HTMLElement | null = view.containerEl.querySelector('[data-var-category="custom"]');
                             if (elementList) {
                                 elementList.empty();
-                                const items = this.plugin.settings.customVariables.filter(v => v.parent === 'custom');
+                                const items = this.plugin.settings.customVariables
+                                    .filter(v => v.parent === 'custom')
+                                    .sort((a, b) => a.variable!.localeCompare(b.variable!)); // Sort by "variable" ASC
                                 if (items.length) {
                                     items.forEach((item) => {
                                         view.createCustomVariableItemInput(elementList, { uuid: item.uuid!, name: item.variable, value: item.value }, 'custom');
                                     });
                                 }
+                            }
+                            const elementListWrapper: HTMLElement | null = view.containerEl.querySelector('#variable-category-custom');
+                            if (elementListWrapper) {
+                                // Toggle icon
+                                let variableListicon: HTMLElement | null = elementListWrapper.querySelector('.collapse-icon.clickable-icon');
+                                setIcon(variableListicon!, 'chevron-down')
+                                variableListicon?.setAttr('aria-label', 'Collapse category');
+                                variableListicon?.setAttr('data-tooltip-position', 'top');
+                                // Variables list
+                                let variableList: HTMLElement | null = elementListWrapper.querySelector('[data-var-category="custom"]');
+                                variableList?.removeClass('variable-list-hide');
+                                variableList?.addClass('variable-list-show');
+                                // Scroll editor to the top of view
+                                setTimeout(() => {
+                                    view.scrollToDiv(elementListWrapper);
+                                }, 100);
                             }
                         }
                     }

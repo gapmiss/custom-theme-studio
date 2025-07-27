@@ -537,23 +537,25 @@ export class CustomThemeStudioView extends ItemView {
 
 			// List variables
 			if (category.category === 'custom') {
-				const items = this.plugin.settings.customVariables.filter(v => v.parent === 'custom');
+				const items = this.plugin.settings.customVariables
+					.filter(v => v.parent === 'custom')
+					.sort((a, b) => a.variable!.localeCompare(b.variable!)); // Sort by "variable" ASC
 				if (items.length) {
 					items.forEach((item) => {
 						this.createCustomVariableItemInput(variableListEl, { uuid: item.uuid!, name: item.variable, value: item.value }, category.category);
 					});
 				}
 			} else {
-				const items: cssVariable[] = cssVariableDefaults.filter(cat => cat.cat === category.category);
+				const items: cssVariable[] = cssVariableDefaults
+					.filter(cat => cat.cat === category.category)
+					.sort((a, b) => a.variable!.localeCompare(b.variable!)); // Sort by "variable" ASC
 				if (items.length) {
 					items.forEach((item) => {
 						this.createVariableItemInput(variableListEl, { name: item.variable, value: item.default }, category.category);
 					});
 				}
 			}
-
 		});
-
 	}
 
 	// debounce applyCustomTheme and showNotice
