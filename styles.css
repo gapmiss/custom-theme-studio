@@ -774,25 +774,6 @@ body {
     padding-bottom: .15em;
     width: 100%;
     background-color: var(--background-primary);
-
-    & .element-item-title {
-        grid-area: unset;
-        padding-inline: unset;
-        min-width: unset;
-        font-size: var(--font-small);
-        flex-grow: 2;
-
-        &>div {
-            text-overflow: unset;
-            overflow: unset;
-            white-space: unset;
-        }
-    }
-
-    & .element-item-actions {
-        grid-area: unset;
-        padding-right: unset;
-    }
 }
 
 .cts-view .inline-element-editor {
@@ -811,7 +792,7 @@ body {
 
 .cts-view .element-item-actions {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
 }
 
 .cts-view .element-item-delete-button:hover {
