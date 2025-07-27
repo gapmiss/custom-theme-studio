@@ -640,7 +640,7 @@ export class CSSEditorManager {
 		// Edit button
 		editButton.addEventListener('click', async () => {
 			// Check if editor section is already visible
-			const editorSection = containerEl.querySelector('.css-editor-section');
+			const editorSection = this.view.containerEl.querySelector('.css-editor-section');
 			const isEditorVisible = editorSection && getComputedStyle(editorSection).display !== 'none';
 
 			if (isEditorVisible && this.plugin.settings.showConfirmation) {
