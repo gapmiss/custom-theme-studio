@@ -367,8 +367,17 @@ export class ElementSelectorManager {
 			return;
 		}
 
-		// Generate selector based on whether alt key is pressed
-		const selector = this.generateSelector(element, evt.altKey, evt.metaKey);
+		let selector: string;
+		if (evt.altKey) {
+			// Generate selector based on whether alt key is pressed
+			selector = this.generateSelector(element, evt.altKey);
+		} else if (evt.metaKey) {
+			// Generate selector based on whether cmd/ctrl (meta) key is pressed
+			selector = this.generateSelector(element, true, evt.metaKey);
+		} else {
+			// Generate selector
+			selector = this.generateSelector(element);
+		}
 
 		// Save the selector
 		this.plugin.settings.lastSelectedSelector = selector;
@@ -453,6 +462,9 @@ export class ElementSelectorManager {
 					selector = `${selector}[${attrName}="${escapedValue}"]`;
 				}
 			});
+
+			console.log('specific selector');
+			console.log(selector);
 
 		} else {
 			// Default mode - prioritize aria-label and data-* attributes
