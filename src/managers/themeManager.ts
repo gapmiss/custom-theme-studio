@@ -48,7 +48,7 @@ export class ThemeManager {
 		}
 	}
 
-	toggleCustomTheme(): void {
+	async toggleCustomTheme(): Promise<void> {
 		this.plugin.settings.themeEnabled = !this.plugin.settings.themeEnabled;
 
 		if (this.plugin.settings.themeEnabled) {

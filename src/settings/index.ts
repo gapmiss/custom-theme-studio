@@ -119,6 +119,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 						this.plugin.themeManager.removeCustomTheme();
 					}
 					await this.plugin.saveSettings();
+					// Update view checkbox
 					let themeToggle: HTMLInputElement | null = window.document.querySelector('.cts-view [id="theme-toggle-switch"]');
 					if (themeToggle) {
 						if (value) {
@@ -148,7 +149,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 					}
 				}));
 
-		containerEl.createEl('h3', { text: 'CSS variables' });
+		containerEl.createEl('h3', { cls: 'cts-settings-h3', text: 'CSS variables' });
 
 		new Setting(containerEl)
 			.setName('Variable input listener')
@@ -177,7 +178,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				})
 			);
 
-		containerEl.createEl('h3', { text: 'Custom elements' });
+		containerEl.createEl('h3', { cls: 'cts-settings-h3', text: 'Custom elements' });
 
 		new Setting(containerEl)
 			.setName('Auto-apply changes')
@@ -190,11 +191,11 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				})
 			);
 
-		let noticeDiv = this.containerEl.createDiv({ cls: 'auto-apply-changes-notice' });
-		let noticeIcon = noticeDiv.createDiv({ cls: 'auto-apply-changes-notice-icon' });
+		let noticeDiv = this.containerEl.createDiv({ cls: 'cts-auto-apply-changes-notice' });
+		let noticeIcon = noticeDiv.createDiv({ cls: 'cts-auto-apply-changes-notice-icon' });
 		noticeIcon.setAttribute('aria-label', 'Notice');
 		noticeIcon.setAttribute('data-tooltip-position', 'top');
-		let noticeText = noticeDiv.createDiv({ cls: 'auto-apply-changes-notice-text' });
+		let noticeText = noticeDiv.createDiv({ cls: 'cts-auto-apply-changes-notice-text' });
 		noticeText.textContent = 'When enabled, every keystroke triggers a "live" refresh of your theme. This can lead to unwanted styling and possibly make Obsidian unusable.';
 		setIcon((noticeIcon), 'alert-triangle');
 
@@ -233,7 +234,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				})
 			);
 
-		containerEl.createEl('h3', { text: 'CSS editor' });
+		containerEl.createEl('h3', { cls: 'cts-settings-h3', text: 'CSS editor' });
 
 		new Setting(containerEl)
 			.setName('Color picker')
@@ -410,11 +411,12 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				}));
 
-		containerEl.createEl('h3', { text: 'Theme export' });
+		containerEl.createEl('h3', { cls: 'cts-settings-h3', text: 'Theme export' });
+		containerEl.createDiv({ cls: 'cts-theme-export-description', text: 'These settings can also be changed at time of export.' });
 
 		new Setting(containerEl)
 			.setName('Theme name')
-			.setDesc('The name or title for your exported theme. (Can also be changed at time of export)')
+			.setDesc('The name or title for your exported theme. ')
 			.addText(text => text
 				.setValue(this.plugin.settings.exportThemeName)
 				.onChange(async (value) => {
@@ -426,7 +428,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Author name')
-			.setDesc('Your name as the theme author. (Can also be changed at time of export)')
+			.setDesc('Your name as the theme author. ')
 			.addText(text => text
 				.setValue(this.plugin.settings.exportThemeAuthor)
 				.onChange(async (value) => {
@@ -440,7 +442,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Author URL')
-			.setDesc('URL to your github profile page (e.g. https://github.com/username). (Can also be changed at time of export)')
+			.setDesc('URL to your github profile page (e.g. https://github.com/username). ')
 			.addText(text => text
 				.setValue(this.plugin.settings.exportThemeURL)
 				.onChange(async (value) => {
@@ -453,13 +455,21 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				}));
 
 		new Setting(containerEl)
-			.setName('Include disabled custom elements when exporting.')
-			.setDesc('(Can also be changed at time of export)')
+			.setName('Include disabled custom elements when exporting')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.exportThemeIncludeDisabled)
 				.onChange(async (value) => {
 					this.plugin.settings.exportThemeIncludeDisabled = value;
 					await this.plugin.saveSettings();
+					// Update view checkbox
+					let includeDisabledToggle: HTMLInputElement | null = window.document.querySelector('.cts-view [id="include-disabled-switch"]');
+					if (includeDisabledToggle) {
+						if (value) {
+							includeDisabledToggle.checked = true;
+						} else {
+							includeDisabledToggle.checked = false;
+						}
+					}
 				})
 			);
 
@@ -471,10 +481,19 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				.onChange(async (value) => {
 					this.plugin.settings.exportPrettierFormat = value;
 					await this.plugin.saveSettings();
+					// Update view checkbox
+					let enabledPrettierToggle: HTMLInputElement | null = window.document.querySelector('.cts-view [id="enable-prettier-switch"]');
+					if (enabledPrettierToggle) {
+						if (value) {
+							enabledPrettierToggle.checked = true;
+						} else {
+							enabledPrettierToggle.checked = false;
+						}
+					}
 				})
 			);
 
-		containerEl.createEl('h3', { text: 'Settings backup' });
+		containerEl.createEl('h3', { cls: 'cts-settings-h3', text: 'Settings backup' });
 
 		new Setting(containerEl)
 			.setName('Export & import settings')

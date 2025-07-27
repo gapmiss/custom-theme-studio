@@ -105,8 +105,6 @@ export class CustomThemeStudioView extends ItemView {
 
 		// Theme enabled toggle
 		const toggleContainer: HTMLDivElement = headerEl.createDiv('theme-toggle-container');
-		const toggleLabel: HTMLLabelElement = toggleContainer.createEl('label', { text: 'Theme enabled: ' });
-		toggleLabel.setAttr('for', 'theme-toggle-switch');
 		const toggleSwitch: HTMLInputElement = toggleContainer.createEl('input', {
 			attr: {
 				type: 'checkbox',
@@ -117,6 +115,8 @@ export class CustomThemeStudioView extends ItemView {
 		toggleSwitch.addEventListener('change', async () => {
 			this.plugin.themeManager.toggleCustomTheme();
 		});
+		const toggleLabel: HTMLLabelElement = toggleContainer.createEl('label', { text: 'Enable theme' });
+		toggleLabel.setAttr('for', 'theme-toggle-switch');
 
 		// Light/dark theme toggle
 		const toggleThemeWrapper = toggleContainer.createDiv({ cls: 'toggle-theme-wrapper' });
@@ -321,7 +321,7 @@ export class CustomThemeStudioView extends ItemView {
 		const searchInput: HTMLInputElement = clearInputContainer.createEl('input', {
 			attr: {
 				type: 'text',
-				placeholder: 'Search variables…',
+				placeholder: 'Search CSS variables…',
 				class: 'search-input'
 			}
 		});
@@ -1148,15 +1148,35 @@ export class CustomThemeStudioView extends ItemView {
 
 		// Toggle for option to include disabled custom elements
 		const includeDisabledContainer: HTMLDivElement = formContainer.createDiv('export-form-item include-disabled-toggle');
-		new Setting(includeDisabledContainer)
-			.setDesc('Include disabled custom elements')
-			.addToggle(toggle => toggle
-				.setValue(this.plugin.settings.exportThemeIncludeDisabled)
-				.onChange(async (value) => {
-					this.plugin.settings.exportThemeIncludeDisabled = value;
-					await this.plugin.saveSettings();
-				})
-			);
+		const includeDisabledToggleSwitch: HTMLInputElement = includeDisabledContainer.createEl('input', {
+			attr: {
+				type: 'checkbox',
+				id: 'include-disabled-switch'
+			}
+		});
+		includeDisabledToggleSwitch.checked = this.plugin.settings.exportThemeIncludeDisabled;
+		includeDisabledToggleSwitch.addEventListener('change', async () => {
+			this.plugin.settings.exportThemeIncludeDisabled = includeDisabledToggleSwitch.checked;
+			await this.plugin.saveSettings();
+		});
+		const includeDisabledToggleLabel: HTMLLabelElement = includeDisabledContainer.createEl('label', { text: 'Include disabled custom elements' });
+		includeDisabledToggleLabel.setAttr('for', 'include-disabled-switch');
+
+		// Toggle for option to use prettier
+		const enablePrettierContainer: HTMLDivElement = formContainer.createDiv('export-form-item');
+		const enablePrettierToggleSwitch: HTMLInputElement = enablePrettierContainer.createEl('input', {
+			attr: {
+				type: 'checkbox',
+				id: 'enable-prettier-switch'
+			}
+		});
+		enablePrettierToggleSwitch.checked = this.plugin.settings.exportPrettierFormat;
+		enablePrettierToggleSwitch.addEventListener('change', async () => {
+			this.plugin.settings.exportPrettierFormat = enablePrettierToggleSwitch.checked;
+			await this.plugin.saveSettings();
+		});
+		const enablePrettierToggleLabel: HTMLLabelElement = enablePrettierContainer.createEl('label', { text: 'Format CSS with Prettier formatter' });
+		enablePrettierToggleLabel.setAttr('for', 'enable-prettier-switch');
 
 		// Save export settings when changed
 		nameInput.addEventListener('change', () => {
