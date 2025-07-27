@@ -113,27 +113,29 @@ export class FontImportModal extends Modal {
 									this.plugin.settings.customElements.forEach(element => {
 										view.cssEditorManager.createElementItem(elementList as HTMLElement, element);
 									});
+
+									// Scroll editor to the top of view
+									setTimeout(() => {
+										const elementDiv: HTMLElement | null = view.containerEl.querySelector(`[data-cts-uuid="${uuid}"]`);
+										view.scrollToDiv(elementDiv!);
+									}, 100);
 								}
 							}
 						} else {
 							showNotice('The @font-face has been saved as a new custom element', 5000, 'success');
 						}
-
 					}
 				});
 			});
 
 		let debounceFocus = debounce(
 			() => {
-				console.log(fontNameInput.settingEl.querySelector('input')!);
 				fontNameInput.settingEl.querySelector('input')!.focus();
 			},
 			10,
 			true
 		);
-
 		debounceFocus();
-
 	}
 
 	onClose() {
