@@ -60,10 +60,6 @@ body {
     margin-bottom: .75em;
 }
 
-.cts-settings-h3 {
-    color: var(--text-accent) !important;
-}
-
 .reset-options-heading {
     color: var(--color-red);
 }
