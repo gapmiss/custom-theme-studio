@@ -483,6 +483,14 @@ body {
     }
 }
 
+.cts-view .custom-variable-item-show {
+    display: block;
+}
+
+.cts-view .custom-variable-item-hide {
+    display: none;
+}
+
 /* clear variable input button */
 .cts-view .clear-variable-input {
     position: relative;

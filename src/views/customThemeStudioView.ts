@@ -280,7 +280,7 @@ export class CustomThemeStudioView extends ItemView {
 								let children: HTMLCollection = el.children;
 								// Check for visible children
 								for (var i = 0; i < children.length; i++) {
-									if (children[i].hasClass('variable-item-show')) {
+									if (children[i].hasClass('variable-item-show') || children[i].hasClass('custom-variable-item-show')) {
 										hasVisibleChildren = true;
 										continue;
 									}
@@ -370,7 +370,7 @@ export class CustomThemeStudioView extends ItemView {
 					let hasVisibleChildren: boolean = false;
 					let children: HTMLCollection = el.children;
 					for (var i = 0; i < children.length; i++) {
-						if (children[i].hasClass('variable-item-show')) {
+						if (children[i].hasClass('variable-item-show') || children[i].hasClass('custom-variable-item-show')) {
 							hasVisibleChildren = true;
 							continue;
 						}
@@ -848,16 +848,16 @@ export class CustomThemeStudioView extends ItemView {
 					varName.includes(searchTerm) ||
 					varValue.includes(searchTerm)
 				) {
-					item.addClass('variable-item-show');
-					item.removeClass('variable-item-hide');
+					item.addClass('custom-variable-item-show');
+					item.removeClass('custom-variable-item-hide');
 				} else {
-					item.addClass('variable-item-hide');
-					item.removeClass('variable-item-show');
+					item.addClass('custom-variable-item-hide');
+					item.removeClass('custom-variable-item-show');
 				}
 			} else {
 				// Empty search - show all variables
-				item.addClass('variable-item-show');
-				item.removeClass('variable-item-hide');
+				item.addClass('custom-variable-item-show');
+				item.removeClass('custom-variable-item-hide');
 			}
 		});
 	}
