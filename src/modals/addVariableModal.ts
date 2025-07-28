@@ -115,10 +115,12 @@ export class AddVariableModal extends Modal {
                                 let variableList: HTMLElement | null = elementListWrapper.querySelector('[data-var-category="custom"]');
                                 variableList?.removeClass('variable-list-hide');
                                 variableList?.addClass('variable-list-show');
-                                // Scroll editor to the top of view
-                                setTimeout(() => {
-                                    view.scrollToDiv(elementListWrapper);
-                                }, 100);
+                                // Scroll variable list to the top of view
+                                if (this.plugin.settings.viewScrollToTop) {
+                                    setTimeout(() => {
+                                        view.scrollToDiv(elementListWrapper);
+                                    }, 100);
+                                }
                             }
                         }
                     }

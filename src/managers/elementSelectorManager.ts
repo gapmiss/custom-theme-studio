@@ -396,10 +396,12 @@ export class ElementSelectorManager {
 			this.view.cssEditorManager.showEditorSection(true);
 
 			// Scroll editor to the top of view
-			setTimeout(() => {
-				this.scrollToDivByUUID(uuid);
-				this.view.cssEditorManager.nameInputEl!.focus();
-			}, 100);
+			if (this.plugin.settings.viewScrollToTop) {
+				setTimeout(() => {
+					this.scrollToDivByUUID(uuid);
+					this.view.cssEditorManager.nameInputEl!.focus();
+				}, 100);
+			}
 		}
 	}
 

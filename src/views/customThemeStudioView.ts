@@ -302,11 +302,12 @@ export class CustomThemeStudioView extends ItemView {
 								setIcon(variableListicon!, 'chevron-down')
 								variableListicon?.setAttr('aria-label', 'Collapse category');
 								variableListicon?.setAttr('data-tooltip-position', 'top');
-
-								// Scroll editor to the top of view
-								setTimeout(() => {
-									this.scrollToDiv(el);
-								}, 100);
+								// Scroll variable list to the top of view
+								if (this.plugin.settings.viewScrollToTop) {
+									setTimeout(() => {
+										this.scrollToDiv(el);
+									}, 100);
+								}
 							});
 						}
 					});
@@ -387,10 +388,12 @@ export class CustomThemeStudioView extends ItemView {
 							setIcon(variableListicon!, 'chevron-down')
 							variableListicon?.setAttr('aria-label', 'Collapse category');
 							variableListicon?.setAttr('data-tooltip-position', 'top');
-							// Scroll editor to the top of view
-							setTimeout(() => {
-								this.scrollToDiv(el);
-							}, 100);
+							// Scroll variable list to the top of view
+							if (this.plugin.settings.viewScrollToTop) {
+								setTimeout(() => {
+									this.scrollToDiv(el);
+								}, 100);
+							}
 						} else {
 							el?.addClass('variable-list-hide');
 							el?.removeClass('variable-list-show');
@@ -410,10 +413,12 @@ export class CustomThemeStudioView extends ItemView {
 								setIcon(variableListicon!, 'chevron-down')
 								variableListicon?.setAttr('aria-label', 'Collapse category');
 								variableListicon?.setAttr('data-tooltip-position', 'top');
-								// Scroll editor to the top of view
-								setTimeout(() => {
-									this.scrollToDiv(el);
-								}, 100);
+								// Scroll variable list to the top of view
+								if (this.plugin.settings.viewScrollToTop) {
+									setTimeout(() => {
+										this.scrollToDiv(el);
+									}, 100);
+								}
 							} else {
 								el?.addClass('variable-list-hide');
 								el?.removeClass('variable-list-show');
@@ -522,10 +527,12 @@ export class CustomThemeStudioView extends ItemView {
 					setIcon(catToggleIcon, 'chevron-down');
 					catToggleIcon.setAttr('aria-label', 'Collapse category');
 					catToggleIcon.setAttr('data-tooltip-position', 'top');
-					// Scroll editor to the top of view
-					setTimeout(() => {
-						this.scrollToDiv(categoryEl);
-					}, 100);
+					// Scroll category to the top of view
+					if (this.plugin.settings.viewScrollToTop) {
+						setTimeout(() => {
+							this.scrollToDiv(categoryEl);
+						}, 100);
+					}
 				} else {
 					variableListEl.addClass('variable-list-hide');
 					variableListEl.removeClass('variable-list-show');
@@ -981,10 +988,12 @@ export class CustomThemeStudioView extends ItemView {
 			}
 
 			// Scroll editor to the top of view
-			setTimeout(() => {
-				this.scrollToDiv(editorSection as HTMLElement);
-				this.cssEditorManager.nameInputEl!.focus();
-			}, 100);
+			if (this.plugin.settings.viewScrollToTop) {
+				setTimeout(() => {
+					this.scrollToDiv(editorSection as HTMLElement);
+					this.cssEditorManager.nameInputEl!.focus();
+				}, 100);
+			}
 		});
 
 		// @font-face rule Modal

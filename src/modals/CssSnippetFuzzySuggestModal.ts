@@ -88,6 +88,13 @@ export class CssSnippetFuzzySuggestModal extends FuzzySuggestModal<Snippets> {
                         toggleIcon.setAttr('aria-label', 'Collapse section');
                         toggleIcon.setAttr('data-tooltip-position', 'top');
                     }
+                    // Scroll custom element to the top of view
+                    if (this.plugin.settings.viewScrollToTop) {
+                        setTimeout(() => {
+                            const elementDiv: HTMLElement | null = view.containerEl.querySelector(`[data-cts-uuid="${uuid}"]`);
+                            view.scrollToDiv(elementDiv!);
+                        }, 100);
+                    }
                 }
             }
         } else {

@@ -51,6 +51,7 @@ export interface CustomThemeStudioSettings {
 	editorLightTheme: string;
 	editorDarkTheme: string;
 	editorKeyboard: string;
+	viewScrollToTop: boolean;
 }
 
 export const DEFAULT_SETTINGS: CustomThemeStudioSettings = {
@@ -84,7 +85,8 @@ export const DEFAULT_SETTINGS: CustomThemeStudioSettings = {
 	editorTheme: 'Auto',
 	editorLightTheme: 'github_light_default',
 	editorDarkTheme: 'github_dark',
-	editorKeyboard: 'default'
+	editorKeyboard: 'default',
+	viewScrollToTop: true
 };
 
 const THEME_COLOR: any = {
@@ -490,6 +492,19 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 							enabledPrettierToggle.checked = false;
 						}
 					}
+				})
+			);
+
+		containerEl.createEl('h3', { cls: 'cts-settings-h3', text: 'Scroll helper' });
+
+		new Setting(containerEl)
+			.setName('Scroll to top')
+			.setDesc('Automatically scroll to the top of the Custom Theme Studio view.')
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.viewScrollToTop)
+				.onChange(async (value) => {
+					this.plugin.settings.viewScrollToTop = value;
+					await this.plugin.saveSettings();
 				})
 			);
 

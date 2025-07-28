@@ -675,10 +675,12 @@ export class CSSEditorManager {
 				this.showEditorSection(true);
 
 				// Scroll editor to the top of view
-				setTimeout(() => {
-					this.scrollToDivByUUID(element.uuid);
-					this.nameInputEl!.focus();
-				}, 100);
+				if (this.plugin.settings.viewScrollToTop) {
+					setTimeout(() => {
+						this.scrollToDivByUUID(element.uuid);
+						this.nameInputEl!.focus();
+					}, 100);
+				}
 			}
 		});
 
