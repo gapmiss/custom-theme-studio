@@ -1275,6 +1275,7 @@ export class CustomThemeStudioView extends ItemView {
 		this.cssEditorManager.clearAppliedChanges();
 	}
 
+	// Scroll element to the top of view
 	scrollToDiv(target: HTMLElement) {
 		if (target) {
 			const container = this.containerEl;

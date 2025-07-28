@@ -464,10 +464,6 @@ export class ElementSelectorManager {
 					selector = `${selector}[${attrName}="${escapedValue}"]`;
 				}
 			});
-
-			console.log('specific selector');
-			console.log(selector);
-
 		} else {
 			// Default mode - prioritize aria-label and data-* attributes
 			// Check for aria-label attribute (high priority)
@@ -592,13 +588,13 @@ export class ElementSelectorManager {
 		return value.replace(/["\\]/g, '\\$&');
 	}
 
+	// Scroll element to the top of view
 	scrollToDivByUUID(uuid: string) {
 		const target = this.view.containerEl.querySelector(`input[value="${uuid}"]`)?.parentElement;
 		if (target) {
 			const container = this.view.containerEl;
 			if (container && target) {
 				const top = (target as HTMLElement).offsetTop-10;
-				// container.scrollTop = top;
 				(container as HTMLElement).scrollTo({
 					top: top,
 					behavior: "smooth"
