@@ -1197,7 +1197,7 @@ export class CustomThemeStudioView extends ItemView {
 		includeDisabledToggleLabel.setAttr('for', 'include-disabled-switch');
 
 		// Toggle for option to use prettier
-		const enablePrettierContainer: HTMLDivElement = formContainer.createDiv('export-form-item');
+		const enablePrettierContainer: HTMLDivElement = formContainer.createDiv('export-form-item enable-prettier-toggle');
 		const enablePrettierToggleSwitch: HTMLInputElement = enablePrettierContainer.createEl('input', {
 			attr: {
 				type: 'checkbox',

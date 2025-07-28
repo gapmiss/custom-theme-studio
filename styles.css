@@ -861,6 +861,11 @@ body {
     }
 }
 
+.cts-view .enable-prettier-toggle,
+.cts-view .include-disabled-toggle{
+    flex-wrap: nowrap;
+}
+
 .cts-view .include-disabled-toggle {
     margin-top: 1em;
 }
