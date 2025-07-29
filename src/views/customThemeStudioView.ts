@@ -1,4 +1,4 @@
-import { ItemView, WorkspaceLeaf, setIcon, Workspace, ColorComponent, Scope, debounce, Setting } from 'obsidian';
+import { ItemView, WorkspaceLeaf, setIcon, Workspace, ColorComponent, Scope, debounce } from 'obsidian';
 import CustomThemeStudioPlugin from '../main';
 import { type cssVariable, CSSVariableManager, allCategories, cssCategory, cssVariableDefaults } from '../managers/cssVariabManager';
 import { ElementSelectorManager } from '../managers/elementSelectorManager';
@@ -95,7 +95,6 @@ export class CustomThemeStudioView extends ItemView {
 			},
 			true
 		);
-
 	}
 
 	// Render header section
@@ -105,12 +104,15 @@ export class CustomThemeStudioView extends ItemView {
 
 		// Theme enabled toggle
 		const toggleContainer: HTMLDivElement = headerEl.createDiv('theme-toggle-container');
-		const toggleSwitch: HTMLInputElement = toggleContainer.createEl('input', {
-			attr: {
-				type: 'checkbox',
-				id: 'theme-toggle-switch'
+		const toggleSwitch: HTMLInputElement = toggleContainer.createEl(
+			'input',
+			{
+				attr: {
+					type: 'checkbox',
+					id: 'theme-toggle-switch'
+				}
 			}
-		});
+		);
 		toggleSwitch.checked = this.plugin.settings.themeEnabled;
 		toggleSwitch.addEventListener('change', async () => {
 			this.plugin.themeManager.toggleCustomTheme();
@@ -120,9 +122,12 @@ export class CustomThemeStudioView extends ItemView {
 
 		// Light/dark theme toggle
 		const toggleThemeWrapper = toggleContainer.createDiv({ cls: 'toggle-theme-wrapper' });
-		const toggleThemeButton = toggleThemeWrapper.createEl('button', {
-			cls: 'toggle-theme-mode clickable-icon'
-		});
+		const toggleThemeButton = toggleThemeWrapper.createEl(
+			'button',
+			{
+				cls: 'toggle-theme-mode clickable-icon'
+			}
+		);
 		toggleThemeButton.setAttr('aria-label', 'Toggle light/dark mode');
 		toggleThemeButton.setAttr('data-tooltip-position', 'top');
 		setIcon(toggleThemeButton, getCurrentTheme() === 'obsidian' ? 'sun' : 'moon');
@@ -145,52 +150,41 @@ export class CustomThemeStudioView extends ItemView {
 		headerTitle.createSpan({ text: 'CSS variables' });
 
 		// Section header toggle button
-		const toggleIcon: HTMLButtonElement = headerTitle.createEl('button', {
-			attr: {
-				'class': 'collapse-icon clickable-icon',
-				'tabindex': '0',
-				'aria-label': 'Expand section',
-				'data-tooltip-position': 'top'
+		const toggleIcon: HTMLButtonElement = headerTitle.createEl(
+			'button',
+			{
+				attr: {
+					'class': 'collapse-icon clickable-icon',
+					'tabindex': '0',
+					'aria-label': 'Expand section',
+					'data-tooltip-position': 'top'
+				}
 			}
-		});
+		);
 
 		// Section collapsible content
 		const content: HTMLDivElement = header.createDiv('collapsible-content');
 
 		// Check saved toggle state
-		if (this.plugin.settings.collapsedCSSVariables === true) {
-			content.addClass('collapsible-content-show');
-			content.removeClass('collapsible-content-hide');
-			setIcon(toggleIcon, 'chevron-down');
-			toggleIcon.setAttr('aria-label', 'Collapse section');
-			toggleIcon.setAttr('data-tooltip-position', 'top');
-		} else {
-			content.addClass('collapsible-content-hide');
-			content.removeClass('collapsible-content-show');
-			setIcon(toggleIcon, 'chevron-right');
-			toggleIcon.setAttr('aria-label', 'Expand section');
-			toggleIcon.setAttr('data-tooltip-position', 'top');
-		}
+		const shouldExpand = this.plugin.settings.expandCSSVariables;
+		content.toggleClass('collapsible-content-show', shouldExpand);
+		content.toggleClass('collapsible-content-hide', !shouldExpand);
+		setIcon(toggleIcon, shouldExpand ? 'chevron-down' : 'chevron-right');
+		toggleIcon.setAttr('aria-label', shouldExpand ? 'Collapse section' : 'Expand section');
+		toggleIcon.setAttr('data-tooltip-position', 'top');
 
 		// Make header title clickable to toggle visibility
 		headerTitle.addEventListener('click', () => {
-			if (content.hasClass('collapsible-content-hide')) {
-				content.addClass('collapsible-content-show');
-				content.removeClass('collapsible-content-hide');
-				setIcon(toggleIcon, 'chevron-down');
-				toggleIcon.setAttr('aria-label', 'Collapse section');
-				toggleIcon.setAttr('data-tooltip-position', 'top');
-				this.plugin.settings.collapsedCSSVariables = true;
-				this.plugin.saveSettings();
-			} else {
-				content.addClass('collapsible-content-hide');
-				content.removeClass('collapsible-content-show');
-				setIcon(toggleIcon, 'chevron-right');
-				toggleIcon.setAttr('aria-label', 'Expand section');
-				toggleIcon.setAttr('data-tooltip-position', 'top');
-				this.plugin.settings.collapsedCSSVariables = false;
-				this.plugin.saveSettings();
-			}
+			const isCurrentlyHidden = content.hasClass('collapsible-content-hide');
+			// Expand if it's currently hidden
+			const shouldExpand = isCurrentlyHidden;
+			content.toggleClass('collapsible-content-show', shouldExpand);
+			content.toggleClass('collapsible-content-hide', !shouldExpand);
+			setIcon(toggleIcon, shouldExpand ? 'chevron-down' : 'chevron-right');
+			toggleIcon.setAttr('aria-label', shouldExpand ? 'Collapse section' : 'Expand section');
+			toggleIcon.setAttr('data-tooltip-position', 'top');
+			this.plugin.settings.expandCSSVariables = shouldExpand;
+			this.plugin.saveSettings();
 		});
 
 		// Variables button container
@@ -246,29 +240,11 @@ export class CustomThemeStudioView extends ItemView {
 						let dataFilterTags: NodeListOf<Element> = this.containerEl.querySelectorAll('[data-filter-tag]');
 						dataFilterTags.forEach((elt: HTMLElement) => {
 							let filter: string | null = elt.getAttr('data-filter-tag');
-
-							if (this.activeTag === 'all') {
-								if (tag === 'all') {
-									elt.addClass('variable-category-show');
-									elt.removeClass('variable-category-hide');
-								} else {
-									if (filter !== filterTag) {
-										elt.addClass('variable-category-hide');
-										elt.removeClass('variable-category-show');
-									} else {
-										elt.addClass('variable-category-show');
-										elt.removeClass('variable-category-hide');
-									}
-								}
-							} else {
-								if (filter !== filterTag) {
-									elt.addClass('variable-category-hide');
-									elt.removeClass('variable-category-show');
-								} else {
-									elt.addClass('variable-category-show');
-									elt.removeClass('variable-category-hide');
-								}
-							}
+							const showCategory =
+								(this.activeTag === 'all' && (tag === 'all' || filter === filterTag)) ||
+								(this.activeTag !== 'all' && filter === filterTag);
+							elt.toggleClass('variable-category-show', showCategory);
+							elt.toggleClass('variable-category-hide', !showCategory);
 						});
 						// Check for variable search
 						if (this.variableSearch !== '') {
@@ -278,6 +254,7 @@ export class CustomThemeStudioView extends ItemView {
 								let dataVarTag: string | null = el.getAttr('data-var-tag');
 								let hasVisibleChildren: boolean = false;
 								let children: HTMLCollection = el.children;
+								
 								// Check for visible children
 								for (var i = 0; i < children.length; i++) {
 									if (children[i].hasClass('variable-item-show') || children[i].hasClass('custom-variable-item-show')) {
@@ -285,18 +262,14 @@ export class CustomThemeStudioView extends ItemView {
 										continue;
 									}
 								}
+
 								// Hide/show
-								if (hasVisibleChildren && ((filterTag === dataVarTag) || filterTag === 'all')) {
-									el?.addClass('variable-list-show');
-									el?.removeClass('variable-list-hide');
-									el?.parentElement!.addClass('variable-category-show');
-									el?.parentElement!.removeClass('variable-category-hide');
-								} else {
-									el?.addClass('variable-list-hide');
-									el?.removeClass('variable-list-show');
-									el?.parentElement!.addClass('variable-category-hide');
-									el?.parentElement!.removeClass('variable-category-show');
-								}
+								const showCategory = hasVisibleChildren && (filterTag === dataVarTag || filterTag === 'all');
+								el?.toggleClass('variable-list-show', showCategory);
+								el?.toggleClass('variable-list-hide', !showCategory);
+								el?.parentElement?.toggleClass('variable-category-show', showCategory);
+								el?.parentElement?.toggleClass('variable-category-hide', !showCategory);
+
 								// Toggle icon
 								let variableListicon: HTMLElement | null = (el.previousSibling as HTMLElement)!.querySelector('.collapse-icon.clickable-icon');
 								setIcon(variableListicon!, 'chevron-down')
@@ -338,103 +311,49 @@ export class CustomThemeStudioView extends ItemView {
 			const variableListEls: NodeListOf<Element> = this.containerEl.querySelectorAll('.variable-list');
 			if (this.variableSearch === '') {
 				variableListEls.forEach((el: HTMLElement) => {
+					const dataVarTag = el.getAttr('data-var-tag');
+					const variableListIcon: HTMLElement | null = (el.previousSibling as HTMLElement)?.querySelector('.collapse-icon.clickable-icon');
+					const shouldShowCategory = activeTagFilter === 'all' || dataVarTag === activeTagFilter;
+					// Always hide the variable list
 					el.addClass('variable-list-hide');
 					el.removeClass('variable-list-show');
-					let dataVarTag: string | null | undefined = el.getAttr('data-var-tag');
-					let variableListicon: HTMLElement | null = (el.previousSibling as HTMLElement)!.querySelector('.collapse-icon.clickable-icon');
-					if (activeTagFilter === 'all') {
-						el?.addClass('variable-list-hide');
-						el?.removeClass('variable-list-show');
-						el?.parentElement!.addClass('variable-category-show');
-						el?.parentElement!.removeClass('variable-category-hide');
-						setIcon(variableListicon!, 'chevron-right')
-						variableListicon?.setAttr('aria-label', 'Expand category');
-						variableListicon?.setAttr('data-tooltip-position', 'top');
-					} else {
-						if (dataVarTag === activeTagFilter) {
-							el?.addClass('variable-list-hide');
-							el?.removeClass('variable-list-show');
-							el?.parentElement!.addClass('variable-category-show');
-							el?.parentElement!.removeClass('variable-category-hide');
-							setIcon(variableListicon!, 'chevron-right')
-							variableListicon?.setAttr('aria-label', 'Expand category');
-							variableListicon?.setAttr('data-tooltip-position', 'top');
-						} else {
-							setIcon(variableListicon!, 'chevron-right')
-							variableListicon?.setAttr('aria-label', 'Expand category');
-							variableListicon?.setAttr('data-tooltip-position', 'top');
-						}
-					}
+					// Show/hide the category based on filter
+					el.parentElement?.toggleClass('variable-category-show', shouldShowCategory);
+					el.parentElement?.toggleClass('variable-category-hide', !shouldShowCategory);
+					setIcon(variableListIcon!, 'chevron-right');
+					variableListIcon?.setAttr('aria-label', 'Expand category');
+					variableListIcon?.setAttr('data-tooltip-position', 'top');
 				});
 			} else {
 				variableListEls.forEach((el: HTMLElement) => {
-					let hasVisibleChildren: boolean = false;
-					let children: HTMLCollection = el.children;
-					for (var i = 0; i < children.length; i++) {
-						if (children[i].hasClass('variable-item-show') || children[i].hasClass('custom-variable-item-show')) {
-							hasVisibleChildren = true;
-							continue;
-						}
-					}
+					const children = Array.from(el.children);
+					const hasVisibleChildren = children.some(child =>
+						child.hasClass('variable-item-show') || child.hasClass('custom-variable-item-show')
+					);
 
-					let dataVarTag: string | null | undefined = el.getAttr('data-var-tag');
-					let variableListicon: HTMLElement | null = (el.previousSibling as HTMLElement)!.querySelector('.collapse-icon.clickable-icon');
-					if (activeTagFilter === 'all') {
-						if (hasVisibleChildren) {
-							el?.addClass('variable-list-show');
-							el?.removeClass('variable-list-hide');
-							el?.parentElement!.addClass('variable-category-show');
-							el?.parentElement!.removeClass('variable-category-hide');
-							setIcon(variableListicon!, 'chevron-down')
-							variableListicon?.setAttr('aria-label', 'Collapse category');
-							variableListicon?.setAttr('data-tooltip-position', 'top');
-							// Scroll variable list to the top of view
-							if (this.plugin.settings.viewScrollToTop) {
-								setTimeout(() => {
-									this.scrollToDiv(el);
-								}, 100);
-							}
-						} else {
-							el?.addClass('variable-list-hide');
-							el?.removeClass('variable-list-show');
-							el?.parentElement!.addClass('variable-category-hide');
-							el?.parentElement!.removeClass('variable-category-show');
-							setIcon(variableListicon!, 'chevron-right')
-							variableListicon?.setAttr('aria-label', 'Expand category');
-							variableListicon?.setAttr('data-tooltip-position', 'top');
-						}
-					} else {
-						if (dataVarTag === activeTagFilter) {
-							if (hasVisibleChildren) {
-								el?.addClass('variable-list-show');
-								el?.removeClass('variable-list-hide');
-								el?.parentElement!.addClass('variable-category-show');
-								el?.parentElement!.removeClass('variable-category-hide');
-								setIcon(variableListicon!, 'chevron-down')
-								variableListicon?.setAttr('aria-label', 'Collapse category');
-								variableListicon?.setAttr('data-tooltip-position', 'top');
-								// Scroll variable list to the top of view
-								if (this.plugin.settings.viewScrollToTop) {
-									setTimeout(() => {
-										this.scrollToDiv(el);
-									}, 100);
-								}
-							} else {
-								el?.addClass('variable-list-hide');
-								el?.removeClass('variable-list-show');
-								el?.parentElement!.addClass('variable-category-hide');
-								el?.parentElement!.removeClass('variable-category-show');
-								setIcon(variableListicon!, 'chevron-right')
-								variableListicon?.setAttr('aria-label', 'Expand category');
-								variableListicon?.setAttr('data-tooltip-position', 'top');
-							}
-						} else {
-							setIcon(variableListicon!, 'chevron-right')
-							variableListicon?.setAttr('aria-label', 'Expand category');
-							variableListicon?.setAttr('data-tooltip-position', 'top');
-						}
-					}
+					const dataVarTag = el.getAttr('data-var-tag');
+					const variableListIcon: HTMLElement | null = (el.previousSibling as HTMLElement)?.querySelector('.collapse-icon.clickable-icon');
+					const shouldExpand = (activeTagFilter === 'all' || dataVarTag === activeTagFilter) && hasVisibleChildren;
 
+					// Toggle visibility
+					el.toggleClass('variable-list-show', shouldExpand);
+					el.toggleClass('variable-list-hide', !shouldExpand);
+					el.parentElement?.toggleClass('variable-category-show', shouldExpand);
+					el.parentElement?.toggleClass('variable-category-hide', !shouldExpand);
+
+					// Icon and accessibility
+					const iconName = shouldExpand ? 'chevron-down' : 'chevron-right';
+					const ariaLabel = shouldExpand ? 'Collapse category' : 'Expand category';
+					setIcon(variableListIcon!, iconName);
+					variableListIcon?.setAttr('aria-label', ariaLabel);
+					variableListIcon?.setAttr('data-tooltip-position', 'top');
+
+					// Optional scroll helper
+					if (shouldExpand && this.plugin.settings.viewScrollToTop) {
+						setTimeout(() => {
+							this.scrollToDiv(el);
+						}, 100);
+					}
 				});
 			}
 			// Clear search
@@ -462,13 +381,16 @@ export class CustomThemeStudioView extends ItemView {
 			searchInput.classList.remove('clear-search-input--touched');
 			const variableListEls: NodeListOf<Element> = this.containerEl.querySelectorAll('.variable-list');
 			variableListEls.forEach((elt: HTMLElement) => {
-				elt.addClass('variable-list-hide');
-				elt.removeClass('variable-list-show');
-				let variableListicon: HTMLElement | null = (elt.previousSibling as HTMLElement)!.querySelector('.collapse-icon.clickable-icon');
-				setIcon(variableListicon!, 'chevron-right')
-				variableListicon?.setAttr('aria-label', 'Expand category');
-				variableListicon?.setAttr('data-tooltip-position', 'top');
+				elt.toggleClass('variable-list-show', false);
+				elt.toggleClass('variable-list-hide', true);
+				const variableListIcon: HTMLElement | null = (elt.previousSibling as HTMLElement)?.querySelector('.collapse-icon.clickable-icon');
+				if (variableListIcon) {
+					setIcon(variableListIcon, 'chevron-right');
+					variableListIcon.setAttr('aria-label', 'Expand category');
+					variableListIcon.setAttr('data-tooltip-position', 'top');
+				}
 			});
+
 		})
 
 		// Render all categories
@@ -521,24 +443,19 @@ export class CustomThemeStudioView extends ItemView {
 
 			// Make header title clickable to toggle visibility
 			header.addEventListener('click', () => {
-				if (variableListEl.hasClass('variable-list-hide')) {
-					variableListEl.addClass('variable-list-show');
-					variableListEl.removeClass('variable-list-hide');
-					setIcon(catToggleIcon, 'chevron-down');
-					catToggleIcon.setAttr('aria-label', 'Collapse category');
-					catToggleIcon.setAttr('data-tooltip-position', 'top');
-					// Scroll category to the top of view
-					if (this.plugin.settings.viewScrollToTop) {
-						setTimeout(() => {
-							this.scrollToDiv(categoryEl);
-						}, 100);
-					}
-				} else {
-					variableListEl.addClass('variable-list-hide');
-					variableListEl.removeClass('variable-list-show');
-					setIcon(catToggleIcon, 'chevron-right');
-					catToggleIcon.setAttr('aria-label', 'Expand category');
-					catToggleIcon.setAttr('data-tooltip-position', 'top');
+				const shouldExpand = variableListEl.hasClass('variable-list-hide');
+
+				variableListEl.toggleClass('variable-list-show', shouldExpand);
+				variableListEl.toggleClass('variable-list-hide', !shouldExpand);
+
+				setIcon(catToggleIcon, shouldExpand ? 'chevron-down' : 'chevron-right');
+				catToggleIcon.setAttr('aria-label', shouldExpand ? 'Collapse category' : 'Expand category');
+				catToggleIcon.setAttr('data-tooltip-position', 'top');
+
+				if (shouldExpand && this.plugin.settings.viewScrollToTop) {
+					setTimeout(() => {
+						this.scrollToDiv(categoryEl);
+					}, 100);
 				}
 			});
 
@@ -822,50 +739,32 @@ export class CustomThemeStudioView extends ItemView {
 		// Filter all variables
 		const varItems: NodeListOf<Element> = this.containerEl.querySelectorAll('.variable-item');
 		varItems.forEach((item: Element) => {
-			const varName: string = item.getAttribute('data-var-name') || '';
-			const varDefaultValue: string = item.getAttribute('data-var-value') || '';
-			const varValue: string = (item.querySelector('.variable-value-input') as HTMLInputElement).value || '';
-			if (searchTerm !== '') {
-				// Show matches or hide non-matches
-				if (
-					varName.includes(searchTerm) ||
-					varDefaultValue.includes(searchTerm) ||
-					varValue.includes(searchTerm)
-				) {
-					item.addClass('variable-item-show');
-					item.removeClass('variable-item-hide');
-				} else {
-					item.addClass('variable-item-hide');
-					item.removeClass('variable-item-show');
-				}
-			} else {
-				// Empty search - show all variables
-				item.addClass('variable-item-show');
-				item.removeClass('variable-item-hide');
-			}
-		});
+			const varName = item.getAttribute('data-var-name') || '';
+			const varDefaultValue = item.getAttribute('data-var-value') || '';
+			const varValue = (item.querySelector('.variable-value-input') as HTMLInputElement)?.value || '';
 
-		const CustomVarItems: NodeListOf<Element> = this.containerEl.querySelectorAll('.custom-variable-item');
-		CustomVarItems.forEach((item: Element) => {
-			const varName: string = item.getAttribute('data-var-name') || '';
-			const varValue: string = item.getAttribute('data-var-value') || '';
-			if (searchTerm !== '') {
-				// Show matches or hide non-matches
-				if (
-					varName.includes(searchTerm) ||
-					varValue.includes(searchTerm)
-				) {
-					item.addClass('custom-variable-item-show');
-					item.removeClass('custom-variable-item-hide');
-				} else {
-					item.addClass('custom-variable-item-hide');
-					item.removeClass('custom-variable-item-show');
-				}
-			} else {
-				// Empty search - show all variables
-				item.addClass('custom-variable-item-show');
-				item.removeClass('custom-variable-item-hide');
-			}
+			const matchesSearch =
+				searchTerm === '' ||
+				varName.includes(searchTerm) ||
+				varDefaultValue.includes(searchTerm) ||
+				varValue.includes(searchTerm);
+
+			item.toggleClass('variable-item-show', matchesSearch);
+			item.toggleClass('variable-item-hide', !matchesSearch);
+		});
+		// Filter custom variables
+		const customVarItems: NodeListOf<Element> = this.containerEl.querySelectorAll('.custom-variable-item');
+		customVarItems.forEach((item: Element) => {
+			const varName = item.getAttribute('data-var-name') || '';
+			const varValue = item.getAttribute('data-var-value') || '';
+
+			const matchesSearch =
+				searchTerm === '' ||
+				varName.includes(searchTerm) ||
+				varValue.includes(searchTerm);
+
+			item.toggleClass('custom-variable-item-show', matchesSearch);
+			item.toggleClass('custom-variable-item-hide', !matchesSearch);
 		});
 	}
 
@@ -885,41 +784,26 @@ export class CustomThemeStudioView extends ItemView {
 		});
 
 		const content: HTMLDivElement = header.createDiv('collapsible-content');
-
 		// Check saved toggle state
-		if (this.plugin.settings.collapsedCSSRules === true) {
-			content.addClass('collapsible-content-show');
-			content.removeClass('collapsible-content-hide');
-			setIcon(toggleIcon, 'chevron-down');
-			toggleIcon.setAttr('aria-label', 'Collapse section');
-			toggleIcon.setAttr('data-tooltip-position', 'top');
-		} else {
-			content.addClass('collapsible-content-hide');
-			content.removeClass('collapsible-content-show');
-			setIcon(toggleIcon, 'chevron-right');
-			toggleIcon.setAttr('aria-label', 'Expand section');
-			toggleIcon.setAttr('data-tooltip-position', 'top');
-		}
+		const shouldExpand = this.plugin.settings.expandCSSRules;
+		content.toggleClass('collapsible-content-show', shouldExpand);
+		content.toggleClass('collapsible-content-hide', !shouldExpand);
+		setIcon(toggleIcon, shouldExpand ? 'chevron-down' : 'chevron-right');
+		toggleIcon.setAttr('aria-label', shouldExpand ? 'Collapse section' : 'Expand section');
+		toggleIcon.setAttr('data-tooltip-position', 'top');
 
 		// Make header title clickable to toggle visibility
 		headerTitle.addEventListener('click', () => {
-			if (content.hasClass('collapsible-content-hide')) {
-				content.addClass('collapsible-content-show');
-				content.removeClass('collapsible-content-hide');
-				setIcon(toggleIcon, 'chevron-down');
-				toggleIcon.setAttr('aria-label', 'Collapse section');
-				toggleIcon.setAttr('data-tooltip-position', 'top');
-				this.plugin.settings.collapsedCSSRules = true;
-				this.plugin.saveSettings();
-			} else {
-				content.addClass('collapsible-content-hide');
-				content.removeClass('collapsible-content-show');
-				setIcon(toggleIcon, 'chevron-right');
-				toggleIcon.setAttr('aria-label', 'Expand section');
-				toggleIcon.setAttr('data-tooltip-position', 'top');
-				this.plugin.settings.collapsedCSSRules = false;
-				this.plugin.saveSettings();
-			}
+			const isCurrentlyHidden = content.hasClass('collapsible-content-hide');
+			// Expand if it's currently hidden
+			const shouldExpand = isCurrentlyHidden;
+			content.toggleClass('collapsible-content-show', shouldExpand);
+			content.toggleClass('collapsible-content-hide', !shouldExpand);
+			setIcon(toggleIcon, shouldExpand ? 'chevron-down' : 'chevron-right');
+			toggleIcon.setAttr('aria-label', shouldExpand ? 'Collapse section' : 'Expand section');
+			toggleIcon.setAttr('data-tooltip-position', 'top');
+			this.plugin.settings.expandCSSRules = shouldExpand;
+			this.plugin.saveSettings();
 		});
 
 		// CSS rules button container
@@ -1052,9 +936,10 @@ export class CustomThemeStudioView extends ItemView {
 			this.ruleSearch = '';
 			const ruleListEls: NodeListOf<Element> = this.containerEl.querySelectorAll('.rule-item');
 			ruleListEls.forEach((elt: HTMLElement) => {
-				elt.addClass('rule-item-show');
-				elt.removeClass('rule-item-hide');
+				elt.toggleClass('rule-item-show', true);
+				elt.toggleClass('rule-item-hide', false);
 			});
+
 		})
 
 		// Rule list
@@ -1074,18 +959,16 @@ export class CustomThemeStudioView extends ItemView {
 	async filterCSSRules(query: string) {
 		// Filter all rules
 		this.plugin.settings.cssRules.forEach((el) => {
-			if (
-				// el.name?.includes(query) ||
-				el.rule?.includes(query) ||
-				el.css?.includes(query)
-			) {
-				this.containerEl.querySelector('[data-cts-uuid="' + el.uuid + '"]')?.addClass('rule-item-show');
-				this.containerEl.querySelector('[data-cts-uuid="' + el.uuid + '"]')?.removeClass('rule-item-hide');
-			} else {
-				this.containerEl.querySelector('[data-cts-uuid="' + el.uuid + '"]')?.addClass('rule-item-hide');
-				this.containerEl.querySelector('[data-cts-uuid="' + el.uuid + '"]')?.removeClass('rule-item-show');
+			const matchesQuery =
+				el.rule?.includes(query) || el.css?.includes(query);
+
+			const ruleEl = this.containerEl.querySelector(`[data-cts-uuid="${el.uuid}"]`);
+			if (ruleEl) {
+				ruleEl.toggleClass('rule-item-show', matchesQuery);
+				ruleEl.toggleClass('rule-item-hide', !matchesQuery);
 			}
 		});
+
 	}
 
 	// Render export section
@@ -1106,39 +989,25 @@ export class CustomThemeStudioView extends ItemView {
 
 		const content: HTMLDivElement = header.createDiv('collapsible-content');
 		// Check saved toggle state
-		if (this.plugin.settings.collapsedExportTheme === true) {
-			content.addClass('collapsible-content-show');
-			content.removeClass('collapsible-content-hide');
-			setIcon(toggleIcon, 'chevron-down');
-			toggleIcon.setAttr('aria-label', 'Collapse section');
-			toggleIcon.setAttr('data-tooltip-position', 'top');
-		} else {
-			content.addClass('collapsible-content-hide');
-			content.removeClass('collapsible-content-show');
-			setIcon(toggleIcon, 'chevron-right');
-			toggleIcon.setAttr('aria-label', 'Expand section');
-			toggleIcon.setAttr('data-tooltip-position', 'top');
-		}
+		const shouldExpand = this.plugin.settings.expandExportTheme;
+		content.toggleClass('collapsible-content-show', shouldExpand);
+		content.toggleClass('collapsible-content-hide', !shouldExpand);
+		setIcon(toggleIcon, shouldExpand ? 'chevron-down' : 'chevron-right');
+		toggleIcon.setAttr('aria-label', shouldExpand ? 'Collapse section' : 'Expand section');
+		toggleIcon.setAttr('data-tooltip-position', 'top');
 
 		// Make header title clickable to toggle visibility
 		headerTitle.addEventListener('click', () => {
-			if (content.hasClass('collapsible-content-hide')) {
-				content.addClass('collapsible-content-show');
-				content.removeClass('collapsible-content-hide');
-				setIcon(toggleIcon, 'chevron-down');
-				toggleIcon.setAttr('aria-label', 'Collapse section');
-				toggleIcon.setAttr('data-tooltip-position', 'top');
-				this.plugin.settings.collapsedExportTheme = true;
-				this.plugin.saveSettings();
-			} else {
-				content.addClass('collapsible-content-hide');
-				content.removeClass('collapsible-content-show');
-				setIcon(toggleIcon, 'chevron-right');
-				toggleIcon.setAttr('aria-label', 'Expand section');
-				toggleIcon.setAttr('data-tooltip-position', 'top');
-				this.plugin.settings.collapsedExportTheme = false;
-				this.plugin.saveSettings();
-			}
+			const isCurrentlyHidden = content.hasClass('collapsible-content-hide');
+			// Expand if it's currently hidden
+			const shouldExpand = isCurrentlyHidden;
+			content.toggleClass('collapsible-content-show', shouldExpand);
+			content.toggleClass('collapsible-content-hide', !shouldExpand);
+			setIcon(toggleIcon, shouldExpand ? 'chevron-down' : 'chevron-right');
+			toggleIcon.setAttr('aria-label', shouldExpand ? 'Collapse section' : 'Expand section');
+			toggleIcon.setAttr('data-tooltip-position', 'top');
+			this.plugin.settings.expandExportTheme = shouldExpand;
+			this.plugin.saveSettings();
 		});
 
 		const description: HTMLDivElement = content.createDiv('export-description');

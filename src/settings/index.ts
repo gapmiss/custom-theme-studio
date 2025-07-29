@@ -29,9 +29,9 @@ export interface CustomThemeStudioSettings {
 	exportThemeIncludeDisabled: boolean;
 	exportPrettierFormat: boolean;
 	lastSelectedSelector: string;
-	collapsedCSSVariables: boolean;
-	collapsedCSSRules: boolean;
-	collapsedExportTheme: boolean;
+	expandCSSVariables: boolean;
+	expandCSSRules: boolean;
+	expandExportTheme: boolean;
 	autoApplyChanges: boolean;
 	variableInputListener: string;
 	generateComputedCSS: boolean;
@@ -64,9 +64,9 @@ export const DEFAULT_SETTINGS: CustomThemeStudioSettings = {
 	exportThemeIncludeDisabled: false,
 	exportPrettierFormat: true,
 	lastSelectedSelector: '',
-	collapsedCSSVariables: false,
-	collapsedCSSRules: false,
-	collapsedExportTheme: false,
+	expandCSSVariables: false,
+	expandCSSRules: false,
+	expandExportTheme: false,
 	autoApplyChanges: false,
 	variableInputListener: 'change',
 	generateComputedCSS: false,

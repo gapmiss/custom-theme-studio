@@ -48,7 +48,6 @@ export class CssSnippetFuzzySuggestModal extends FuzzySuggestModal<Snippets> {
     }
 
     async onChooseItem(item: Snippets, _evt: MouseEvent | KeyboardEvent) {
-        // let name = item.name;
         let css = await this.readSnippetFile(this.app, item);
         let uuid = generateUniqueId();
         let rule = "Snippet: " + name;
@@ -57,7 +56,6 @@ export class CssSnippetFuzzySuggestModal extends FuzzySuggestModal<Snippets> {
             uuid,
             rule,
             css,
-            // name: "Snippet: " + name || undefined,
             enabled: false
         });
         this.plugin.saveSettings();
