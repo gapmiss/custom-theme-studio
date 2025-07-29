@@ -15,7 +15,6 @@ export class CSSEditorManager {
 	currentRule: string = '';
 	editorEl: HTMLTextAreaElement | null = null;
 	ruleInputEl: HTMLInputElement | null = null;
-	// nameInputEl: HTMLInputElement | null = null;
 	editorUUID: HTMLInputElement;
 	enabledToggleEl: HTMLInputElement | null = null;
 	editorSection: HTMLElement | null = null;
@@ -40,15 +39,8 @@ export class CSSEditorManager {
 	}
 
 	showEditorSection(show: boolean): void {
-		if (this.editorSection) {
-			if (show) {
-				this.editorSection.addClass('css-editor-section-show');
-				this.editorSection.removeClass('css-editor-section-hide');
-			} else {
-				this.editorSection.addClass('css-editor-section-hide');
-				this.editorSection.removeClass('css-editor-section-show');
-			}
-		}
+		this.editorSection?.toggleClass('css-editor-section-show', show);
+		this.editorSection?.toggleClass('css-editor-section-hide', !show);
 	}
 
 	createEditorSection(containerEl: HTMLElement): void {
@@ -61,16 +53,6 @@ export class CSSEditorManager {
 				type: 'hidden'
 			}
 		});
-
-		// Element name input
-		// const nameContainer = this.editorSection.createDiv('editor-name-container');
-		// nameContainer.createSpan({ text: 'Element name:' });
-		// this.nameInputEl = nameContainer.createEl('input', {
-		// 	attr: {
-		// 		type: 'text',
-		// 		placeholder: 'Enter a descriptive name (optional)'
-		// 	}
-		// });
 
 		// CSS Rule input
 		const ruleContainer = this.editorSection.createDiv('editor-rule-container');
@@ -130,16 +112,10 @@ export class CSSEditorManager {
 			wordWrapCheckboxContainer.addClass('is-enabled');
 		}
 		wordWrapCheckboxContainer.addEventListener('click', () => {
-			if (wordWrapCheckboxContainer.classList.contains('is-enabled')) {
-				wordWrapCheckboxContainer.removeClass('is-enabled');
-				wordWrapCheckbox.checked = false;
-				this.editor?.getSession().setUseWrapMode(false)
-			} else {
-				wordWrapCheckboxContainer.addClass('is-enabled');
-				wordWrapCheckbox.checked = true;
-				this.editor?.getSession().setUseWrapMode(true)
-			}
-		})
+			const isEnabled = wordWrapCheckboxContainer.classList.toggle('is-enabled');
+			wordWrapCheckbox.checked = isEnabled;
+			this.editor?.getSession().setUseWrapMode(isEnabled);
+		});
 
 		// Font-size
 		const fontsizeOptionContainer = editorOptions.createDiv('font-size-container');
@@ -204,17 +180,17 @@ export class CSSEditorManager {
 		setIcon(settingsButton, 'settings-2');
 
 		settingsButton.addEventListener('click', () => {
-			if (editorOptions.hasClass('editor-options-container-hide')) {
-				editorOptions.addClass('editor-options-container-show');
-				editorOptions.removeClass('editor-options-container-hide');
-				settingsButton.setAttr('aria-label', 'Hide editor options');
-			} else {
-				editorOptions.addClass('editor-options-container-hide');
-				editorOptions.removeClass('editor-options-container-show');
-				settingsButton.setAttr('aria-label', 'Show editor options');
-			}
+			const isHidden: boolean = editorOptions.hasClass('editor-options-container-hide');
+			const shouldExpand: boolean = isHidden;
 
-		})
+			editorOptions.toggleClass('editor-options-container-show', shouldExpand);
+			editorOptions.toggleClass('editor-options-container-hide', !shouldExpand);
+
+			settingsButton.setAttr(
+				'aria-label',
+				shouldExpand ? 'Hide editor options' : 'Show editor options'
+			);
+		});
 
 		// Event listeners
 		this.ruleInputEl.addEventListener('input', () => {
@@ -294,15 +270,6 @@ export class CSSEditorManager {
 			this.editorUUID!.value = existingRule.uuid;
 			this.editorEl!.value = existingRule.css;
 			this.aceService.setValue(existingRule.css, 1);
-
-			// Populate name if available			
-			// if (existingRule.name) {
-			// 	this.nameInputEl!.value = existingRule.name;
-			// }
-			// else {
-			// 	this.nameInputEl!.value = '';
-			// }
-
 		} else {
 			// Generate default CSS template
 			this.generateDefaultCSS(rule);
