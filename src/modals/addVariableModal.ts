@@ -104,23 +104,25 @@ export class AddVariableModal extends Modal {
                                     });
                                 }
                             }
+                            
                             const customVarListWrapper: HTMLElement | null = view.containerEl.querySelector('#variable-category-custom');
-                            if (customVarListWrapper) {
-                                // Toggle icon
-                                let variableListicon: HTMLElement | null = customVarListWrapper.querySelector('.collapse-icon.clickable-icon');
-                                setIcon(variableListicon!, 'chevron-down')
-                                variableListicon?.setAttr('aria-label', 'Collapse category');
-                                variableListicon?.setAttr('data-tooltip-position', 'top');
-                                // Variables list
-                                let variableList: HTMLElement | null = customVarListWrapper.querySelector('[data-var-category="custom"]');
-                                variableList?.removeClass('variable-list-hide');
-                                variableList?.addClass('variable-list-show');
-                                // Scroll variable list to the top of view
-                                if (this.plugin.settings.viewScrollToTop) {
-                                    setTimeout(() => {
-                                        view.scrollToDiv(customVarListWrapper);
-                                    }, 100);
-                                }
+                            if (!customVarListWrapper) return;
+
+                            // Toggle icon
+                            const icon = customVarListWrapper.querySelector<HTMLElement>('.collapse-icon.clickable-icon');
+                            if (icon) {
+                                setIcon(icon, 'chevron-down');
+                                icon.setAttr('aria-label', 'Collapse category');
+                                icon.setAttr('data-tooltip-position', 'top');
+                            }
+
+                            // Variable list
+                            const variableList = customVarListWrapper.querySelector<HTMLElement>('[data-var-category="custom"]');
+                            variableList?.classList.replace('variable-list-hide', 'variable-list-show');
+
+                            // Scroll to top if setting is enabled
+                            if (this.plugin.settings.viewScrollToTop) {
+                                setTimeout(() => view.scrollToDiv(customVarListWrapper), 100);
                             }
                         }
                     }
