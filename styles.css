@@ -89,7 +89,7 @@ body {
 
 /* search section */
 .cts-view .search-container,
-.cts-view .search-elements-container {
+.cts-view .search-rules-container {
     margin-bottom: .75em;
     margin-inline: 0;
     transform: scale(1);
@@ -101,7 +101,7 @@ body {
 }
 
 .cts-view .search-input,
-.cts-view .search-elements-input {
+.cts-view .search-rules-input {
     width: 100%;
     padding: 8px;
     border-radius: 4px;
@@ -110,14 +110,14 @@ body {
 
 /* clear search button */
 .cts-view .clear-search-input,
-.cts-view .clear-search-elements-input {
+.cts-view .clear-search-rules-input {
     position: relative;
     display: inline-block;
     width: 100%;
 }
 
 .cts-view .clear-search-input-button,
-.cts-view .clear-search-elements-input-button {
+.cts-view .clear-search-rules-input-button {
     position: absolute;
     background: transparent;
     border-radius: 50%;
@@ -141,7 +141,7 @@ body {
 }
 
 .cts-view .clear-search-input-button:after,
-.cts-view .clear-search-elements-input-button:after {
+.cts-view .clear-search-rules-input-button:after {
     content: '';
     height: var(--search-clear-button-size);
     width: var(--search-clear-button-size);
@@ -155,8 +155,8 @@ body {
 
 .cts-view .clear-search-input-button:hover,
 .cts-view .clear-search-input-button:active,
-.cts-view .clear-search-elements-input-button:hover,
-.cts-view .clear-search-elements-input-button:active {
+.cts-view .clear-search-rules-input-button:hover,
+.cts-view .clear-search-rules-input-button:active {
     color: var(--text-normal);
     transition: color 0.15s ease-in-out;
 }
@@ -164,9 +164,9 @@ body {
 .cts-view .clear-search-input--touched:focus+.clear-search-input-button,
 .cts-view .clear-search-input--touched:hover+.clear-search-input-button,
 .cts-view .clear-search-input--touched+.clear-search-input-button:hover,
-.cts-view .clear-search-elements-input--touched:focus+.clear-search-elements-input-button,
-.cts-view .clear-search-elements-input--touched:hover+.clear-search-elements-input-button,
-.cts-view .clear-search-elements-input--touched+.clear-search-elements-input-button:hover {
+.cts-view .clear-search-rules-input--touched:focus+.clear-search-rules-input-button,
+.cts-view .clear-search-rules-input--touched:hover+.clear-search-rules-input-button,
+.cts-view .clear-search-rules-input--touched+.clear-search-rules-input-button:hover {
     display: inline-flex;
 }
 
@@ -547,8 +547,8 @@ body {
     padding-right: 25px !important;
 }
 
-/* element section */
-.cts-view .selector-button-container {
+/* rule section */
+.cts-view .css-rules-button-container {
     padding: .5em;
     display: flex;
     gap: .5em;
@@ -660,7 +660,7 @@ body {
 }
 
 /* css editor */
-:not(.inline-element-editor)>.css-editor-section.css-editor-section-show {
+:not(.inline-rule-editor)>.css-editor-section.css-editor-section-show {
     border: 2px solid var(--background-modifier-border);
     border-radius: var(--size-4-2);
     padding: var(--size-4-2);
@@ -698,8 +698,7 @@ body {
     resize: vertical;
 }
 
-.cts-view .editor-name-container,
-.cts-view .editor-selector-container {
+.cts-view .editor-rule-container {
     margin-top: .5em;
     display: flex;
     flex-wrap: wrap;
@@ -718,15 +717,15 @@ body {
     }
 }
 
-.cst-view .element-item-show {
+.cst-view .rule-item-show {
     display: block;
 }
 
-.cts-view .element-item-hide {
+.cts-view .rule-item-hide {
     display: none;
 }
 
-.cts-view .element-item-header {
+.cts-view .rule-item-header {
     width: 100%;
     display: grid;
     /* border: 1px solid lime; */
@@ -737,7 +736,7 @@ body {
     margin-bottom: .25em;
     padding-block: .25em;
 
-    & .element-item-title {
+    & .rule-item-title {
         grid-area: title;
         padding-inline: .5em;
         min-width: 0;
@@ -750,13 +749,13 @@ body {
         }
     }
 
-    & .element-item-actions {
+    & .rule-item-actions {
         grid-area: actions;
         padding-right: .5em;
     }
 }
 
-.cts-view .element-item:has(.inline-element-editor) {
+.cts-view .rule-item:has(.inline-rule-editor) {
     border: 2px solid var(--background-modifier-border);
     border-radius: var(--size-4-2);
     padding: var(--size-4-2);
@@ -772,26 +771,26 @@ body {
     background-color: var(--background-primary);
 }
 
-.cts-view .inline-element-editor {
+.cts-view .inline-rule-editor {
     display: block;
     width: 100%;
 }
 
-.cts-view .element-item:hover {
+.cts-view .rule-item:hover {
     background-color: var(--background-primary);
 }
 
-.cts-view .element-item:has(.css-editor-section-show) .element-item-title {
+.cts-view .rule-item:has(.css-editor-section-show) .rule-item-title {
     font-size: var(--font-ui-medium) !important;
     color: var(--text-accent);
 }
 
-.cts-view .element-item-actions {
+.cts-view .rule-item-actions {
     display: flex;
     flex-wrap: nowrap;
 }
 
-.cts-view .element-item-delete-button:hover {
+.cts-view .rule-item-delete-button:hover {
     color: var(--color-red);
 }
 

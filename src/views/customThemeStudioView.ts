@@ -21,7 +21,7 @@ export class CustomThemeStudioView extends ItemView {
 	cssEditorManager: CSSEditorManager;
 	workspace: Workspace;
 	variableSearch: string;
-	elementSearch: string;
+	ruleSearch: string;
 	activeTag: string | null;
 	editorScope: Scope;
 
@@ -34,7 +34,7 @@ export class CustomThemeStudioView extends ItemView {
 		this.workspace = this.app.workspace;
 		this.settings = settings;
 		this.variableSearch = '';
-		this.elementSearch = '';
+		this.ruleSearch = '';
 		this.activeTag = 'all';
 		this.editorScope = new Scope();
 	}
@@ -60,7 +60,7 @@ export class CustomThemeStudioView extends ItemView {
 		// Render main sections
 		this.renderHeader();
 		this.renderCSSVariables();
-		this.renderCustomElements();
+		this.renderCSSRules();
 		this.renderExportSection();
 
 		// Make filters <a> tags act as buttons for "Enter" key and "Spacebar"
@@ -790,9 +790,9 @@ export class CustomThemeStudioView extends ItemView {
 
 				// Update custom CSS
 				let fullCSS = '';
-				this.plugin.settings.customElements.forEach(el => {
-					if (el.enabled) {
-						fullCSS += `/* ${el.name || el.selector} */\n${el.css}\n\n`;
+				this.plugin.settings.cssRules.forEach(rule => {
+					if (rule.enabled) {
+						fullCSS += `/* ${rule.rule} */\n${rule.css}\n\n`;
 					}
 				});
 
@@ -869,12 +869,12 @@ export class CustomThemeStudioView extends ItemView {
 		});
 	}
 
-	// Render custom elements section
-	private renderCustomElements(): void {
-		const section: HTMLDivElement = this.containerEl.createDiv('element-section')
+	// Render CSS rules section
+	private renderCSSRules(): void {
+		const section: HTMLDivElement = this.containerEl.createDiv('rules-section')
 		const header: HTMLDivElement = section.createDiv('collapsible');
 		const headerTitle: HTMLDivElement = header.createDiv('collapsible-header');
-		headerTitle.createSpan({ text: 'Custom elements' });
+		headerTitle.createSpan({ text: 'CSS rules' });
 		const toggleIcon: HTMLButtonElement = headerTitle.createEl('button', {
 			attr: {
 				'class': 'collapse-icon clickable-icon',
@@ -887,7 +887,7 @@ export class CustomThemeStudioView extends ItemView {
 		const content: HTMLDivElement = header.createDiv('collapsible-content');
 
 		// Check saved toggle state
-		if (this.plugin.settings.collapsedCustomElements === true) {
+		if (this.plugin.settings.collapsedCSSRules === true) {
 			content.addClass('collapsible-content-show');
 			content.removeClass('collapsible-content-hide');
 			setIcon(toggleIcon, 'chevron-down');
@@ -909,7 +909,7 @@ export class CustomThemeStudioView extends ItemView {
 				setIcon(toggleIcon, 'chevron-down');
 				toggleIcon.setAttr('aria-label', 'Collapse section');
 				toggleIcon.setAttr('data-tooltip-position', 'top');
-				this.plugin.settings.collapsedCustomElements = true;
+				this.plugin.settings.collapsedCSSRules = true;
 				this.plugin.saveSettings();
 			} else {
 				content.addClass('collapsible-content-hide');
@@ -917,17 +917,60 @@ export class CustomThemeStudioView extends ItemView {
 				setIcon(toggleIcon, 'chevron-right');
 				toggleIcon.setAttr('aria-label', 'Expand section');
 				toggleIcon.setAttr('data-tooltip-position', 'top');
-				this.plugin.settings.collapsedCustomElements = false;
+				this.plugin.settings.collapsedCSSRules = false;
 				this.plugin.saveSettings();
 			}
 		});
 
-		// Selector button container
-		const selectElementButtonContainer: HTMLDivElement = content.createDiv('selector-button-container');
+		// CSS rules button container
+		const cssRulesButtonContainer: HTMLDivElement = content.createDiv('css-rules-button-container');
+
+		// "New CSS rule" button
+		const addElementButton = cssRulesButtonContainer.createEl('button', {
+			attr: { 'aria-label': 'Add CSS rule', 'data-tooltip-position': 'top' },
+			cls: 'add-rule-button',
+		});
+		setIcon(addElementButton, 'square-pen');
+		addElementButton.addEventListener('click', async () => {
+			// Check if editor section is already visible
+			const editorSection: Element | null = this.containerEl.querySelector('.css-editor-section');
+			const isEditorVisible: boolean | null = editorSection && getComputedStyle(editorSection).display !== 'none';
+
+			if (isEditorVisible && this.plugin.settings.showConfirmation) {
+				if (!await confirm('You have an unsaved CSS rule form open. Creating a new rule will discard your changes. Continue?', this.plugin.app)) {
+					return;
+				}
+			}
+
+			// Remove any existing inline editors
+			const inlineEditors: NodeListOf<Element> = document.querySelectorAll('.inline-rule-editor');
+			inlineEditors.forEach(editor => editor.remove());
+
+			// Show the editor section and reset it
+			this.cssEditorManager.resetEditor();
+			this.cssEditorManager.clearAppliedChanges();
+
+			this.cssEditorManager.showEditorSection(true);
+
+			// Ensure the new form appears below the buttons
+			const buttonContainer: Element | null = this.containerEl.querySelector('.css-rules-button-container');
+			if (buttonContainer && editorSection) {
+				buttonContainer.after(editorSection);
+			}
+
+			// Scroll editor to the top of view
+			if (this.plugin.settings.viewScrollToTop) {
+				setTimeout(() => {
+					this.scrollToDiv(editorSection as HTMLElement);
+					this.cssEditorManager.ruleInputEl!.focus();
+				}, 100);
+			}
+		});
+
 
 		// "Select element" button
-		const selectElementButton: HTMLButtonElement = selectElementButtonContainer.createEl('button', {
-			attr: { 'aria-label': 'Select element', 'data-tooltip-position': 'top', 'tabindex': 0 },
+		const selectElementButton: HTMLButtonElement = cssRulesButtonContainer.createEl('button', {
+			attr: { 'aria-label': 'Select an element', 'data-tooltip-position': 'top', 'tabindex': 0 },
 			cls: 'select-element-button'
 		});
 		setIcon(selectElementButton, 'mouse-pointer-square-dashed');
@@ -937,13 +980,13 @@ export class CustomThemeStudioView extends ItemView {
 			const isEditorVisible: boolean | null = editorSection && getComputedStyle(editorSection).display !== 'none';
 
 			if (isEditorVisible && this.plugin.settings.showConfirmation) {
-				if (!await confirm('You have an unsaved element form open. Creating a new element will discard your changes. Continue?', this.plugin.app)) {
+				if (!await confirm('You have an unsaved CSS rule form open. Creating a new rule will discard your changes. Continue?', this.plugin.app)) {
 					return;
 				}
 			}
 
 			// Remove any existing inline editors
-			const inlineEditors: NodeListOf<Element> = document.querySelectorAll('.inline-element-editor');
+			const inlineEditors: NodeListOf<Element> = document.querySelectorAll('.inline-rule-editor');
 			inlineEditors.forEach(editor => editor.remove());
 
 			// Show the editor section and reset it
@@ -954,51 +997,9 @@ export class CustomThemeStudioView extends ItemView {
 			this.elementSelectorManager.startElementSelection();
 		});
 
-		// "Add element" button
-		const addElementButton = selectElementButtonContainer.createEl('button', {
-			attr: { 'aria-label': 'New custom element', 'data-tooltip-position': 'top' },
-			cls: 'add-element-button',
-		});
-		setIcon(addElementButton, 'square-pen');
-		addElementButton.addEventListener('click', async () => {
-			// Check if editor section is already visible
-			const editorSection: Element | null = this.containerEl.querySelector('.css-editor-section');
-			const isEditorVisible: boolean | null = editorSection && getComputedStyle(editorSection).display !== 'none';
-
-			if (isEditorVisible && this.plugin.settings.showConfirmation) {
-				if (!await confirm('You have an unsaved element form open. Creating a new element will discard your changes. Continue?', this.plugin.app)) {
-					return;
-				}
-			}
-
-			// Remove any existing inline editors
-			const inlineEditors: NodeListOf<Element> = document.querySelectorAll('.inline-element-editor');
-			inlineEditors.forEach(editor => editor.remove());
-
-			// Show the editor section and reset it
-			this.cssEditorManager.resetEditor();
-			this.cssEditorManager.clearAppliedChanges();
-
-			this.cssEditorManager.showEditorSection(true);
-
-			// Ensure the new form appears below the buttons
-			const buttonContainer: Element | null = this.containerEl.querySelector('.selector-button-container');
-			if (buttonContainer && editorSection) {
-				buttonContainer.after(editorSection);
-			}
-
-			// Scroll editor to the top of view
-			if (this.plugin.settings.viewScrollToTop) {
-				setTimeout(() => {
-					this.scrollToDiv(editorSection as HTMLElement);
-					this.cssEditorManager.nameInputEl!.focus();
-				}, 100);
-			}
-		});
-
 		// @font-face rule Modal
 		if (this.plugin.settings.enableFontImport) {
-			const addFontFaceButton = selectElementButtonContainer.createEl('button', {
+			const addFontFaceButton = cssRulesButtonContainer.createEl('button', {
 				attr: { 'aria-label': 'Import font', 'data-tooltip-position': 'top' },
 				cls: 'add-font-face-button'
 			});
@@ -1008,37 +1009,37 @@ export class CustomThemeStudioView extends ItemView {
 			});
 		}
 
-		// CSS Editor section - initially hidden when not adding a new element
+		// CSS Editor section - initially hidden when not adding a new rule
 		this.cssEditorManager.createEditorSection(content);
 		this.cssEditorManager.showEditorSection(false);
 
-		// Custom custom elements search
-		const searchContainer: HTMLDivElement = content.createDiv('search-elements-container');
-		const clearInputContainer: HTMLDivElement = searchContainer.createDiv('clear-search-elements-input');
+		// CSS rules search
+		const searchContainer: HTMLDivElement = content.createDiv('search-rules-container');
+		const clearInputContainer: HTMLDivElement = searchContainer.createDiv('clear-search-rules-input');
 		const searchInput: HTMLInputElement = clearInputContainer.createEl('input', {
 			attr: {
 				type: 'text',
-				placeholder: 'Search custom elements…',
-				class: 'search-elements-input'
+				placeholder: 'Search CSS rules…',
+				class: 'search-rules-input'
 			}
 		});
 		searchInput.addEventListener('input', async (e) => {
 			const searchTerm: string = (e.target as HTMLInputElement).value.trim();
-			this.elementSearch = searchTerm;
+			this.ruleSearch = searchTerm;
 
-			await this.filterCustomElements(searchTerm);
+			await this.filterCSSRules(searchTerm);
 
-			if ((e.currentTarget! as HTMLInputElement).value && !searchInput.classList.contains('clear-search-elements-input--touched')) {
-				searchInput.classList.add('clear-search-elements-input--touched')
-			} else if (!(e.currentTarget! as HTMLInputElement).value && searchInput.classList.contains('clear-search-elements-input--touched')) {
-				searchInput.classList.remove('clear-search-elements-input--touched')
+			if ((e.currentTarget! as HTMLInputElement).value && !searchInput.classList.contains('clear-search-rules-input--touched')) {
+				searchInput.classList.add('clear-search-rules-input--touched')
+			} else if (!(e.currentTarget! as HTMLInputElement).value && searchInput.classList.contains('clear-search-rules-input--touched')) {
+				searchInput.classList.remove('clear-search-rules-input--touched')
 			}
 		});
 
 		// Clear search button
 		const clearSearchButton: HTMLButtonElement = clearInputContainer.createEl('button', {
 			attr: {
-				class: 'clear-search-elements-input-button',
+				class: 'clear-search-rules-input-button',
 				'aria-label': 'Clear search',
 				'data-tooltip-position': 'top', 
 				'tabindex': 0
@@ -1047,42 +1048,42 @@ export class CustomThemeStudioView extends ItemView {
 		clearSearchButton.addEventListener('click', (evt) => {
 			searchInput.value = '';
 			searchInput.focus();
-			searchInput.classList.remove('clear-search-elements-input--touched');
-			this.elementSearch = '';
-			const elementListEls: NodeListOf<Element> = this.containerEl.querySelectorAll('.element-item');
-			elementListEls.forEach((elt: HTMLElement) => {
-				elt.addClass('element-item-show');
-				elt.removeClass('element-item-hide');
+			searchInput.classList.remove('clear-search-rules-input--touched');
+			this.ruleSearch = '';
+			const ruleListEls: NodeListOf<Element> = this.containerEl.querySelectorAll('.rule-item');
+			ruleListEls.forEach((elt: HTMLElement) => {
+				elt.addClass('rule-item-show');
+				elt.removeClass('rule-item-hide');
 			});
 		})
 
-		// Element list
-		const elementListContainer = content.createDiv('element-list-container');
-		const elementList = elementListContainer.createDiv('element-list');
-		// Sort by "selector" value ASC
+		// Rule list
+		const ruleListContainer = content.createDiv('css-rule-container');
+		const ruleList = ruleListContainer.createDiv('css-rule');
+		// Sort by "rule" value ASC
 		// https://www.javascripttutorial.net/array/javascript-sort-an-array-of-objects/
-		this.plugin.settings.customElements.sort((a, b) => a.selector!.localeCompare(b.selector!));
-		// Populate with saved elements
-		this.plugin.settings.customElements.forEach(element => {
-			this.cssEditorManager.createElementItem(elementList, element);
+		this.plugin.settings.cssRules.sort((a, b) => a.rule!.localeCompare(b.rule!));
+		// Populate with saved rules
+		this.plugin.settings.cssRules.forEach(rule => {
+			this.cssEditorManager.createRuleItem(ruleList, rule);
 		});
 
 	}
 
-	// Filter custom elements
-	async filterCustomElements(query: string) {
-		// Filter all custom elements
-		this.plugin.settings.customElements.forEach((el) => {
+	// Filter CSS rules
+	async filterCSSRules(query: string) {
+		// Filter all rules
+		this.plugin.settings.cssRules.forEach((el) => {
 			if (
-				el.name?.includes(query) ||
-				el.selector?.includes(query) ||
+				// el.name?.includes(query) ||
+				el.rule?.includes(query) ||
 				el.css?.includes(query)
 			) {
-				this.containerEl.querySelector('[data-cts-uuid="' + el.uuid + '"]')?.addClass('element-item-show');
-				this.containerEl.querySelector('[data-cts-uuid="' + el.uuid + '"]')?.removeClass('element-item-hide');
+				this.containerEl.querySelector('[data-cts-uuid="' + el.uuid + '"]')?.addClass('rule-item-show');
+				this.containerEl.querySelector('[data-cts-uuid="' + el.uuid + '"]')?.removeClass('rule-item-hide');
 			} else {
-				this.containerEl.querySelector('[data-cts-uuid="' + el.uuid + '"]')?.addClass('element-item-hide');
-				this.containerEl.querySelector('[data-cts-uuid="' + el.uuid + '"]')?.removeClass('element-item-show');
+				this.containerEl.querySelector('[data-cts-uuid="' + el.uuid + '"]')?.addClass('rule-item-hide');
+				this.containerEl.querySelector('[data-cts-uuid="' + el.uuid + '"]')?.removeClass('rule-item-show');
 			}
 		});
 	}
@@ -1142,7 +1143,7 @@ export class CustomThemeStudioView extends ItemView {
 
 		const description: HTMLDivElement = content.createDiv('export-description');
 		description.createSpan({
-			text: 'Export your custom variables and elements as CSS and manifest files to create a shareable theme.',
+			text: 'Export your custom variables and rules as CSS and manifest files to create a shareable theme.',
 		});
 
 		const formContainer: HTMLDivElement = content.createDiv('export-form');
@@ -1180,7 +1181,7 @@ export class CustomThemeStudioView extends ItemView {
 			}
 		});
 
-		// Toggle for option to include disabled custom elements
+		// Toggle for option to include disabled CSS rules
 		const includeDisabledContainer: HTMLDivElement = formContainer.createDiv('export-form-item include-disabled-toggle');
 		const includeDisabledToggleSwitch: HTMLInputElement = includeDisabledContainer.createEl('input', {
 			attr: {
@@ -1193,7 +1194,7 @@ export class CustomThemeStudioView extends ItemView {
 			this.plugin.settings.exportThemeIncludeDisabled = includeDisabledToggleSwitch.checked;
 			await this.plugin.saveSettings();
 		});
-		const includeDisabledToggleLabel: HTMLLabelElement = includeDisabledContainer.createEl('label', { text: 'Include disabled custom elements' });
+		const includeDisabledToggleLabel: HTMLLabelElement = includeDisabledContainer.createEl('label', { text: 'Include disabled CSS rules when exporting' });
 		includeDisabledToggleLabel.setAttr('for', 'include-disabled-switch');
 
 		// Toggle for option to use prettier

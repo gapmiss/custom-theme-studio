@@ -1,7 +1,7 @@
 import { App, setIcon, Workspace } from 'obsidian';
 import CustomThemeStudioPlugin from '../main';
 import { CustomThemeStudioView } from '../views/customThemeStudioView';
-import { CustomThemeStudioSettings, CustomElement } from '../settings';
+import { CustomThemeStudioSettings, CSSrule } from '../settings';
 import { AceService } from '../ace/AceService';
 import { ICodeEditorConfig } from '../interfaces/types';
 import * as ace from 'ace-builds';
@@ -12,10 +12,10 @@ import { generateUniqueId, showNotice } from "../utils";
 export class CSSEditorManager {
 	plugin: CustomThemeStudioPlugin;
 	view: CustomThemeStudioView;
-	currentSelector: string = '';
+	currentRule: string = '';
 	editorEl: HTMLTextAreaElement | null = null;
-	selectorInputEl: HTMLInputElement | null = null;
-	nameInputEl: HTMLInputElement | null = null;
+	ruleInputEl: HTMLInputElement | null = null;
+	// nameInputEl: HTMLInputElement | null = null;
 	editorUUID: HTMLInputElement;
 	enabledToggleEl: HTMLInputElement | null = null;
 	editorSection: HTMLElement | null = null;
@@ -63,22 +63,22 @@ export class CSSEditorManager {
 		});
 
 		// Element name input
-		const nameContainer = this.editorSection.createDiv('editor-name-container');
-		nameContainer.createSpan({ text: 'Element name:' });
-		this.nameInputEl = nameContainer.createEl('input', {
-			attr: {
-				type: 'text',
-				placeholder: 'Enter a descriptive name (optional)'
-			}
-		});
+		// const nameContainer = this.editorSection.createDiv('editor-name-container');
+		// nameContainer.createSpan({ text: 'Element name:' });
+		// this.nameInputEl = nameContainer.createEl('input', {
+		// 	attr: {
+		// 		type: 'text',
+		// 		placeholder: 'Enter a descriptive name (optional)'
+		// 	}
+		// });
 
-		// Selector input
-		const selectorContainer = this.editorSection.createDiv('editor-selector-container');
-		selectorContainer.createSpan({ text: 'CSS selector:' });
-		this.selectorInputEl = selectorContainer.createEl('input', {
+		// CSS Rule input
+		const ruleContainer = this.editorSection.createDiv('editor-rule-container');
+		ruleContainer.createSpan({ text: 'CSS rule:' });
+		this.ruleInputEl = ruleContainer.createEl('input', {
 			attr: {
 				type: 'text',
-				placeholder: 'Enter CSS selector or use element picker'
+				placeholder: 'Enter a descriptive name '
 			}
 		});
 
@@ -186,7 +186,7 @@ export class CSSEditorManager {
 		}
 
 		const saveButton = buttonContainer.createEl('button', {
-			text: 'Save Element',
+			text: 'Save rule',
 			cls: 'mod-cta'
 		});
 
@@ -217,12 +217,12 @@ export class CSSEditorManager {
 		})
 
 		// Event listeners
-		this.selectorInputEl.addEventListener('input', () => {
-			this.currentSelector = this.selectorInputEl!.value;
+		this.ruleInputEl.addEventListener('input', () => {
+			this.currentRule = this.ruleInputEl!.value;
 		});
 
-		this.selectorInputEl.addEventListener('change', () => {
-			this.currentSelector = this.selectorInputEl!.value;
+		this.ruleInputEl.addEventListener('change', () => {
+			this.currentRule = this.ruleInputEl!.value;
 			if (this.plugin.settings.autoApplyChanges) {
 				const css = this.aceService.getValue();
 				if (css !== '') {
@@ -238,20 +238,20 @@ export class CSSEditorManager {
 				if (!this.isEditingExisting) {
 					this.showEditorSection(false);
 				} else {
-					// If editing an existing element, remove the inline editor
+					// If editing an existing rule, remove the inline editor
 					this.removeInlineEditor();
 				}
 			}
 
-			if (this.view.elementSearch) {
-				await this.view.filterCustomElements(this.view.elementSearch);
+			if (this.view.ruleSearch) {
+				await this.view.filterCSSRules(this.view.ruleSearch);
 			}
 		});
 
 		// Cancel button
 		cancelButton.addEventListener('click', () => {
 			if (this.isEditingExisting) {
-				// If editing an existing element, remove the inline editor;
+				// If editing an existing rule, remove the inline editor;
 				this.removeInlineEditor();
 			} else {
 				// Otherwise only hide the editor section
@@ -280,33 +280,33 @@ export class CSSEditorManager {
 		}, 10);
 	}
 
-	setSelector(uuid: string, selector: string, isEditingExisting: boolean): void {
-		if (!this.selectorInputEl || !this.editorUUID) return;
+	setRule(uuid: string, rule: string, isEditingExisting: boolean): void {
+		if (!this.ruleInputEl || !this.editorUUID) return;
 
-		this.currentSelector = selector;
-		this.selectorInputEl.value = selector;
+		this.currentRule = rule;
+		this.ruleInputEl.value = rule;
 		this.editorUUID.value = uuid;
 
-		// Try to find existing element with this UUID
-		const existingElement = this.plugin.settings.customElements.find(el => el.uuid === uuid);
+		// Try to find existing rule with this UUID
+		const existingRule = this.plugin.settings.cssRules.find(el => el.uuid === uuid);
 
-		if (existingElement) {
-			this.editorUUID!.value = existingElement.uuid;
-			this.editorEl!.value = existingElement.css;
-			this.aceService.setValue(existingElement.css, 1);
+		if (existingRule) {
+			this.editorUUID!.value = existingRule.uuid;
+			this.editorEl!.value = existingRule.css;
+			this.aceService.setValue(existingRule.css, 1);
 
 			// Populate name if available			
-			if (existingElement.name) {
-				this.nameInputEl!.value = existingElement.name;
-			}
-			else {
-				this.nameInputEl!.value = '';
-			}
+			// if (existingRule.name) {
+			// 	this.nameInputEl!.value = existingRule.name;
+			// }
+			// else {
+			// 	this.nameInputEl!.value = '';
+			// }
 
 		} else {
 			// Generate default CSS template
-			this.generateDefaultCSS(selector);
-			showNotice(`Element selected: ${selector}`, 5000, 'success');
+			this.generateDefaultCSS(rule);
+			showNotice(`Element selected: ${rule}`, 5000, 'success');
 		}
 		this.editor!.session.on('change', this.changeListener);
 	}
@@ -314,7 +314,7 @@ export class CSSEditorManager {
 	generateDefaultCSS(selector: string): void {
 		if (!this.editorEl) return;
 
-		// Try to find the element
+		// Try to find the rule
 		const element = this.findElementBySelector(selector);
 		let css: string = '';
 
@@ -357,9 +357,9 @@ export class CSSEditorManager {
 		this.aceService.setValue(css, 1);
 
 		// Clear name input
-		if (this.nameInputEl) {
-			this.nameInputEl.value = '';
-		}
+		// if (this.nameInputEl) {
+		// 	this.nameInputEl.value = '';
+		// }
 	}
 
 	findElementBySelector(selector: string): HTMLElement | null {
@@ -372,22 +372,16 @@ export class CSSEditorManager {
 	}
 
 	applyChanges(css: string): void {
-		if (!this.editorEl || !this.selectorInputEl) return;
+		if (!this.editorEl || !this.ruleInputEl) return;
 
-		const name = this.nameInputEl!.value.trim();
-		const selector = this.selectorInputEl.value.trim();
+		const rule = this.ruleInputEl.value.trim();
 		const uuid = this.editorUUID.value;
-
-		// if (!uuid || !css) {
-		// 	showNotice('Please enter CSS rules to auto apply your CSS changes', 5000, 'error');
-		// 	return;
-		// }
 
 		if (!uuid) {
 			return;
 		}
 		// Update the custom CSS
-		this.updateCustomCSS(uuid, name, selector, css);
+		this.updateCustomCSS(uuid, rule, css);
 
 		// Apply the changes
 		if (this.plugin.settings.themeEnabled) {
@@ -397,7 +391,8 @@ export class CSSEditorManager {
 
 	clearAppliedChanges(): void {
 		// Update the custom CSS
-		this.updateCustomCSS(generateUniqueId(), '', '', '');
+		// this.updateCustomCSS(generateUniqueId(), '', '', '');
+		this.updateCustomCSS(generateUniqueId(), '', '');
 
 		// Apply the changes
 		if (this.plugin.settings.themeEnabled) {
@@ -406,37 +401,36 @@ export class CSSEditorManager {
 	}
 
 	saveElement(): boolean {
-		if (!this.editorEl || !this.selectorInputEl || !this.nameInputEl) return false;
+		if (!this.editorEl || !this.ruleInputEl) return false;
 
 		const uuid = this.editorUUID.value;
-		const name = this.nameInputEl.value.trim();
-		const selector = this.selectorInputEl.value.trim();
+		const rule = this.ruleInputEl.value.trim();
 		const css = this.aceService.getValue();
 
-		if (!selector || !css) {
-			showNotice('Please enter both a selector and CSS rules', 5000, 'error');
+		if (!rule || !css) {
+			showNotice('Please enter both a rule (name) and CSS', 5000, 'error');
 			return false;
 		}
 
-		// Check if element already exists
-		const existingIndex = this.plugin.settings.customElements.findIndex(el => el.uuid === uuid);
+		// Check if rule already exists
+		const existingIndex = this.plugin.settings.cssRules.findIndex(el => el.uuid === uuid);
 
 		if (existingIndex >= 0) {
-			// Update existing element
-			this.plugin.settings.customElements[existingIndex] = {
+			// Update existing rule
+			this.plugin.settings.cssRules[existingIndex] = {
 				uuid,
-				selector,
+				rule,
 				css,
-				name: name || undefined,
-				enabled: this.plugin.settings.customElements[existingIndex].enabled
+				// name: name || undefined,
+				enabled: this.plugin.settings.cssRules[existingIndex].enabled
 			};
 		} else {
-			// Add new element
-			this.plugin.settings.customElements.push({
+			// Add new rule
+			this.plugin.settings.cssRules.push({
 				uuid,
-				selector,
+				rule,
 				css,
-				name: name || undefined,
+				// name: name || undefined,
 				enabled: true
 			});
 		}
@@ -445,7 +439,7 @@ export class CSSEditorManager {
 		this.plugin.saveSettings();
 
 		// Update the custom CSS
-		this.updateCustomCSS(uuid, name, selector, css);
+		this.updateCustomCSS(uuid, rule, css);
 
 		// Apply the changes
 		if (this.plugin.settings.themeEnabled) {
@@ -454,67 +448,65 @@ export class CSSEditorManager {
 
 		this.editorEl.value = '';
 
-		// Get the element list
-		const elementList = this.view.containerEl.querySelector('.element-list');
-		if (elementList) {
-			// If we're editing an existing element, we need to update the list
+		// Get the rule list
+		const ruleList = this.view.containerEl.querySelector('.css-rule');
+		if (ruleList) {
+			// If we're editing an existing rule, we need to update the list
 			if (this.isEditingExisting) {
-				// Clear the element list
-				elementList.empty();
-				// Sort by "selector" value ASC
-				this.plugin.settings.customElements.sort((a, b) => a.selector!.localeCompare(b.selector!));
-				// Re-populate with all elements
-				this.plugin.settings.customElements.forEach(element => {
-					this.createElementItem(elementList as HTMLElement, element);
+				// Clear the rule list
+				ruleList.empty();
+				// Sort by "rule" value ASC
+				this.plugin.settings.cssRules.sort((a, b) => a.rule!.localeCompare(b.rule!));
+				// Re-populate with all rules
+				this.plugin.settings.cssRules.forEach(rule => {
+					this.createRuleItem(ruleList as HTMLElement, rule);
 				});
 			} else {
-				// Check if element already exists in the list
-				const existingElements = elementList.querySelectorAll('.element-item');
-				let elementExists = false;
+				// Check if rule already exists in the list
+				const existingRules = ruleList.querySelectorAll('.rule-item');
+				let ruleExists = false;
 
-				existingElements.forEach(el => {
-					// if (el.getAttribute('data-selector') === selector) {
+				existingRules.forEach(el => {
 					if (el.getAttribute('data-cts-uuid') === uuid) {
-						elementExists = true;
+						ruleExists = true;
 					}
 				});
 
-				if (!elementExists) {
-					// Create new element item
-					this.createElementItem(elementList as HTMLElement, {
+				if (!ruleExists) {
+					// Create new rule item
+					this.createRuleItem(ruleList as HTMLElement, {
 						uuid,
-						selector,
+						rule,
 						css,
-						name: name || undefined,
+						// name: name || undefined,
 						enabled: true
 					});
 				}
 
-				elementList.empty();
-				// Sort by "selector" value ASC
-				this.plugin.settings.customElements.sort((a, b) => a.selector!.localeCompare(b.selector!));
-				// Re-populate with all elements
-				this.plugin.settings.customElements.forEach(element => {
-					this.createElementItem(elementList as HTMLElement, element);
+				ruleList.empty();
+				// Sort by "rule" value ASC
+				this.plugin.settings.cssRules.sort((a, b) => a.rule!.localeCompare(b.rule!));
+				// Re-populate with all rules
+				this.plugin.settings.cssRules.forEach(rule => {
+					this.createRuleItem(ruleList as HTMLElement, rule);
 				});
 			}
 		}
 
-		showNotice('Element saved successfully', 5000, 'success');
+		showNotice('Rule saved successfully', 5000, 'success');
 		return true;
 	}
 
 	resetEditor(): void {
-		if (!this.editorEl || !this.selectorInputEl || !this.nameInputEl) return;
+		if (!this.editorEl || !this.ruleInputEl) return;
 
 		// Clear inputs
 		this.editorUUID.value = generateUniqueId();
-		this.selectorInputEl.value = '';
+		this.ruleInputEl.value = '';
 		this.aceService.setValue('');
-		this.nameInputEl.value = '';
 
-		// Reset current selector
-		this.currentSelector = '';
+		// Reset current rule
+		this.currentRule = '';
 
 		// Reset editing state
 		this.isEditingExisting = false;
@@ -528,7 +520,7 @@ export class CSSEditorManager {
 		this.editor!.session.off('change', this.changeListener);
 
 		// Remove any existing inline editors
-		const inlineEditors = document.querySelectorAll('.inline-element-editor');
+		const inlineEditors = document.querySelectorAll('.inline-rule-editor');
 		inlineEditors.forEach(editor => editor.remove());
 
 		// Reset editing state
@@ -540,12 +532,12 @@ export class CSSEditorManager {
 
 		// Move the editor section back to its original container
 		if (this.editorSection) {
-			const content = this.view.containerEl.querySelector('.element-section .collapsible-content');
+			const content = this.view.containerEl.querySelector('.rules-section .collapsible-content');
 			if (content) {
-				// Find the selector button container to insert after
-				const selectorButtonContainer = content.querySelector('.selector-button-container');
-				if (selectorButtonContainer && selectorButtonContainer.nextSibling) {
-					content.insertBefore(this.editorSection, selectorButtonContainer.nextSibling);
+				// Find the rules button container to insert after
+				const rulesButtonContainer = content.querySelector('.css-rules-button-container');
+				if (rulesButtonContainer && rulesButtonContainer.nextSibling) {
+					content.insertBefore(this.editorSection, rulesButtonContainer.nextSibling);
 				} else {
 					content.appendChild(this.editorSection);
 				}
@@ -553,30 +545,30 @@ export class CSSEditorManager {
 		}
 	}
 
-	async updateCustomCSS(uuid: string, name: string, selector: string, css: string): Promise<void> {
-		// Get all custom elements CSS
+	async updateCustomCSS(uuid: string, rule: string, css: string): Promise<void> {
+		// Get all CSS rules
 		let fullCSS = '';
-		const existingIndex = this.plugin.settings.customElements.findIndex(el => el.uuid === uuid);
+		const existingIndex = this.plugin.settings.cssRules.findIndex(el => el.uuid === uuid);
 		if (existingIndex >= 0) {
-			if (this.plugin.settings.customElements[existingIndex].enabled) {
-				// First add the current element
+			if (this.plugin.settings.cssRules[existingIndex].enabled) {
+				// First add the current rule
 				if (css !== '') {
-					fullCSS += `/* ${name || selector} */\n${css}\n\n`;
+					fullCSS += `/* ${rule} */\n${css}\n\n`;
 				}
 			}
 		} else {
-			// New custom element
+			// New CSS rule
 			if (css !== '') {
-				fullCSS += `/* ${name || selector} */\n${css}\n\n`;
+				fullCSS += `/* ${rule} */\n${css}\n\n`;
 			}
 		}
 
-		// Then add all other elements
-		this.plugin.settings.customElements.forEach(element => {
-			// Skip the current element as we already added it
-			if (element.uuid === uuid) return;
-			if (element.enabled) {
-				fullCSS += `/* ${element.name || element.selector} */\n${element.css}\n\n`;
+		// Then add all other rules
+		this.plugin.settings.cssRules.forEach(rule => {
+			// Skip the current rule as we already added it
+			if (rule.uuid === uuid) return;
+			if (rule.enabled) {
+				fullCSS += `/* ${rule.rule} */\n${rule.css}\n\n`;
 			}
 		});
 
@@ -585,31 +577,30 @@ export class CSSEditorManager {
 		await this.plugin.saveSettings();
 	}
 
-	createElementItem(containerEl: HTMLElement, element: CustomElement): HTMLElement {
+	createRuleItem(containerEl: HTMLElement, rule: CSSrule): HTMLElement {
 		const item = containerEl.createDiv({
-			cls: 'element-item',
+			cls: 'rule-item',
 			attr: {
-				'data-cts-uuid': element.uuid,
+				'data-cts-uuid': rule.uuid,
 				'data-tooltip-position': 'top'
 			}
 		});
 
-		let currentEnabled = element.enabled;
+		let currentEnabled = rule.enabled;
 
-		const elementHeader = item.createDiv('element-item-header');
+		const ruleHeader = item.createDiv('rule-item-header');
 
-		const titleEl = elementHeader.createDiv('element-item-title');
+		const titleEl = ruleHeader.createDiv('rule-item-title');
 		titleEl.createDiv({
-			text: element.name || element.selector,
-			attr: { 'aria-label': element.selector, 'data-tooltip-position': 'top' }
+			text: rule.rule,
 		});
 
-		const actionsEl = elementHeader.createDiv('element-item-actions');
+		const actionsEl = ruleHeader.createDiv('rule-item-actions');
 
 		const editButton = actionsEl.createEl('button', {
 			cls: 'clickable-icon'
 		});
-		editButton.setAttr('aria-label', 'Edit this element');
+		editButton.setAttr('aria-label', 'Edit this rule');
 		editButton.setAttr('data-tooltip-position', 'top');
 		editButton.setAttr('tabindex', '0');
 		setIcon(editButton, 'edit');
@@ -621,18 +612,18 @@ export class CSSEditorManager {
 		enabledButton.setAttr('tabindex', '0');
 		if (currentEnabled) {
 			setIcon(enabledButton, 'eye');
-			enabledButton.setAttr('aria-label', 'Disable this element');
+			enabledButton.setAttr('aria-label', 'Disable this rule');
 			enabledButton.setAttr('data-tooltip-position', 'top');
 		} else {
 			setIcon(enabledButton, 'eye-off');
-			enabledButton.setAttr('aria-label', 'Enable this element');
+			enabledButton.setAttr('aria-label', 'Enable this rule');
 			enabledButton.setAttr('data-tooltip-position', 'top');
 		}
 
 		const deleteButton = actionsEl.createEl('button', {
-			cls: 'element-item-delete-button clickable-icon mod-destructive'
+			cls: 'rule-item-delete-button clickable-icon mod-destructive'
 		});
-		deleteButton.setAttr('aria-label', 'Delete this element');
+		deleteButton.setAttr('aria-label', 'Delete this rule');
 		deleteButton.setAttr('data-tooltip-position', 'top');
 		deleteButton.setAttr('tabindex', '0');
 		setIcon(deleteButton, 'trash');
@@ -644,7 +635,7 @@ export class CSSEditorManager {
 			const isEditorVisible = editorSection && getComputedStyle(editorSection).display !== 'none';
 
 			if (isEditorVisible && this.plugin.settings.showConfirmation) {
-				if (!await confirm('You have an unsaved element form open. Editing another element will discard your changes. Continue?', this.plugin.app)) {
+				if (!await confirm('You have an unsaved CSS rule form open. Editing another rule will discard your changes. Continue?', this.plugin.app)) {
 					return;
 				}
 			}
@@ -662,23 +653,23 @@ export class CSSEditorManager {
 
 			// Create inline editor container
 			const inlineEditor = item.createDiv({
-				cls: 'inline-element-editor'
+				cls: 'inline-rule-editor'
 			});
 
 			// Clone the editor section into the inline editor
 			if (this.editorSection) {
-				// Show the editor with the current element's values
-				this.setSelector(element.uuid, element.selector, true);
+				// Show the editor with the current rule's values
+				this.setRule(rule.uuid, rule.rule, true);
 
-				// Move the editor section under this element
+				// Move the editor section under this rule
 				inlineEditor.appendChild(this.editorSection);
 				this.showEditorSection(true);
 
 				// Scroll editor to the top of view
 				if (this.plugin.settings.viewScrollToTop) {
 					setTimeout(() => {
-						this.scrollToDivByUUID(element.uuid);
-						this.nameInputEl!.focus();
+						this.scrollToDivByUUID(rule.uuid);
+						this.ruleInputEl!.focus();
 					}, 100);
 				}
 			}
@@ -686,12 +677,12 @@ export class CSSEditorManager {
 
 		// Enabled button
 		enabledButton.addEventListener('click', async () => {
-			// Enable/disable other selector
+			// Enable/disable other rule
 			const currentlyEditedIndex = await new Promise<number | boolean>((resolve) => {
-				const elementList = this.view.containerEl.querySelector('.element-list');
-				const existingElements = elementList!.querySelectorAll('.element-item');
-				existingElements!.forEach((el, index) => {
-					const openEditor = el.querySelector('.inline-element-editor');
+				const ruleList = this.view.containerEl.querySelector('.css-rule');
+				const existingRules = ruleList!.querySelectorAll('.rule-item');
+				existingRules!.forEach((el, index) => {
+					const openEditor = el.querySelector('.inline-rule-editor');
 					if (openEditor!) {
 						return resolve(index);
 					}
@@ -699,12 +690,11 @@ export class CSSEditorManager {
 				return resolve(false);
 			});
 
-			// const existingIndex = this.plugin.settings.customElements.findIndex(el => el.selector === element.selector);
-			const existingIndex = this.plugin.settings.customElements.findIndex(el => el.uuid === element.uuid);
+			const existingIndex = this.plugin.settings.cssRules.findIndex(el => el.uuid === rule.uuid);
 
 			if (existingIndex >= 0) {
 
-				this.plugin.settings.customElements[existingIndex].enabled = this.plugin.settings.customElements[existingIndex].enabled ? false : true;
+				this.plugin.settings.cssRules[existingIndex].enabled = this.plugin.settings.cssRules[existingIndex].enabled ? false : true;
 			}
 
 			if (currentEnabled) {
@@ -717,14 +707,14 @@ export class CSSEditorManager {
 
 			// Update custom CSS
 			let fullCSS = '';
-			this.plugin.settings.customElements.forEach((el, index) => {
-				if (el.enabled) {
+			this.plugin.settings.cssRules.forEach((rule, index) => {
+				if (rule.enabled) {
 					// Need currently edited index here
 					if (index === currentlyEditedIndex) {
 						let css = this.aceService.getValue();
-						fullCSS += `/* ${el.name || el.selector} */\n${css}\n\n`;
+						fullCSS += `/* ${rule.rule} */\n${css}\n\n`;
 					} else {
-						fullCSS += `/* ${el.name || el.selector} */\n${el.css}\n\n`;
+						fullCSS += `/* ${rule.rule} */\n${rule.css}\n\n`;
 					}
 
 				}
@@ -743,17 +733,17 @@ export class CSSEditorManager {
 		deleteButton.addEventListener('click', async () => {
 			deleteButton.addClass('mod-loading');
 			// Confirm deletion
-			if (await confirm(`Are you sure you want to delete the element "${element.name || element.selector}"?`, this.plugin.app)) {
+			if (await confirm(`Are you sure you want to delete the rule "${rule.rule}"?`, this.plugin.app)) {
 				// Remove from settings
-				this.plugin.settings.customElements = this.plugin.settings.customElements.filter(
-					el => el.uuid !== element.uuid
+				this.plugin.settings.cssRules = this.plugin.settings.cssRules.filter(
+					el => el.uuid !== rule.uuid
 				);
 
 				// Update custom CSS
 				let fullCSS = '';
-				this.plugin.settings.customElements.forEach(el => {
+				this.plugin.settings.cssRules.forEach(el => {
 					if (el.enabled) {
-						fullCSS += `/* ${el.name || el.selector} */\n${el.css}\n\n`;
+						fullCSS += `/* ${el.rule} */\n${el.css}\n\n`;
 					}
 				});
 

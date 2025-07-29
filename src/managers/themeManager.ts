@@ -26,11 +26,11 @@ export class ThemeManager {
 		this.styleEl = document.createElement('style');
 		this.styleEl.id = 'custom-theme-studio-css';
 
-		// Generate CSS from variables and custom elements
+		// Generate CSS from variables and CSS rules
 		const variablesCSS: string = this.generateVariablesCSS();
-		const elementsCSS: string = this.plugin.settings.customCSS || '';
+		const rulesCSS: string = this.plugin.settings.customCSS || '';
 
-		this.styleEl.textContent = (variablesCSS !== '' ? (variablesCSS + '\n\n') : '') + elementsCSS;
+		this.styleEl.textContent = (variablesCSS !== '' ? (variablesCSS + '\n\n') : '') + rulesCSS;
 
 		// Add to document
 		document.head.appendChild(this.styleEl);
@@ -126,7 +126,7 @@ export class ThemeManager {
 			if (view && view.elementSelectorManager) {
 				view.elementSelectorManager.startElementSelection();
 				// Expand "Element customization" section
-				const section: HTMLDivElement | null = window.activeDocument.querySelector('.element-section');
+				const section: HTMLDivElement | null = window.activeDocument.querySelector('.rules-section');
 				const collapsibleIcon: HTMLDivElement | null | undefined = section?.querySelector('.collapse-icon');
 				const collapsibleContent: HTMLDivElement | null | undefined = section?.querySelector('.collapsible-content');
 				collapsibleContent!.removeClass('collapsible-content-hide');
@@ -145,7 +145,7 @@ export class ThemeManager {
 						if (view && view.elementSelectorManager) {
 							view.elementSelectorManager.startElementSelection();
 							// Expand "Element customization" section
-							const section: HTMLDivElement | null = window.activeDocument.querySelector('.element-section');
+							const section: HTMLDivElement | null = window.activeDocument.querySelector('.rules-section');
 							const collapsibleIcon: HTMLDivElement | null | undefined = section?.querySelector('.collapse-icon');
 							const collapsibleContent: HTMLDivElement | null | undefined = section?.querySelector('.collapsible-content');
 							collapsibleContent!.removeClass('collapsible-content-hide');
@@ -165,22 +165,22 @@ export class ThemeManager {
 			// Generate theme.css content
 			const variablesCSS: string = this.generateVariablesCSS();
 
-			// Optional "include disabled custom elements" when exporting
+			// Optional "include disabled CSS rules" when exporting
 			let fullCSS = '';
 			if (this.plugin.settings.exportThemeIncludeDisabled) {
-				this.plugin.settings.customElements.forEach(element => {
-					fullCSS += `/* ${element.name || element.selector} */\n${element.css}\n\n`;
+				this.plugin.settings.cssRules.forEach(rule => {
+					fullCSS += `/* ${rule.rule} */\n${rule.css}\n\n`;
 				});
 			}
 
-			const elementsCSS: string = fullCSS !== '' ? fullCSS : this.plugin.settings.customCSS;
+			const rulesCSS: string = fullCSS !== '' ? fullCSS : this.plugin.settings.customCSS;
 			const themeCSS: string = `/* ${this.plugin.settings.exportThemeName || DEFAULT_SETTINGS.exportThemeName} for Obsidian */
 /* by ${this.plugin.settings.exportThemeAuthor || DEFAULT_SETTINGS.exportThemeAuthor} */
 /* ${this.plugin.settings.exportThemeURL || DEFAULT_SETTINGS.exportThemeURL} */
 
 ${variablesCSS}
 
-${elementsCSS}`;
+${rulesCSS}`;
 
 			new Notice('Exporting theme CSS file…', 5000);
 			let prettierCSS: string = (this.plugin.settings.exportPrettierFormat) ? await this.formatCSS(themeCSS) : themeCSS;
@@ -221,22 +221,22 @@ ${elementsCSS}`;
 		try {
 			const variablesCSS: string = this.generateVariablesCSS();
 			
-			// Optional "include disabled custom elements" when exporting
+			// Optional "include disabled CSS rules" when exporting
 			let fullCSS = '';
 			if (this.plugin.settings.exportThemeIncludeDisabled) {
-				this.plugin.settings.customElements.forEach(element => {
-					fullCSS += `/* ${element.name || element.selector} */\n${element.css}\n\n`;
+				this.plugin.settings.cssRules.forEach(rule => {
+					fullCSS += `/* ${rule.rule} */\n${rule.css}\n\n`;
 				});
 			}
 
-			const elementsCSS: string = fullCSS !== '' ? fullCSS : this.plugin.settings.customCSS;
+			const rulesCSS: string = fullCSS !== '' ? fullCSS : this.plugin.settings.customCSS;
 			const themeCSS: string = `/* ${this.plugin.settings.exportThemeName || DEFAULT_SETTINGS.exportThemeName} for Obsidian */
 /* by ${this.plugin.settings.exportThemeAuthor || DEFAULT_SETTINGS.exportThemeAuthor} */
 /* ${this.plugin.settings.exportThemeURL || DEFAULT_SETTINGS.exportThemeURL} */
 
 ${variablesCSS}
 
-${elementsCSS}`;
+${rulesCSS}`;
 
 			let prettierCSS: string = (this.plugin.settings.exportPrettierFormat) ? await this.formatCSS(themeCSS) : themeCSS;
 			navigator.clipboard.writeText(prettierCSS).then(() => {

@@ -4,11 +4,10 @@ import { confirm } from '../modals/confirmModal';
 import CustomThemeStudioPlugin from '../main';
 import settingsIO from './settingsIO';
 
-export interface CustomElement {
+export interface CSSrule {
 	uuid: string;
-	selector: string;
+	rule: string;
 	css: string;
-	name?: string;
 	enabled: boolean;
 }
 
@@ -23,7 +22,7 @@ export interface CustomThemeStudioSettings {
 	themeEnabled: boolean;
 	customCSS: string;
 	customVariables: CSSVariable[];
-	customElements: CustomElement[];
+	cssRules: CSSrule[];
 	exportThemeName: string;
 	exportThemeAuthor: string;
 	exportThemeURL: string;
@@ -31,7 +30,7 @@ export interface CustomThemeStudioSettings {
 	exportPrettierFormat: boolean;
 	lastSelectedSelector: string;
 	collapsedCSSVariables: boolean;
-	collapsedCustomElements: boolean;
+	collapsedCSSRules: boolean;
 	collapsedExportTheme: boolean;
 	autoApplyChanges: boolean;
 	variableInputListener: string;
@@ -58,7 +57,7 @@ export const DEFAULT_SETTINGS: CustomThemeStudioSettings = {
 	themeEnabled: false,
 	customCSS: '',
 	customVariables: [],
-	customElements: [],
+	cssRules: [],
 	exportThemeName: 'My Custom Theme',
 	exportThemeAuthor: 'Anonymous',
 	exportThemeURL: 'https://github.com/obsidianmd',
@@ -66,7 +65,7 @@ export const DEFAULT_SETTINGS: CustomThemeStudioSettings = {
 	exportPrettierFormat: true,
 	lastSelectedSelector: '',
 	collapsedCSSVariables: false,
-	collapsedCustomElements: false,
+	collapsedCSSRules: false,
 	collapsedExportTheme: false,
 	autoApplyChanges: false,
 	variableInputListener: 'change',
@@ -135,7 +134,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Reload view')
-			.setDesc('Most settings under CSS variables & Custom Elements require the plugin\'s view to be reloaded to take effect.')
+			.setDesc('Most settings under CSS variables & CSS rules require the plugin\'s view to be reloaded to take effect.')
 			.addButton(button => button
 				.setButtonText('Reload')
 				.setClass('mod-destructive')
@@ -180,32 +179,11 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				})
 			);
 
-		containerEl.createEl('h3', { cls: 'cts-settings-h3', text: 'Custom elements' });
-
-		new Setting(containerEl)
-			.setName('Auto-apply changes')
-			.setDesc('For custom elements, automatically preview changes "live" as you make them. Changes become permanent once the CSS is saved.')
-			.addToggle(toggle => toggle
-				.setValue(this.plugin.settings.autoApplyChanges)
-				.onChange(async (value) => {
-					this.plugin.settings.autoApplyChanges = value;
-					await this.plugin.saveSettings();
-				})
-			);
-
-		let noticeDiv = this.containerEl.createDiv({ cls: 'cts-auto-apply-changes-notice' });
-		let noticeIcon = noticeDiv.createDiv({ cls: 'cts-auto-apply-changes-notice-icon' });
-		noticeIcon.setAttribute('aria-label', 'Notice');
-		noticeIcon.setAttribute('data-tooltip-position', 'top');
-		let noticeText = noticeDiv.createDiv({ cls: 'cts-auto-apply-changes-notice-text' });
-		noticeText.textContent = 'When enabled, every keystroke triggers a "live" refresh of your theme. This can lead to unwanted styling and possibly make Obsidian unusable.';
-		setIcon((noticeIcon), 'alert-triangle');
-
-		this.containerEl.appendChild(noticeDiv);
+		containerEl.createEl('h3', { cls: 'cts-settings-h3', text: 'CSS rules' });
 
 		new Setting(containerEl)
 			.setName('Font import')
-			.setDesc('Enable font imports to create @font-face custom element.')
+			.setDesc('Enable font imports to create @font-face CSS rules.')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.enableFontImport)
 				.onChange(async (value) => {
@@ -227,7 +205,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Generate CSS')
-			.setDesc('For custom elements, when selecting an element, automatically generate CSS rules with the most common properties.')
+			.setDesc('When using the element picker, automatically generate CSS rules with the most common properties.')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.generateComputedCSS)
 				.onChange(async (value) => {
@@ -237,6 +215,28 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 			);
 
 		containerEl.createEl('h3', { cls: 'cts-settings-h3', text: 'CSS editor' });
+
+		new Setting(containerEl)
+			.setName('Auto-apply changes')
+			.setDesc('Automatically preview changes "live" as you make them. Changes become permanent once the CSS is saved.')
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.autoApplyChanges)
+				.onChange(async (value) => {
+					this.plugin.settings.autoApplyChanges = value;
+					await this.plugin.saveSettings();
+				})
+			);
+
+		let noticeDiv = this.containerEl.createDiv({ cls: 'cts-auto-apply-changes-notice' });
+		let noticeIcon = noticeDiv.createDiv({ cls: 'cts-auto-apply-changes-notice-icon' });
+		noticeIcon.setAttribute('aria-label', 'Notice');
+		noticeIcon.setAttribute('data-tooltip-position', 'top');
+		let noticeText = noticeDiv.createDiv({ cls: 'cts-auto-apply-changes-notice-text' });
+		noticeText.textContent = 'When enabled, every keystroke triggers a "live" refresh of your theme. This can lead to unwanted styling and possibly make Obsidian unusable.';
+		setIcon((noticeIcon), 'alert-triangle');
+
+		this.containerEl.appendChild(noticeDiv);
+
 
 		new Setting(containerEl)
 			.setName('Color picker')
@@ -457,7 +457,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				}));
 
 		new Setting(containerEl)
-			.setName('Include disabled custom elements when exporting')
+			.setName('Include disabled CSS rules when exporting')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.exportThemeIncludeDisabled)
 				.onChange(async (value) => {
@@ -499,7 +499,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Scroll to top')
-			.setDesc('Automatically scroll to the top of the Custom Theme Studio view.')
+			.setDesc('Automatically scroll sections to the top of the Custom Theme Studio view when expanding or editing.')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.viewScrollToTop)
 				.onChange(async (value) => {
@@ -546,7 +546,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 					if (await confirm('Are you sure you want to reset all theme customizations? This cannot be undone.', this.plugin.app)) {
 						this.plugin.settings.customCSS = '';
 						this.plugin.settings.customVariables = [];
-						this.plugin.settings.customElements = [];
+						this.plugin.settings.cssRules = [];
 						this.plugin.settings.themeEnabled = false;
 
 						// Apply changes

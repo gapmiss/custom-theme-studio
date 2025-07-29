@@ -174,7 +174,7 @@ class SettingsIO {
 
         if (typeof settings.themeEnabled !== 'boolean') return false;
         if (!Array.isArray(settings.customVariables)) return false;
-        if (!Array.isArray(settings.customElements)) return false;
+        if (!Array.isArray(settings.cssRules)) return false;
         if (typeof settings.autoApplyChanges !== 'boolean') return false;
 
         return true;

@@ -48,57 +48,57 @@ export class CssSnippetFuzzySuggestModal extends FuzzySuggestModal<Snippets> {
     }
 
     async onChooseItem(item: Snippets, _evt: MouseEvent | KeyboardEvent) {
-        let name = item.name;
+        // let name = item.name;
         let css = await this.readSnippetFile(this.app, item);
         let uuid = generateUniqueId();
-        let selector = name;
-        // Add new element
-        this.plugin.settings.customElements.push({
+        let rule = "Snippet: " + name;
+        // Add new rule
+        this.plugin.settings.cssRules.push({
             uuid,
-            selector,
+            rule,
             css,
-            name: "Snippet: " + name || undefined,
+            // name: "Snippet: " + name || undefined,
             enabled: false
         });
         this.plugin.saveSettings();
 
         let leaf = this.app.workspace.getLeavesOfType(VIEW_TYPE_CTS).first();
         if (leaf) {
-            if (!await confirm('The snippet has been saved as a new custom element. Click "OK" to reload the "Custom Theme Studio" view or if you have unsaved changes, click "Cancel" to reload the view manually at a later time.', this.plugin.app)) {
+            if (!await confirm('The snippet has been saved as a new CSS rule. Click "OK" to reload the "Custom Theme Studio" view or if you have unsaved changes, click "Cancel" to reload the view manually at a later time.', this.plugin.app)) {
                 return;
             }
             await this.app.workspace.revealLeaf(leaf);
             if (leaf.view instanceof CustomThemeStudioView) {
                 let view = leaf.view;
-                const elementList = view.containerEl.querySelector('.element-list');
-                if (elementList) {
-                    elementList.empty();
-                    // Sort by "selector" value ASC
-                    this.plugin.settings.customElements.sort((a, b) => a.selector!.localeCompare(b.selector!));
-                    // Re-populate with all elements
-                    this.plugin.settings.customElements.forEach(element => {
-                        view.cssEditorManager.createElementItem(elementList as HTMLElement, element);
+                const ruleList = view.containerEl.querySelector('.css-rule');
+                if (ruleList) {
+                    ruleList.empty();
+                    // Sort by "rule" value ASC
+                    this.plugin.settings.cssRules.sort((a, b) => a.rule!.localeCompare(b.rule!));
+                    // Re-populate with all rules
+                    this.plugin.settings.cssRules.forEach(rule => {
+                        view.cssEditorManager.createRuleItem(ruleList as HTMLElement, rule);
                     });
-                    let elementSection = view.containerEl.querySelector('.element-section')?.querySelector('.collapsible-content');
-                    let toggleIcon: HTMLElement | null | undefined = view.containerEl.querySelector('.element-section')?.querySelector('.collapse-icon');
-                    if (elementSection && toggleIcon) {
-                        elementSection.addClass('collapsible-content-show');
-                        elementSection.removeClass('collapsible-content-hide');
+                    let ruleSection = view.containerEl.querySelector('.rules-section')?.querySelector('.collapsible-content');
+                    let toggleIcon: HTMLElement | null | undefined = view.containerEl.querySelector('.rules-section')?.querySelector('.collapse-icon');
+                    if (ruleSection && toggleIcon) {
+                        ruleSection.addClass('collapsible-content-show');
+                        ruleSection.removeClass('collapsible-content-hide');
                         setIcon(toggleIcon, 'chevron-down');
                         toggleIcon.setAttr('aria-label', 'Collapse section');
                         toggleIcon.setAttr('data-tooltip-position', 'top');
                     }
-                    // Scroll custom element to the top of view
+                    // Scroll CSS rule to the top of view
                     if (this.plugin.settings.viewScrollToTop) {
                         setTimeout(() => {
-                            const elementDiv: HTMLElement | null = view.containerEl.querySelector(`[data-cts-uuid="${uuid}"]`);
-                            view.scrollToDiv(elementDiv!);
+                            const ruleDiv: HTMLElement | null = view.containerEl.querySelector(`[data-cts-uuid="${uuid}"]`);
+                            view.scrollToDiv(ruleDiv!);
                         }, 100);
                     }
                 }
             }
         } else {
-            showNotice('The snippet has been saved as a new custom element', 5000, 'success');
+            showNotice('The snippet has been saved as a new CSS rule', 5000, 'success');
         }
     }
 

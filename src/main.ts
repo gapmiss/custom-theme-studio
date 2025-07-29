@@ -47,10 +47,10 @@ export default class CustomThemeStudioPlugin extends Plugin {
 			}
 		});
 
-		// Add command to select elements
+		// Add command to select element
 		this.addCommand({
-			id: 'select-element-for-styling',
-			name: 'Select element for styling',
+			id: 'select-element-for-css-rule',
+			name: 'Select an element for new CSS rule',
 			callback: () => {
 				this.themeManager.startElementSelection();
 			}
@@ -80,9 +80,9 @@ export default class CustomThemeStudioPlugin extends Plugin {
 
 		// Update custom CSS
 		let fullCSS = '';
-		this.settings.customElements.forEach(el => {
-			if (el.enabled) {
-				fullCSS += `/* ${el.name || el.selector} */\n${el.css}\n\n`;
+		this.settings.cssRules.forEach(rule => {
+			if (rule.enabled) {
+				fullCSS += `/* ${rule.rule} */\n${rule.css}\n\n`;
 			}
 		});
 		this.settings.customCSS = fullCSS;

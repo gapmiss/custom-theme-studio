@@ -390,7 +390,7 @@ export class ElementSelectorManager {
 
 			// Set the selector in the editor
 			let uuid = generateUniqueId();
-			this.view.cssEditorManager.setSelector(uuid, selector, false);
+			this.view.cssEditorManager.setRule(uuid, selector, false);
 
 			// Show the editor section
 			this.view.cssEditorManager.showEditorSection(true);
@@ -399,7 +399,7 @@ export class ElementSelectorManager {
 			if (this.plugin.settings.viewScrollToTop) {
 				setTimeout(() => {
 					this.scrollToDivByUUID(uuid);
-					this.view.cssEditorManager.nameInputEl!.focus();
+					this.view.cssEditorManager.ruleInputEl!.focus();
 				}, 100);
 			}
 		}

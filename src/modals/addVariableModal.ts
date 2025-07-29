@@ -92,33 +92,33 @@ export class AddVariableModal extends Modal {
                         if (leaf.view instanceof CustomThemeStudioView) {
                             showNotice('The variable has been added', 5000, 'success');
                             let view = leaf.view;
-                            const elementList: HTMLElement | null = view.containerEl.querySelector('[data-var-category="custom"]');
-                            if (elementList) {
-                                elementList.empty();
+                            const customVarList: HTMLElement | null = view.containerEl.querySelector('[data-var-category="custom"]');
+                            if (customVarList) {
+                                customVarList.empty();
                                 const items = this.plugin.settings.customVariables
                                     .filter(v => v.parent === 'custom')
                                     .sort((a, b) => a.variable!.localeCompare(b.variable!)); // Sort by "variable" ASC
                                 if (items.length) {
                                     items.forEach((item) => {
-                                        view.createCustomVariableItemInput(elementList, { uuid: item.uuid!, name: item.variable, value: item.value }, 'custom');
+                                        view.createCustomVariableItemInput(customVarList, { uuid: item.uuid!, name: item.variable, value: item.value }, 'custom');
                                     });
                                 }
                             }
-                            const elementListWrapper: HTMLElement | null = view.containerEl.querySelector('#variable-category-custom');
-                            if (elementListWrapper) {
+                            const customVarListWrapper: HTMLElement | null = view.containerEl.querySelector('#variable-category-custom');
+                            if (customVarListWrapper) {
                                 // Toggle icon
-                                let variableListicon: HTMLElement | null = elementListWrapper.querySelector('.collapse-icon.clickable-icon');
+                                let variableListicon: HTMLElement | null = customVarListWrapper.querySelector('.collapse-icon.clickable-icon');
                                 setIcon(variableListicon!, 'chevron-down')
                                 variableListicon?.setAttr('aria-label', 'Collapse category');
                                 variableListicon?.setAttr('data-tooltip-position', 'top');
                                 // Variables list
-                                let variableList: HTMLElement | null = elementListWrapper.querySelector('[data-var-category="custom"]');
+                                let variableList: HTMLElement | null = customVarListWrapper.querySelector('[data-var-category="custom"]');
                                 variableList?.removeClass('variable-list-hide');
                                 variableList?.addClass('variable-list-show');
                                 // Scroll variable list to the top of view
                                 if (this.plugin.settings.viewScrollToTop) {
                                     setTimeout(() => {
-                                        view.scrollToDiv(elementListWrapper);
+                                        view.scrollToDiv(customVarListWrapper);
                                     }, 100);
                                 }
                             }
