@@ -31,27 +31,34 @@ export class FontImportModal extends Modal {
 		// Help notice regarding performance
 		contentEl.createDiv({
 			text: 'Embedding assets increases the file size of your theme, which may lead to poor performance in the following situations:'
-		})
-		let listFragment = contentEl.createEl('ul');
-		listFragment.appendChild(contentEl.createEl('li', {
-			text: 'Downloading and updating your theme from the community theme directory.',
-		}))
-		listFragment.appendChild(contentEl.createEl('li', {
-			text: 'Loading and using your theme in the Obsidian app.',
-		}))
-		listFragment.appendChild(contentEl.createEl('li', {
-			text: 'Editing your theme in a code editor.',
-		}))
+		});
+
+		// Create a <ul> list with <li> items
+		const listItems = [
+			'Downloading and updating your theme from the community theme directory.',
+			'Loading and using your theme in the Obsidian app.',
+			'Editing your theme in a code editor.'
+		];
+
+		const listFragment = contentEl.createEl('ul');
+		listItems.forEach(text => {
+			listFragment.appendChild(contentEl.createEl('li', { text }));
+		});
 		contentEl.appendChild(listFragment);
-		contentEl.createDiv('cts-font-import-modal-desc')
-			.createSpan({
-				text: 'See: '
-			})
-			.createEl('a', {
-				href: 'https://docs.obsidian.md/Themes/App+themes/Embed+fonts+and+images+in+your+theme#Consider+file+size',
-				text: 'Embed fonts and images in your theme - Developer Documentation',
-				attr: { 'aria-label': 'https://docs.obsidian.md/Themes/App+themes/Embed+fonts+and+images+in+your+theme#Consider+file+size', 'class': 'external-link', 'data-tooltip-position': 'top', 'tabindex': '0' }
-			})
+
+		// Link with supporting documentation
+		const linkContainer = contentEl.createDiv('cts-font-import-modal-desc');
+		linkContainer.createSpan({ text: 'See: ' });
+		linkContainer.createEl('a', {
+			href: 'https://docs.obsidian.md/Themes/App+themes/Embed+fonts+and+images+in+your+theme#Consider+file+size',
+			text: 'Embed fonts and images in your theme - Developer Documentation',
+			attr: {
+				'aria-label': 'https://docs.obsidian.md/Themes/App+themes/Embed+fonts+and+images+in+your+theme#Consider+file+size',
+				class: 'external-link',
+				'data-tooltip-position': 'top',
+				tabindex: '0'
+			}
+		});
 
 		// Font name input
 		const fontNameInput = new Setting(contentEl)
