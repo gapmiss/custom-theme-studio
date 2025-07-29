@@ -245,34 +245,34 @@ export class ElementSelectorManager {
 
 		// Set tooltip content
 		this.tooltip.createDiv()
-			.createEl('strong', {text: "Tag: "})
-			.createEl('code', {text: tagName});
+			.createEl('strong', { text: "Tag: " })
+			.createEl('code', { text: tagName });
 
 		// Add aria-label if present (highlight it prominently)
 		if (ariaLabel) {
-			this.tooltip.createDiv({cls: 'attribute-highlight aria-label-highlight'})
-				.createEl('strong', {text: 'aria-label: '})
-				.createSpan({text: `"${ariaLabel}"`})
-				.createDiv({cls: 'attribute-note', text: '(High priority selector)'});
+			this.tooltip.createDiv({ cls: 'attribute-highlight aria-label-highlight' })
+				.createEl('strong', { text: 'aria-label: ' })
+				.createSpan({ text: `"${ariaLabel}"` })
+				.createDiv({ cls: 'attribute-note', text: '(High priority selector)' });
 		}
 
 		// Add data attributes (highlight them)
 		if (dataAttributes.length > 0) {
-			this.tooltip.createDiv({cls: 'attribute-highlight'})
-				.createEl('strong', {text: 'Data Attributes:'});
-			let attrList: HTMLElement = this.tooltip.createEl('ul', {cls: 'data-attributes-list'});
+			this.tooltip.createDiv({ cls: 'attribute-highlight' })
+				.createEl('strong', { text: 'Data Attributes:' });
+			let attrList: HTMLElement = this.tooltip.createEl('ul', { cls: 'data-attributes-list' });
 			dataAttributes.forEach(attr => {
 				attrList.appendChild(
-					attrList.createEl('li', {text: `${attr.name}="${attr.value}"`})
+					attrList.createEl('li', { text: `${attr.name}="${attr.value}"` })
 				);
 			});
 		}
 
 		// Add classes if present
 		if (classes) {
-			this.tooltip.createDiv({cls: 'tooltip-classes'})
-				.createEl('strong', {text: 'Classes: '})
-				.createSpan({text: `${classes.replace('.cts-element-picker-hover', '')}`});
+			this.tooltip.createDiv({ cls: 'tooltip-classes' })
+				.createEl('strong', { text: 'Classes: ' })
+				.createSpan({ text: `${classes.replace('.cts-element-picker-hover', '')}` });
 		}
 
 		// Add selector options
@@ -587,7 +587,7 @@ export class ElementSelectorManager {
 		if (target) {
 			const container = this.view.containerEl;
 			if (container && target) {
-				const top = (target as HTMLElement).offsetTop-10;
+				const top = (target as HTMLElement).offsetTop - 10;
 				(container as HTMLElement).scrollTo({
 					top: top,
 					behavior: "smooth"

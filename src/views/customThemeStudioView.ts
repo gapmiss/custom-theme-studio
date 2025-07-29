@@ -254,7 +254,7 @@ export class CustomThemeStudioView extends ItemView {
 								let dataVarTag: string | null = el.getAttr('data-var-tag');
 								let hasVisibleChildren: boolean = false;
 								let children: HTMLCollection = el.children;
-								
+
 								// Check for visible children
 								for (var i = 0; i < children.length; i++) {
 									if (children[i].hasClass('variable-item-show') || children[i].hasClass('custom-variable-item-show')) {
@@ -370,7 +370,7 @@ export class CustomThemeStudioView extends ItemView {
 			attr: {
 				class: 'clear-search-input-button',
 				'aria-label': 'Clear search',
-				'data-tooltip-position': 'top', 
+				'data-tooltip-position': 'top',
 				'tabindex': 0
 			}
 		});
@@ -925,7 +925,7 @@ export class CustomThemeStudioView extends ItemView {
 			attr: {
 				class: 'clear-search-rules-input-button',
 				'aria-label': 'Clear search',
-				'data-tooltip-position': 'top', 
+				'data-tooltip-position': 'top',
 				'tabindex': 0
 			}
 		});
@@ -1150,7 +1150,7 @@ export class CustomThemeStudioView extends ItemView {
 		if (target) {
 			const container = this.containerEl;
 			if (container && target) {
-				const top = (target as HTMLElement).offsetTop-10;
+				const top = (target as HTMLElement).offsetTop - 10;
 				// container.scrollTop = top;
 				(container as HTMLElement).scrollTo({
 					top: top,

@@ -741,7 +741,7 @@ export class CSSEditorManager {
 		if (target) {
 			const container = this.view.containerEl;
 			if (container && target) {
-				const top = (target as HTMLElement).offsetTop-10;
+				const top = (target as HTMLElement).offsetTop - 10;
 				// container.scrollTop = top;
 				(container as HTMLElement).scrollTo({
 					top: top,
