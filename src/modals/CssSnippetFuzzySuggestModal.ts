@@ -50,7 +50,7 @@ export class CssSnippetFuzzySuggestModal extends FuzzySuggestModal<Snippets> {
     async onChooseItem(item: Snippets, _evt: MouseEvent | KeyboardEvent) {
         let css = await this.readSnippetFile(this.app, item);
         let uuid = generateUniqueId();
-        let rule = "Snippet: " + name;
+        let rule = "Snippet: " + item.name;
         // Add new rule
         this.plugin.settings.cssRules.push({
             uuid,
@@ -77,15 +77,19 @@ export class CssSnippetFuzzySuggestModal extends FuzzySuggestModal<Snippets> {
                     this.plugin.settings.cssRules.forEach(rule => {
                         view.cssEditorManager.createRuleItem(ruleList as HTMLElement, rule);
                     });
-                    let ruleSection = view.containerEl.querySelector('.rules-section')?.querySelector('.collapsible-content');
-                    let toggleIcon: HTMLElement | null | undefined = view.containerEl.querySelector('.rules-section')?.querySelector('.collapse-icon');
+
+                    const rulesSection = view.containerEl.querySelector('.rules-section');
+                    const ruleSection = rulesSection!.querySelector('.collapsible-content');
+                    const toggleIcon: HTMLElement | null = rulesSection!.querySelector('.collapse-icon');
+
                     if (ruleSection && toggleIcon) {
-                        ruleSection.addClass('collapsible-content-show');
-                        ruleSection.removeClass('collapsible-content-hide');
+                        ruleSection.classList.replace('collapsible-content-hide', 'collapsible-content-show');
+
                         setIcon(toggleIcon, 'chevron-down');
                         toggleIcon.setAttr('aria-label', 'Collapse section');
                         toggleIcon.setAttr('data-tooltip-position', 'top');
                     }
+
                     // Scroll CSS rule to the top of view
                     if (this.plugin.settings.viewScrollToTop) {
                         setTimeout(() => {
