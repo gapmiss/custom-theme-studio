@@ -27,64 +27,120 @@ function createHelpFragment(text: string, parent: string = '', category: string 
 	return helpFragment;
 }
 
+let basesHelpFragment: DocumentFragment = createHelpFragment('Catalyst license feature – currently not released for PUBLIC availability. Subject to change as the Bases core plugin is in development.');
+let blockquoteHelpFragment: DocumentFragment = createHelpFragment('', 'Editor', 'Blockquote');
+let bordersHelpFragment: DocumentFragment = createHelpFragment('', 'Foundations', 'Borders');
+let buttonHelpFragment: DocumentFragment = createHelpFragment('', 'Components', 'Button');
+let calloutHelpFragment: DocumentFragment = createHelpFragment('', 'Editor', 'Callout');
+let canvasHelpFragment: DocumentFragment = createHelpFragment('', 'Plugins', 'Canvas');
+let checkboxHelpFragment: DocumentFragment = createHelpFragment('', 'Components', 'Checkbox');
+let codeHelpFragment: DocumentFragment = createHelpFragment('', 'Editor', 'Code');
+let colorinputHelpFragment: DocumentFragment = createHelpFragment('', 'Components', 'Color+input');
+let colorsHelpFragment: DocumentFragment = createHelpFragment('', 'Foundations', 'Colors');
+let cursorHelpFragment: DocumentFragment = createHelpFragment('', 'Foundations', 'Cursor');
+let dialogHelpFragment: DocumentFragment = createHelpFragment('', 'Components', 'Dialog');
+let dividerHelpFragment: DocumentFragment = createHelpFragment('Dividers between panes');
+let draggingHelpFragment: DocumentFragment = createHelpFragment('', 'Components', 'Dragging');
+let dropdownsHelpFragment: DocumentFragment = createHelpFragment('', 'Components', 'Dropdowns');
+let embedHelpFragment: DocumentFragment = createHelpFragment('', 'Editor', 'Embed');
+let fileHelpFragment: DocumentFragment = createHelpFragment('', 'Editor', 'File');
+let fileexplorerHelpFragment: DocumentFragment = createHelpFragment('', 'Plugins', 'File+explorer');
+let footnoteHelpFragment: DocumentFragment = createHelpFragment('', 'Editor', 'Footnote');
+let graphHelpFragment: DocumentFragment = createHelpFragment('', 'Plugins', 'Graph');
+let headingsHelpFragment: DocumentFragment = createHelpFragment('', 'Editor', 'Headings');
+let horizontalruleHelpFragment: DocumentFragment = createHelpFragment('', 'Editor', 'Horizontal+rule');
+let iconsHelpFragment: DocumentFragment = createHelpFragment('', 'Foundations', 'Icons');
+let indentationHelpFragment: DocumentFragment = createHelpFragment('', 'Components', 'Indentation+guides');
+let inlinetitleHelpFragment: DocumentFragment = createHelpFragment('', 'Editor', 'Inline+title');
+let layersHelpFragment: DocumentFragment = createHelpFragment('', 'Foundations', 'Layers');
+let linkHelpFragment: DocumentFragment = createHelpFragment('', 'Editor', 'Link');
+let listHelpFragment: DocumentFragment = createHelpFragment('', 'Editor', 'List');
+let modalHelpFragment: DocumentFragment = createHelpFragment('', 'Components', 'Modal');
+let multiselectHelpFragment: DocumentFragment = createHelpFragment('', 'Components', 'Multi-select');
+let navigationHelpFragment: DocumentFragment = createHelpFragment('', 'Components', 'Navigation');
+let popoverHelpFragment: DocumentFragment = createHelpFragment('', 'Components', 'Popover');
+let promptHelpFragment: DocumentFragment = createHelpFragment('', 'Components', 'Prompt');
+let propertiesHelpFragment: DocumentFragment = createHelpFragment('', 'Editor', 'Properties');
+let radiusesHelpFragment: DocumentFragment = createHelpFragment('', 'Foundations', 'Radiuses');
+let ribbonHelpFragment: DocumentFragment = createHelpFragment('', 'Window', 'Ribbon');
+let scrollbarHelpFragment: DocumentFragment = createHelpFragment('', 'Window', 'Scrollbar');
+let searchHelpFragment: DocumentFragment = createHelpFragment('', 'Plugins', 'Search');
+let sidebarHelpFragment: DocumentFragment = createHelpFragment('', 'Window', 'Sidebar');
+let sliderHelpFragment: DocumentFragment = createHelpFragment('', 'Components', 'Slider');
+let spacingHelpFragment: DocumentFragment = createHelpFragment('', 'Foundations', 'Spacing');
+let statusbarHelpFragment: DocumentFragment = createHelpFragment('', 'Window', 'Status+bar');
+let syncHelpFragment: DocumentFragment = createHelpFragment('', 'Plugins', 'Sync');
+let tableHelpFragment: DocumentFragment = createHelpFragment('', 'Editor', 'Table');
+let tabsHelpFragment: DocumentFragment = createHelpFragment('', 'Components', 'Tabs');
+let tagHelpFragment: DocumentFragment = createHelpFragment('', 'Editor', 'Tag');
+let textinputHelpFragment: DocumentFragment = createHelpFragment('', 'Components', 'Text+input');
+let toggleHelpFragment: DocumentFragment = createHelpFragment('', 'Components', 'Toggle');
+let themelightHelpFragment: DocumentFragment = createHelpFragment('Variables specifically for light theme', '', '');
+let themedarkHelpFragment: DocumentFragment = createHelpFragment('Variables specifically for dark theme', '', '');
+let typographyHelpFragment: DocumentFragment = createHelpFragment('', 'Foundations', 'Typography');
+let vaultprofileHelpFragment: DocumentFragment = createHelpFragment('', 'Window', 'Vault+profile');
+let windowframeHelpFragment: DocumentFragment = createHelpFragment('', 'Window', 'Window+frame');
+let workspaceHelpFragment: DocumentFragment = createHelpFragment('', 'Window', 'Workspace');
+
+
 export const allCategories: cssCategory[] = [
 	{ category: 'animation', title: 'Animation', tag: 'foundations', help: null },
-	{ category: 'bases', title: 'Bases', tag: 'plugins', help: createHelpFragment('Catalyst license feature – currently not released for PUBLIC availability. Subject to change as the Bases core plugin is in development.') },
-	{ category: 'blockquote', title: 'Blockquote', tag: 'editor', help: createHelpFragment('', 'Editor', 'Blockquote') },
-	{ category: 'borders', title: 'Borders', tag: 'foundations', help: createHelpFragment('', 'Foundations', 'Borders') },
-	{ category: 'button', title: 'Button', tag: 'components', help: createHelpFragment('', 'Components', 'Button') },
-	{ category: 'callout', title: 'Callout', tag: 'editor', help: createHelpFragment('', 'Editor', 'Callout') },
-	{ category: 'canvas', title: 'Canvas', tag: 'plugins', help: createHelpFragment('', 'Plugins', 'Canvas') },
-	{ category: 'checkbox', title: 'Checkbox', tag: 'components', help: createHelpFragment('', 'Components', 'Checkbox') },
-	{ category: 'code', title: 'Code', tag: 'editor', help: createHelpFragment('', 'Editor', 'Code') },
-	{ category: 'colorinput', title: 'Color input', tag: 'components', help: createHelpFragment('', 'Components', 'Color+input') },
-	{ category: 'colors', title: 'Colors', tag: 'foundations', help: createHelpFragment('', 'Foundations', 'Colors') },
+	{ category: 'bases', title: 'Bases', tag: 'plugins', help: basesHelpFragment },
+	{ category: 'blockquote', title: 'Blockquote', tag: 'editor', help: blockquoteHelpFragment },
+	{ category: 'borders', title: 'Borders', tag: 'foundations', help: bordersHelpFragment },
+	{ category: 'button', title: 'Button', tag: 'components', help: buttonHelpFragment },
+	{ category: 'callout', title: 'Callout', tag: 'editor', help: calloutHelpFragment },
+	{ category: 'canvas', title: 'Canvas', tag: 'plugins', help: canvasHelpFragment },
+	{ category: 'checkbox', title: 'Checkbox', tag: 'components', help: checkboxHelpFragment },
+	{ category: 'code', title: 'Code', tag: 'editor', help: codeHelpFragment },
+	{ category: 'colorinput', title: 'Color input', tag: 'components', help: colorinputHelpFragment },
+	{ category: 'colors', title: 'Colors', tag: 'foundations', help: colorsHelpFragment },
 	{ category: 'cts', title: 'Custom Theme Studio plugin', tag: 'CTS', help: null },
-	{ category: 'cursor', title: 'Cursor', tag: 'foundations', help: createHelpFragment('', 'Foundations', 'Cursor') },
+	{ category: 'cursor', title: 'Cursor', tag: 'foundations', help: cursorHelpFragment },
 	{ category: 'custom', title: 'Custom variables', tag: 'CTS', help: null },
-	{ category: 'dialog', title: 'Dialog', tag: 'components', help: createHelpFragment('', 'Components', 'Dialog') },
-	{ category: 'divider', title: 'Divider', tag: 'window', help: createHelpFragment('Dividers between panes') },
-	{ category: 'dragging', title: 'Dragging', tag: 'components', help: createHelpFragment('', 'Components', 'Dragging') },
-	{ category: 'dropdowns', title: 'Dropdowns', tag: 'components', help: createHelpFragment('', 'Components', 'Dropdowns') },
-	{ category: 'embed', title: 'Embed', tag: 'editor', help: createHelpFragment('', 'Editor', 'Embed') },
-	{ category: 'file', title: 'File', tag: 'editor', help: createHelpFragment('', 'Editor', 'File') },
-	{ category: 'fileexplorer', title: 'File explorer', tag: 'plugins', help: createHelpFragment('', 'Plugins', 'File+explorer') },
-	{ category: 'footnote', title: 'Footnote', tag: 'editor', help: createHelpFragment('', 'Editor', 'Footnote') },
-	{ category: 'graph', title: 'Graph', tag: 'plugins', help: createHelpFragment('', 'Plugins', 'Graph') },
-	{ category: 'headings', title: 'Headings', tag: 'editor', help: createHelpFragment('', 'Editor', 'Headings') },
-	{ category: 'horizontalrule', title: 'Horizontal rule', tag: 'editor', help: createHelpFragment('', 'Editor', 'Horizontal+rule') },
-	{ category: 'icons', title: 'Icons', tag: 'foundations', help: createHelpFragment('', 'Foundations', 'Icons') },
-	{ category: 'indentation', title: 'Indentation', tag: 'components', help: createHelpFragment('', 'Components', 'Indentation+guides') },
-	{ category: 'inlinetitle', title: 'Inline title', tag: 'editor', help: createHelpFragment('', 'Editor', 'Inline+title') },
-	{ category: 'layers', title: 'Layers', tag: 'foundations', help: createHelpFragment('', 'Foundations', 'Layers') },
-	{ category: 'link', title: 'Link', tag: 'editor', help: createHelpFragment('', 'Editor', 'Link') },
-	{ category: 'list', title: 'List', tag: 'editor', help: createHelpFragment('', 'Editor', 'List') },
-	{ category: 'modal', title: 'Modal', tag: 'components', help: createHelpFragment('', 'Components', 'Modal') },
-	{ category: 'multiselect', title: 'Multi-select', tag: 'components', help: createHelpFragment('', 'Components', 'Multi-select') },
-	{ category: 'navigation', title: 'Navigation', tag: 'components', help: createHelpFragment('', 'Components', 'Navigation') },
-	{ category: 'popover', title: 'Popover', tag: 'components', help: createHelpFragment('', 'Components', 'Popover') },
-	{ category: 'prompt', title: 'Prompt', tag: 'components', help: createHelpFragment('', 'Components', 'Prompt') },
-	{ category: 'properties', title: 'Properties', tag: 'editor', help: createHelpFragment('', 'Editor', 'Properties') },
-	{ category: 'radiuses', title: 'Radiuses', tag: 'foundations', help: createHelpFragment('', 'Foundations', 'Radiuses') },
-	{ category: 'ribbon', title: 'Ribbon', tag: 'window', help: createHelpFragment('', 'Window', 'Ribbon') },
-	{ category: 'scrollbar', title: 'Scrollbar', tag: 'window', help: createHelpFragment('', 'Window', 'Scrollbar') },
-	{ category: 'search', title: 'Search', tag: 'plugins', help: createHelpFragment('', 'Plugins', 'Search') },
-	{ category: 'sidebar', title: 'Sidebar', tag: 'window', help: createHelpFragment('', 'Window', 'Sidebar') },
-	{ category: 'slider', title: 'Slider', tag: 'components', help: createHelpFragment('', 'Components', 'Slider') },
-	{ category: 'spacing', title: 'Spacing', tag: 'foundations', help: createHelpFragment('', 'Foundations', 'Spacing') },
-	{ category: 'statusbar', title: 'Status bar', tag: 'window', help: createHelpFragment('', 'Window', 'Status+bar') },
-	{ category: 'sync', title: 'Sync', tag: 'plugins', help: createHelpFragment('', 'Plugins', 'Sync') },
-	{ category: 'table', title: 'Table', tag: 'editor', help: createHelpFragment('', 'Editor', 'Table') },
-	{ category: 'tabs', title: 'Tabs', tag: 'components', help: createHelpFragment('', 'Components', 'Tabs') },
-	{ category: 'tag', title: 'Tag', tag: 'editor', help: createHelpFragment('', 'Editor', 'Tag') },
-	{ category: 'textinput', title: 'Text input', tag: 'components', help: createHelpFragment('', 'Components', 'Text+input') },
-	{ category: 'toggle', title: 'Toggle', tag: 'components', help: createHelpFragment('', 'Components', 'Toggle') },
-	{ category: 'themelight', title: 'Theme - light', tag: 'theme-light', help: createHelpFragment('Variables specifically for light theme', '', '') },
-	{ category: 'themedark', title: 'Theme - dark', tag: 'theme-dark', help: createHelpFragment('Variables specifically for dark theme', '', '') },
-	{ category: 'typography', title: 'Typography', tag: 'foundations', help: createHelpFragment('', 'Foundations', 'Typography') },
-	{ category: 'vaultprofile', title: 'Vault profile', tag: 'window', help: createHelpFragment('', 'Window', 'Vault+profile') },
-	{ category: 'windowframe', title: 'Window frame', tag: 'window', help: createHelpFragment('', 'Window', 'Window+frame') },
-	{ category: 'workspace', title: 'Workspace', tag: 'window', help: createHelpFragment('', 'Window', 'Workspace') }
+	{ category: 'dialog', title: 'Dialog', tag: 'components', help: dialogHelpFragment },
+	{ category: 'divider', title: 'Divider', tag: 'window', help: dividerHelpFragment },
+	{ category: 'dragging', title: 'Dragging', tag: 'components', help: draggingHelpFragment },
+	{ category: 'dropdowns', title: 'Dropdowns', tag: 'components', help: dropdownsHelpFragment },
+	{ category: 'embed', title: 'Embed', tag: 'editor', help: embedHelpFragment },
+	{ category: 'file', title: 'File', tag: 'editor', help: fileHelpFragment },
+	{ category: 'fileexplorer', title: 'File explorer', tag: 'plugins', help: fileexplorerHelpFragment },
+	{ category: 'footnote', title: 'Footnote', tag: 'editor', help: footnoteHelpFragment },
+	{ category: 'graph', title: 'Graph', tag: 'plugins', help: graphHelpFragment },
+	{ category: 'headings', title: 'Headings', tag: 'editor', help: headingsHelpFragment },
+	{ category: 'horizontalrule', title: 'Horizontal rule', tag: 'editor', help: horizontalruleHelpFragment },
+	{ category: 'icons', title: 'Icons', tag: 'foundations', help: iconsHelpFragment },
+	{ category: 'indentation', title: 'Indentation', tag: 'components', help: indentationHelpFragment },
+	{ category: 'inlinetitle', title: 'Inline title', tag: 'editor', help: inlinetitleHelpFragment },
+	{ category: 'layers', title: 'Layers', tag: 'foundations', help: layersHelpFragment },
+	{ category: 'link', title: 'Link', tag: 'editor', help: linkHelpFragment },
+	{ category: 'list', title: 'List', tag: 'editor', help: listHelpFragment },
+	{ category: 'modal', title: 'Modal', tag: 'components', help: modalHelpFragment },
+	{ category: 'multiselect', title: 'Multi-select', tag: 'components', help: multiselectHelpFragment },
+	{ category: 'navigation', title: 'Navigation', tag: 'components', help: navigationHelpFragment },
+	{ category: 'popover', title: 'Popover', tag: 'components', help: popoverHelpFragment },
+	{ category: 'prompt', title: 'Prompt', tag: 'components', help: promptHelpFragment },
+	{ category: 'properties', title: 'Properties', tag: 'editor', help: propertiesHelpFragment },
+	{ category: 'radiuses', title: 'Radiuses', tag: 'foundations', help: radiusesHelpFragment },
+	{ category: 'ribbon', title: 'Ribbon', tag: 'window', help: ribbonHelpFragment },
+	{ category: 'scrollbar', title: 'Scrollbar', tag: 'window', help: scrollbarHelpFragment },
+	{ category: 'search', title: 'Search', tag: 'plugins', help: searchHelpFragment },
+	{ category: 'sidebar', title: 'Sidebar', tag: 'window', help: sidebarHelpFragment },
+	{ category: 'slider', title: 'Slider', tag: 'components', help: sliderHelpFragment },
+	{ category: 'spacing', title: 'Spacing', tag: 'foundations', help: spacingHelpFragment },
+	{ category: 'statusbar', title: 'Status bar', tag: 'window', help: statusbarHelpFragment },
+	{ category: 'sync', title: 'Sync', tag: 'plugins', help: syncHelpFragment },
+	{ category: 'table', title: 'Table', tag: 'editor', help: tableHelpFragment },
+	{ category: 'tabs', title: 'Tabs', tag: 'components', help: tabsHelpFragment },
+	{ category: 'tag', title: 'Tag', tag: 'editor', help: tagHelpFragment },
+	{ category: 'textinput', title: 'Text input', tag: 'components', help: textinputHelpFragment },
+	{ category: 'toggle', title: 'Toggle', tag: 'components', help: toggleHelpFragment },
+	{ category: 'themelight', title: 'Theme - light', tag: 'theme-light', help: themelightHelpFragment },
+	{ category: 'themedark', title: 'Theme - dark', tag: 'theme-dark', help: themedarkHelpFragment },
+	{ category: 'typography', title: 'Typography', tag: 'foundations', help: typographyHelpFragment },
+	{ category: 'vaultprofile', title: 'Vault profile', tag: 'window', help: vaultprofileHelpFragment },
+	{ category: 'windowframe', title: 'Window frame', tag: 'window', help: windowframeHelpFragment },
+	{ category: 'workspace', title: 'Workspace', tag: 'window', help: workspaceHelpFragment }
 ]
 
 export interface cssVariable {
