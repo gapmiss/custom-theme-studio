@@ -26,6 +26,7 @@ An Obsidian.md plugin that empowers users to create, edit, and export custom the
 - Interactive element picker to target specific UI components
 - Advanced CSS editor with syntax highlighting
 - Live preview of changes
+- Filter and search functionality to easily find specific rules
 - Save and manage multiple custom CSS rules
 
 ### CSS Editor Features
@@ -76,3 +77,15 @@ An Obsidian.md plugin that empowers users to create, edit, and export custom the
 2. Trigger the command Obsidian42 - BRAT: Add a beta plugin for testing
 3. Enter this repository, gapmiss/custom-theme-studio
 4. Enable the "Custom Theme Studio" plugin in the community plugin list
+
+## Credits
+
+Some code inspired by and derived from:
+
+- [RavenHogWarts/obsidian-ace-code-editor](https://github.com/RavenHogWarts/obsidian-ace-code-editor)
+- [chrisgrieser/obsidian-theme-design-utilities](https://github.com/chrisgrieser/obsidian-theme-design-utilities)
+- [Yuichi-Aragi/Version-Control](https://github.com/Yuichi-Aragi/Version-Control)
+- [easylogic/ace-colorpicker](https://github.com/easylogic/ace-colorpicker)
+- [Zachatoo/obsidian-css-editor](https://github.com/Zachatoo/obsidian-css-editor)
+
+Thank you!
