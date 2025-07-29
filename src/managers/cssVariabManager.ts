@@ -935,50 +935,53 @@ export class CSSVariableManager {
 			this.plugin.settings.cssVariables = [];
 		}
 
+		// Helper to update an existing variable's name and value
+		const updateVar = (target: CSSVariable, name: string, value: string) => {
+			target.variable = name;
+			target.value = value;
+		};
+
+		// Helper to remove a variable by UUID
+		const removeVarByUUID = (uuid: string) => {
+			const index = customVars.findIndex(el => el.uuid === uuid);
+			if (index !== -1) customVars.splice(index, 1);
+		};
+
 		if (uuid) {
-			const existingVariable = customVars.find(el => el.uuid === uuid);
-			if (existingVariable) {
-				if (value !== '') {
-					// Update
-					for (const obj of customVars) {
-						if (obj.uuid === uuid) {
-							obj.value = value;
-							obj.variable = name;
-							break;
-						}
-					}
-				} else {
-					// Remove if empty value
-					const index = customVars.findIndex(el => el.uuid === uuid);
-					customVars.splice(index, 1);
-				}
-			}
-		} else {
-			const existingVariable = customVars.find(el => el.variable === name && el.parent === parent);
-			if (existingVariable) {
-				if (value !== '') {
-					// Update
-					for (const obj of customVars) {
-						if (obj.uuid === existingVariable.uuid) {
-							obj.value = value;
-							obj.variable = name;
-							break;
-						}
-					}
-				} else {
-					// Remove if empty value
-					const index = customVars.findIndex(el => el.uuid === existingVariable.uuid);
-					customVars.splice(index, 1);
-				}
+			// Case 1: We have a UUID — look for the existing variable by UUID
+			const existing = customVars.find(el => el.uuid === uuid);
+			if (!existing) return; // If not found, do nothing
+
+			if (value !== '') {
+				// Update the variable's name and value
+				updateVar(existing, name, value);
 			} else {
-				// New
-				let obj: CSSVariable = {
-					'uuid': generateUniqueId(),
-					'parent': parent,
-					'variable': name,
-					'value': value
+				// If the new value is empty, remove the variable
+				removeVarByUUID(uuid);
+			}
+
+		} else {
+			// Case 2: No UUID — check if a variable already exists with the same name + parent
+			const existing = customVars.find(el => el.variable === name && el.parent === parent);
+
+			if (existing) {
+				if (value !== '') {
+					// Update existing variable
+					updateVar(existing, name, value);
+				} else {
+					// Remove it if the new value is empty
+					removeVarByUUID(existing.uuid!);
 				}
-				customVars.push(obj)
+
+			} else if (value !== '') {
+				// Case 3: New variable (name + parent combination does not exist)
+				const obj: CSSVariable = {
+					uuid: generateUniqueId(),
+					parent,
+					variable: name,
+					value
+				};
+				customVars.push(obj); // Add the new variable to the list
 			}
 		}
 		this.plugin.saveSettings();
