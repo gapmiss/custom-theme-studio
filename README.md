@@ -1,27 +1,32 @@
-# Custom Theme Studio for Obsidian
+# Custom Theme Studio
 
-An Obsidian.md plugin to create and customize themes with a built-in CSS editor. Modify colors, styles, and export your custom theme—all inside Obsidian.
+An Obsidian.md plugin that empowers users to create, edit, and export custom themes with a built-in CSS editor and visual styling tools. It streamlines the process of modifying UI styles, managing variables, and styling individual elements—all without leaving Obsidian.
 
 ## Features
 
-- Integrated CSS editor for live theme customization
-- Modify colors, fonts, and UI styles
-- Export customized themes for use or sharing
-- Supports real-time preview of style changes
+- Modify Obsidian's CSS variable
+    - Modify colors, fonts, UI styles and more
+- Integrated CSS editor powered by Ace for live theme customization
+- Real-time preview of style changes
+- Visual element picker for targeting styles
+- Fuzzy search modal for importing CSS snippet
+- Freeze UI feature for design inspection
+- Theme management (enable, disable)
+- Export your customized theme as a shareable theme
 
-### CSS Variable Customization
+### CSS variable customization
 
 - Modify Obsidian's built-in CSS variables
 - Variables organized by categories (components, editor, foundations, plugins, window, theme-dark, theme-light)
 - Filter and search functionality to easily find specific variables
 - Color picker for variables with HEX color values
 
-### Custom Element Styling
+### CSS rules
 
-- Interactive element selector to target specific UI components
+- Interactive element picker to target specific UI components
 - Advanced CSS editor with syntax highlighting
 - Live preview of changes
-- Save and manage multiple custom element styles
+- Save and manage multiple custom CSS rules
 
 ### CSS Editor Features
 
