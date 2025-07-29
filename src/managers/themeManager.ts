@@ -79,42 +79,27 @@ export class ThemeManager {
 
 		let css: string = '';
 
-		let bodyVars: string = 'body {\n';
-		let lightVars: string = '.theme-light {\n';
-		let darkVars: string = '.theme-dark {\n';
-		let foundBodyVars: boolean = false;
-		let foundLightVars: boolean = false;
-		let foundDarkVars: boolean = false;
+		type SectionKey = 'body' | 'themelight' | 'themedark';
+		const sections: Record<SectionKey, { selector: string; vars: string; found: boolean }> = {
+			body: { selector: 'body', vars: '', found: false },
+			themelight: { selector: '.theme-light', vars: '', found: false },
+			themedark: { selector: '.theme-dark', vars: '', found: false },
+		};
 
-		variables.forEach(v => {
-			if (v.parent === 'themedark') {
-				if (v.value !== '') {
-					darkVars += `  ${v.variable}: ${v.value};\n`;
-					foundDarkVars = true;
-				}
-			} else if (v.parent === 'themelight') {
-				if (v.value !== '') {
-					lightVars += `  ${v.variable}: ${v.value};\n`;
-					foundLightVars = true;
-				}
-			} else {
-				if (v.value !== '') {
-					bodyVars += `  ${v.variable}: ${v.value};\n`;
-					foundBodyVars = true;
-				}
+		variables.forEach((v) => {
+			const parentKey = (['body', 'themelight', 'themedark'].includes(v.parent) ? v.parent : 'body') as SectionKey;
+
+			if (v.value !== '') {
+				sections[parentKey].vars += `  ${v.variable}: ${v.value};\n`;
+				sections[parentKey].found = true;
 			}
 		});
 
-		if (foundBodyVars) {
-			css += bodyVars + '}\n\n'
+		for (const section of Object.values(sections)) {
+			if (section.found) {
+				css += `${section.selector} {\n${section.vars}}\n\n`;
+			}
 		}
-		if (foundLightVars) {
-			css += lightVars + '}\n\n'
-		}
-		if (foundDarkVars) {
-			css += darkVars + '}'
-		}
-
 		return css;
 	}
 
@@ -123,18 +108,22 @@ export class ThemeManager {
 		const leaves = this.plugin.app.workspace.getLeavesOfType('cts-view');
 		if (leaves.length > 0) {
 			const view: any = leaves[0].view;
-			if (view && view.elementSelectorManager) {
+			if (view?.elementSelectorManager) {
 				view.elementSelectorManager.startElementSelection();
-				// Expand "Element customization" section
-				const section: HTMLDivElement | null = window.activeDocument.querySelector('.rules-section');
-				const collapsibleIcon: HTMLDivElement | null | undefined = section?.querySelector('.collapse-icon');
-				const collapsibleContent: HTMLDivElement | null | undefined = section?.querySelector('.collapsible-content');
-				collapsibleContent!.removeClass('collapsible-content-hide');
-				collapsibleContent!.addClass('collapsible-content-show');
-				setIcon(collapsibleIcon!, 'chevron-down');
-				collapsibleIcon!.setAttr('aria-label', 'Collapse section');
-				collapsibleIcon!.setAttr('data-tooltip-position', 'top');
+
+				const section = window.activeDocument.querySelector<HTMLDivElement>('.rules-section');
+				const icon = section?.querySelector<HTMLDivElement>('.collapse-icon');
+				const content = section?.querySelector<HTMLDivElement>('.collapsible-content');
+
+				if (content && icon) {
+					content.classList.replace('collapsible-content-hide', 'collapsible-content-show');
+
+					setIcon(icon, 'chevron-down');
+					icon.setAttr('aria-label', 'Collapse section');
+					icon.setAttr('data-tooltip-position', 'top');
+				}
 			}
+
 		} else {
 			// Open the view first, then start selection
 			this.plugin.activateView().then(() => {
@@ -142,17 +131,20 @@ export class ThemeManager {
 					const newLeaves = this.plugin.app.workspace.getLeavesOfType('cts-view');
 					if (newLeaves.length > 0) {
 						const view: any = newLeaves[0].view;
-						if (view && view.elementSelectorManager) {
+						if (view?.elementSelectorManager) {
 							view.elementSelectorManager.startElementSelection();
-							// Expand "Element customization" section
-							const section: HTMLDivElement | null = window.activeDocument.querySelector('.rules-section');
-							const collapsibleIcon: HTMLDivElement | null | undefined = section?.querySelector('.collapse-icon');
-							const collapsibleContent: HTMLDivElement | null | undefined = section?.querySelector('.collapsible-content');
-							collapsibleContent!.removeClass('collapsible-content-hide');
-							collapsibleContent!.addClass('collapsible-content-show');
-							setIcon(collapsibleIcon!, 'chevron-down');
-							collapsibleIcon!.setAttr('aria-label', 'Collapse section');
-							collapsibleIcon!.setAttr('data-tooltip-position', 'top');
+
+							const section = window.activeDocument.querySelector<HTMLDivElement>('.rules-section');
+							const icon = section?.querySelector<HTMLDivElement>('.collapse-icon');
+							const content = section?.querySelector<HTMLDivElement>('.collapsible-content');
+
+							if (content && icon) {
+								content.classList.replace('collapsible-content-hide', 'collapsible-content-show');
+
+								setIcon(icon, 'chevron-down');
+								icon.setAttr('aria-label', 'Collapse section');
+								icon.setAttr('data-tooltip-position', 'top');
+							}
 						}
 					}
 				}, 300);
@@ -220,7 +212,7 @@ ${rulesCSS}`;
 	async copyThemeToClipboard(): Promise<void> {
 		try {
 			const variablesCSS: string = this.generateVariablesCSS();
-			
+
 			// Optional "include disabled CSS rules" when exporting
 			let fullCSS = '';
 			if (this.plugin.settings.exportThemeIncludeDisabled) {
