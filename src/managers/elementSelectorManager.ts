@@ -30,11 +30,9 @@ export class ElementSelectorManager {
 		document.body.classList.add('cts-element-picker-active');
 
 		// Create tooltip
-		this.tooltip = document.createElement('div');
-		this.tooltip.className = 'cts-element-picker-tooltip';
-		this.tooltip.removeClass('cts-element-picker-tooltip-show');
-		this.tooltip.addClass('cts-element-picker-tooltip-hide');
-		document.body.appendChild(this.tooltip);
+		this.tooltip = document.body.appendChild(
+			createDiv({ cls: ['cts-element-picker-tooltip', 'cts-element-picker-tooltip-hide'] })
+		);
 
 		// Add event listeners
 		document.addEventListener('mouseover', this.handleMouseOver);
@@ -278,37 +276,38 @@ export class ElementSelectorManager {
 		}
 
 		// Add selector options
-		let defaultSelectorDiv: HTMLElement = this.tooltip.createDiv();
-		defaultSelectorDiv.createEl('strong', {text: 'Default selector: '});
-		defaultSelectorDiv.createSpan({cls: 'selector-highlight', text: `${defaultSelector}`});
-		let specificSelectorDiv: HTMLElement = this.tooltip.createDiv();
-		specificSelectorDiv.createEl('strong', {text: 'Specific selector: '});
-		specificSelectorDiv.createSpan({cls: 'selector-highlight', text: `${specificSelector}`});
-		let specificSelectorWithParentDiv: HTMLElement = this.tooltip.createDiv();
-		specificSelectorWithParentDiv.createEl('strong', {text: 'Specific selector with parent: '});
-		specificSelectorWithParentDiv.createSpan({cls: 'selector-highlight', text: `${parentSelector}`});
-		let kbdDefaultDiv: HTMLElement = this.tooltip.createDiv({cls: 'keys first'});
-		kbdDefaultDiv.createEl('kbd', {text: 'Click'});
-		kbdDefaultDiv.createSpan({text: ' to select with default selector'});
-		let kbdAltDiv: HTMLElement = this.tooltip.createDiv({cls: 'keys'});
-		kbdAltDiv.createEl('kbd', {text: 'Alt'});
-		kbdAltDiv.createSpan({text: ' + '});
-		kbdAltDiv.createEl('kbd', {text: 'Click'});
-		kbdAltDiv.createSpan({text: ' to select with specific selector'});
-		let kbdCtrlDiv: HTMLElement = this.tooltip.createDiv({cls: 'keys'});
-		kbdCtrlDiv.createEl('kbd', {text: 'Cmd/Ctrl'});
-		kbdCtrlDiv.createSpan({text: ' + '});
-		kbdCtrlDiv.createEl('kbd', {text: 'Click'});
-		kbdCtrlDiv.createSpan({text: ' to select the specific selector with parent'});
-		let kbdShiftDiv: HTMLElement = this.tooltip.createDiv({cls: 'keys'});
-		kbdShiftDiv.createEl('kbd', {text: 'Shift'});
-		kbdShiftDiv.createSpan({text: ' + '});
-		kbdShiftDiv.createEl('kbd', {text: 'Click'});
-		kbdShiftDiv.createSpan({text: ' to copy the specific selector with parent to your clipboard'});
+		// Helper to create a labeled selector line
+		const createSelectorLine = (label: string, value: string) => {
+			const line = this.tooltip!.createDiv();
+			line.createEl('strong', { text: `${label}: ` });
+			line.createSpan({ cls: 'selector-highlight', text: value });
+		};
+
+		// Helper to create a shortcut instruction line
+		const createShortcutLine = (keys: string[], description: string, isFirst = false) => {
+			const line = this.tooltip!.createDiv({ cls: isFirst ? 'keys first' : 'keys' });
+			keys.forEach((key, i) => {
+				line.createEl('kbd', { text: key });
+				if (i < keys.length - 1) {
+					line.createSpan({ text: ' + ' });
+				}
+			});
+			line.createSpan({ text: ` ${description}` });
+		};
+
+		// Add selector info
+		createSelectorLine('Default selector', defaultSelector);
+		createSelectorLine('Specific selector', specificSelector);
+		createSelectorLine('Specific selector with parent', parentSelector);
+
+		// Add keyboard shortcut instructions
+		createShortcutLine(['Click'], 'to select with default selector', true);
+		createShortcutLine(['Alt', 'Click'], 'to select with specific selector');
+		createShortcutLine(['Cmd/Ctrl', 'Click'], 'to select the specific selector with parent');
+		createShortcutLine(['Shift', 'Click'], 'to copy the specific selector with parent to your clipboard');
 
 		// First display the tooltip to get its dimensions
-		this.tooltip.removeClass('cts-element-picker-tooltip-hide');
-		this.tooltip.addClass('cts-element-picker-tooltip-show');
+		this.tooltip.classList.replace('cts-element-picker-tooltip-hide', 'cts-element-picker-tooltip-show');
 		const tooltipRect = this.tooltip.getBoundingClientRect();
 
 		// Get mouse position and window dimensions
@@ -416,22 +415,22 @@ export class ElementSelectorManager {
 		}
 
 		if (includeParent) {
-			const classes = Array.from(element.parentElement!.classList).filter(cls =>
-				!cls.includes('cts-element-picker-highlight')
-			).join('.');
-			selector = `${element.parentElement?.tagName.toLowerCase()}${(classes.length > 0) ? '.' + classes : ''} > ${selector}`;
+			const parent = element.parentElement!;
+			const classSelector = Array.from(parent.classList)
+				.filter(cls => !cls.includes('cts-element-picker-highlight'))
+				.map(cls => `.${cls}`)
+				.join('');
+			selector = `${parent.tagName.toLowerCase()}${classSelector} > ${selector}`;
 		}
 
 		if (useSpecific) {
 			// For specific selector, include everything possible in a consistent order
-
 			// Add all classes first
 			if (element.classList.length > 0) {
 				const classes = Array.from(element.classList)
 					.filter(cls => !cls.includes('cts-element-picker-highlight'))
 					.map(cls => `.${cls}`)
 					.join('');
-
 				if (classes) {
 					selector = `${selector}${classes}`;
 				}
@@ -441,47 +440,47 @@ export class ElementSelectorManager {
 			if (element.hasAttribute('aria-label')) {
 				const ariaLabel = element.getAttribute('aria-label');
 				const escapedAriaLabel = this.escapeAttributeValue(ariaLabel!);
-				selector = `${selector}[aria-label="${escapedAriaLabel}"]`;
+				if (escapedAriaLabel) {
+					selector = `${selector}[aria-label="${escapedAriaLabel}"]`;
+				}
 			}
 
 			// Add all data attributes
-			const dataAttributes = this.getDataAttributes(element);
-			if (dataAttributes.length > 0) {
-				// Sort data attributes for consistent ordering
-				dataAttributes.sort((a, b) => a.name.localeCompare(b.name));
-				dataAttributes.forEach(attr => {
-					const escapedValue = this.escapeAttributeValue(attr.value);
-					selector = `${selector}[${attr.name}="${escapedValue}"]`;
+			this.getDataAttributes(element)
+				.sort((a, b) => a.name.localeCompare(b.name))
+				.forEach(attr => {
+					const value = this.escapeAttributeValue(attr.value);
+					selector += `[${attr.name}="${value}"]`;
 				});
-			}
+
 
 			// Add other significant attributes
-			const significantAttrs = ['role', 'type', 'name'];
-			significantAttrs.forEach(attrName => {
-				if (element.hasAttribute(attrName)) {
-					const value = element.getAttribute(attrName);
-					const escapedValue = this.escapeAttributeValue(value!);
-					selector = `${selector}[${attrName}="${escapedValue}"]`;
+			for (const attr of ['role', 'type', 'name']) {
+				const value = element.getAttribute(attr);
+				if (value !== null) {
+					const escaped = this.escapeAttributeValue(value);
+					selector += `[${attr}="${escaped}"]`;
 				}
-			});
+			}
 		} else {
 			// Default mode - prioritize aria-label and data-* attributes
 			// Check for aria-label attribute (high priority)
 			if (element.hasAttribute('aria-label')) {
 				const ariaLabel = element.getAttribute('aria-label');
 				const escapedAriaLabel = this.escapeAttributeValue(ariaLabel!);
-				selector = `${selector}[aria-label="${escapedAriaLabel}"]`;
-				return selector; // aria-label is specific enough to return immediately
+				if (escapedAriaLabel) {
+					selector = `${selector}[aria-label="${escapedAriaLabel}"]`;
+					return selector; // aria-label is specific enough to return immediately
+				}
 			}
 
 			// Check for data-* attributes (next priority)
-			const dataAttributes = this.getDataAttributes(element);
-			if (dataAttributes.length > 0) {
-				// Use the most specific data attribute (prefer shorter ones as they're usually more specific)
-				dataAttributes.sort((a, b) => a.name.length - b.name.length);
-				const attr = dataAttributes[0];
-				const escapedValue = this.escapeAttributeValue(attr.value);
-				return `${selector}[${attr.name}="${escapedValue}"]`;
+			const attr = this.getDataAttributes(element)
+				.sort((a, b) => a.name.length - b.name.length)[0];
+
+			if (attr) {
+				const value = this.escapeAttributeValue(attr.value);
+				return `${selector}[${attr.name}="${value}"]`;
 			}
 
 			// Add classes if no better selectors are available
@@ -490,13 +489,11 @@ export class ElementSelectorManager {
 					.filter(cls => !cls.includes('cts-element-picker-highlight'))
 					.map(cls => `.${cls}`)
 					.join('');
-
 				if (classes) {
 					selector = `${selector}${classes}`;
 				}
 			}
 		}
-
 		return selector.replace('.cts-element-picker-hover', '');
 	}
 
@@ -505,17 +502,18 @@ export class ElementSelectorManager {
 		let selector = element.tagName.toLowerCase();
 
 		// Parent
-		const classes = Array.from(element.parentElement!.classList).filter(cls =>
-			!cls.includes('cts-element-picker-highlight')
-		).join('.');
-		selector = `${element.parentElement?.tagName.toLowerCase()}${(classes.length > 0) ? '.' + classes : ''} > ${selector}`;
+		const parent = element.parentElement!;
+		const classSelector = Array.from(parent.classList)
+			.filter(cls => !cls.includes('cts-element-picker-highlight'))
+			.map(cls => `.${cls}`)
+			.join('');
+		selector = `${parent.tagName.toLowerCase()}${classSelector} > ${selector}`;
 
 		// Add id if present (highest priority for both modes)
 		if (element.id) {
 			selector = `${selector}#${element.id}`;
 		} else {
 			// For specific selector, include everything possible in a consistent order
-
 			// Add all classes first
 			if (element.classList.length > 0) {
 				const classes = Array.from(element.classList)
@@ -536,25 +534,22 @@ export class ElementSelectorManager {
 			}
 
 			// Add all data attributes
-			const dataAttributes = this.getDataAttributes(element);
-			if (dataAttributes.length > 0) {
-				// Sort data attributes for consistent ordering
-				dataAttributes.sort((a, b) => a.name.localeCompare(b.name));
-				dataAttributes.forEach(attr => {
-					const escapedValue = this.escapeAttributeValue(attr.value);
-					selector = `${selector}[${attr.name}="${escapedValue}"]`;
+			this.getDataAttributes(element)
+				.sort((a, b) => a.name.localeCompare(b.name))
+				.forEach(attr => {
+					const value = this.escapeAttributeValue(attr.value);
+					selector += `[${attr.name}="${value}"]`;
 				});
-			}
 
 			// Add other significant attributes
-			const significantAttrs = ['role', 'type', 'name'];
-			significantAttrs.forEach(attrName => {
-				if (element.hasAttribute(attrName)) {
-					const value = element.getAttribute(attrName);
-					const escapedValue = this.escapeAttributeValue(value!);
-					selector = `${selector}[${attrName}="${escapedValue}"]`;
+			for (const attr of ['role', 'type', 'name']) {
+				const value = element.getAttribute(attr);
+				if (value !== null) {
+					const escaped = this.escapeAttributeValue(value);
+					selector += `[${attr}="${escaped}"]`;
 				}
-			});
+			}
+
 		}
 		selector = selector.replace('.cts-element-picker-hover', '');
 		copyStringToClipboard(selector, selector);
@@ -565,7 +560,6 @@ export class ElementSelectorManager {
 	 */
 	getDataAttributes(element: HTMLElement): Array<{ name: string, value: string }> {
 		const dataAttributes: Array<{ name: string, value: string }> = [];
-
 		// Loop through all attributes
 		for (let i = 0; i < element.attributes.length; i++) {
 			const attr = element.attributes[i];
@@ -576,7 +570,6 @@ export class ElementSelectorManager {
 				});
 			}
 		}
-
 		return dataAttributes;
 	}
 
