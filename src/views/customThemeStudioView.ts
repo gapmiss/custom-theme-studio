@@ -544,7 +544,7 @@ export class CustomThemeStudioView extends ItemView {
 
 			// List variables
 			if (category.category === 'custom') {
-				const items = this.plugin.settings.customVariables
+				const items = this.plugin.settings.cssVariables
 					.filter(v => v.parent === 'custom')
 					.sort((a, b) => a.variable!.localeCompare(b.variable!)); // Sort by "variable" ASC
 				if (items.length) {
@@ -589,7 +589,7 @@ export class CustomThemeStudioView extends ItemView {
 
 		// Get current value
 		let currentVarValue: string = '';
-		const customVars: CSSVariable[] = this.plugin.settings.customVariables;
+		const customVars: CSSVariable[] = this.plugin.settings.cssVariables;
 		const existingVariable: CSSVariable | undefined = customVars.find(v => v.variable === variable.name && v.parent === category);
 		if (existingVariable) {
 			currentVarValue = existingVariable.value;
@@ -784,7 +784,7 @@ export class CustomThemeStudioView extends ItemView {
 			deleteVariableButton.addClass('mod-loading');
 			if (await confirm(`Are you sure you want to delete this variable?`, this.plugin.app)) {
 				// Remove from settings
-				this.plugin.settings.customVariables = this.plugin.settings.customVariables.filter(
+				this.plugin.settings.cssVariables = this.plugin.settings.cssVariables.filter(
 					el => el.uuid !== variable.uuid
 				);
 

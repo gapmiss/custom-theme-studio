@@ -72,7 +72,7 @@ export class ThemeManager {
 	}
 
 	generateVariablesCSS(): string {
-		const variables: CSSVariable[] = this.plugin.settings.customVariables;
+		const variables: CSSVariable[] = this.plugin.settings.cssVariables;
 		if (!variables.length) {
 			return '';
 		}

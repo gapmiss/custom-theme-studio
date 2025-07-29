@@ -21,7 +21,7 @@ export interface CSSVariable {
 export interface CustomThemeStudioSettings {
 	themeEnabled: boolean;
 	customCSS: string;
-	customVariables: CSSVariable[];
+	cssVariables: CSSVariable[];
 	cssRules: CSSrule[];
 	exportThemeName: string;
 	exportThemeAuthor: string;
@@ -56,7 +56,7 @@ export interface CustomThemeStudioSettings {
 export const DEFAULT_SETTINGS: CustomThemeStudioSettings = {
 	themeEnabled: false,
 	customCSS: '',
-	customVariables: [],
+	cssVariables: [],
 	cssRules: [],
 	exportThemeName: 'My Custom Theme',
 	exportThemeAuthor: 'Anonymous',
@@ -545,7 +545,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				.onClick(async () => {
 					if (await confirm('Are you sure you want to reset all theme customizations? This cannot be undone.', this.plugin.app)) {
 						this.plugin.settings.customCSS = '';
-						this.plugin.settings.customVariables = [];
+						this.plugin.settings.cssVariables = [];
 						this.plugin.settings.cssRules = [];
 						this.plugin.settings.themeEnabled = false;
 

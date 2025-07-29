@@ -75,7 +75,7 @@ export class AddVariableModal extends Modal {
 
                     let uuid: string = generateUniqueId();
                     // Add new variable
-                    this.plugin.settings.customVariables.push({
+                    this.plugin.settings.cssVariables.push({
                         uuid,
                         parent,
                         variable,
@@ -95,7 +95,7 @@ export class AddVariableModal extends Modal {
                             const customVarList: HTMLElement | null = view.containerEl.querySelector('[data-var-category="custom"]');
                             if (customVarList) {
                                 customVarList.empty();
-                                const items = this.plugin.settings.customVariables
+                                const items = this.plugin.settings.cssVariables
                                     .filter(v => v.parent === 'custom')
                                     .sort((a, b) => a.variable!.localeCompare(b.variable!)); // Sort by "variable" ASC
                                 if (items.length) {

@@ -872,11 +872,11 @@ export class CSSVariableManager {
 	 */
 	updateVariable(uuid: string | undefined, name: string, value: string, parent: string): void {
 
-		let customVars: CSSVariable[] = this.plugin.settings.customVariables;
+		let customVars: CSSVariable[] = this.plugin.settings.cssVariables;
 
 		// Store in settings
 		if (!customVars) {
-			this.plugin.settings.customVariables = [];
+			this.plugin.settings.cssVariables = [];
 		}
 
 		if (uuid) {

@@ -173,7 +173,7 @@ class SettingsIO {
         if (!settings) return false;
 
         if (typeof settings.themeEnabled !== 'boolean') return false;
-        if (!Array.isArray(settings.customVariables)) return false;
+        if (!Array.isArray(settings.cssVariables)) return false;
         if (!Array.isArray(settings.cssRules)) return false;
         if (typeof settings.autoApplyChanges !== 'boolean') return false;
 
