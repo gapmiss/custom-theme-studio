@@ -39,8 +39,8 @@ export class CSSEditorManager {
 	}
 
 	showEditorSection(show: boolean): void {
-		this.editorSection?.toggleClass('css-editor-section-show', show);
-		this.editorSection?.toggleClass('css-editor-section-hide', !show);
+		this.editorSection?.toggleClass('show', show);
+		this.editorSection?.toggleClass('hide', !show);
 	}
 
 	createEditorSection(containerEl: HTMLElement): void {
