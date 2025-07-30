@@ -27,7 +27,7 @@ function createHelpFragment(text: string, parent = '', category = ''): DocumentF
 
 	if (parent && category) {
 		helpFragment.createEl(
-			'a',
+			'a', 
 			{
 				cls: 'external-link',
 				href: `https://docs.obsidian.md/Reference/CSS+variables/${parent}/${category}`,

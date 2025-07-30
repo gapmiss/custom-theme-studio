@@ -173,7 +173,7 @@ export class FontImportModal extends Modal {
 
 	private generateFontFaceRule(): string {
 		let mimeType: string;
-		let ext = path.extname(this.fontFilePath)
+		let ext = path.extname(this.fontFilePath);
 		// Determine the MIME type based on file extension
 		switch (ext) {
 			case '.woff':

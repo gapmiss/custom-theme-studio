@@ -16,7 +16,7 @@ export function copyStringToClipboard(text: string, topic: string | undefined = 
 		})
 		.catch(function (error) {
 			console.error('Failed to copy to clipboard: ', error)
-		})
+		});
 }
 
 // Show Notice with type & icon

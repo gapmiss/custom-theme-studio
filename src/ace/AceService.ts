@@ -38,7 +38,7 @@ export class AceService {
 					type: 'vscode'
 				});
 			}
-		})
+		});
 
 		if (this.plugin.settings.editorKeyboard === 'default') {
 			this.editor.setKeyboardHandler(null);
