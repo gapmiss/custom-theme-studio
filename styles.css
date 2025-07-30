@@ -605,11 +605,11 @@ body {
     }
 }
 
-.cts-element-picker-tooltip-show {
+.cts-element-picker-tooltip.show {
     display: block;
 }
 
-.cts-element-picker-tooltip-hide {
+.cts-element-picker-tooltip.hide {
     display: none;
 }
 

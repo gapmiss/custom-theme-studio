@@ -31,7 +31,7 @@ export class ElementSelectorManager {
 
 		// Create tooltip
 		this.tooltip = document.body.appendChild(
-			createDiv('cts-element-picker-tooltip cts-element-picker-tooltip-hide')
+			createDiv('cts-element-picker-tooltip hide')
 		);
 
 		// Add event listeners
@@ -168,8 +168,7 @@ export class ElementSelectorManager {
 			while (this.tooltip.hasChildNodes()) {
 				this.tooltip.removeChild(this.tooltip.lastChild!);
 			}
-			this.tooltip.removeClass('cts-element-picker-tooltip-show');
-			this.tooltip.addClass('cts-element-picker-tooltip-hide');
+			this.tooltip.classList.replace('show', 'hide');
 		}
 	};
 
@@ -392,7 +391,7 @@ export class ElementSelectorManager {
 		createShortcutLine(['Shift', 'Click'], 'to copy the specific selector with parent to your clipboard');
 
 		// First display the tooltip to get its dimensions
-		this.tooltip.classList.replace('cts-element-picker-tooltip-hide', 'cts-element-picker-tooltip-show');
+		this.tooltip.classList.replace('hide', 'show');
 		const tooltipRect = this.tooltip.getBoundingClientRect();
 
 		// Get mouse position and window dimensions
