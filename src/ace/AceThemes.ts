@@ -49,61 +49,69 @@ import 'ace-builds/src-noconflict/theme-tomorrow_night_eighties';
 import 'ace-builds/src-noconflict/theme-twilight';
 import 'ace-builds/src-noconflict/theme-vibrant_ink';
 
-export const AceLightThemesList: Record<string, string>[] = [
-	{ name: 'Chrome', value: 'chrome' },
-	{ name: 'Cloud Editor', value: 'cloud_editor' },
-	{ name: 'Cloud9 Day', value: 'cloud9_day' },
-	{ name: 'Clouds', value: 'clouds' },
-	{ name: 'Crimson Editor', value: 'crimson_editor' },
-	{ name: 'Dawn', value: 'dawn' },
-	{ name: 'Dreamweaver', value: 'dreamweaver' },
-	{ name: 'Eclipse', value: 'eclipse' },
-	{ name: 'Github (Legacy)', value: 'github' },
-	{ name: 'Github Light Default', value: 'github_light_default' },
-	{ name: 'Gruvbox Light Hard', value: 'gruvbox_light_hard' },
-	{ name: 'iPlastic', value: 'iplastic' },
-	{ name: 'Katzenmilch', value: 'katzenmilch' },
-	{ name: 'Kuroir', value: 'kuroir' },
-	{ name: 'Solarized Light', value: 'solarized_light' },
-	{ name: 'Sqlserver', value: 'sqlserver' },
-	{ name: 'Textmate', value: 'textmate' },
-	{ name: 'Tomorrow', value: 'tomorrow' },
-	{ name: 'XCode', value: 'xcode' },
+const lightThemes: [string, string][] = [
+	['Chrome', 'chrome'],
+	['Cloud Editor', 'cloud_editor'],
+	['Cloud9 Day', 'cloud9_day'],
+	['Clouds', 'clouds'],
+	['Crimson Editor', 'crimson_editor'],
+	['Dawn', 'dawn'],
+	['Dreamweaver', 'dreamweaver'],
+	['Eclipse', 'eclipse'],
+	['Github (Legacy)', 'github'],
+	['Github Light Default', 'github_light_default'],
+	['Gruvbox Light Hard', 'gruvbox_light_hard'],
+	['iPlastic', 'iplastic'],
+	['Katzenmilch', 'katzenmilch'],
+	['Kuroir', 'kuroir'],
+	['Solarized Light', 'solarized_light'],
+	['Sqlserver', 'sqlserver'],
+	['Textmate', 'textmate'],
+	['Tomorrow', 'tomorrow'],
+	['XCode', 'xcode'],
 ];
+
+export const AceLightThemesList: Record<string, string>[] = lightThemes.map(
+	([name, value]) => ({ name, value })
+);
 
 export type AceLightThemes = (typeof AceLightThemesList);
 
-export const AceDarkThemesList: Record<string, string>[] = [
-	{ name: 'Ambiance', value: 'ambiance' },
-	{ name: 'Chaos', value: 'chaos' },
-	{ name: 'Cloud Editor Dark', value: 'cloud_editor_dark' },
-	{ name: 'Cloud9 Night', value: 'cloud9_night' },
-	{ name: 'Cloud9 Night Low Color', value: 'cloud9_night_low_color' },
-	{ name: 'Clouds Midnight', value: 'clouds_midnight' },
-	{ name: 'Cobalt', value: 'cobalt' },
-	{ name: 'Dracula', value: 'dracula' },
-	{ name: 'Github Dark', value: 'github_dark' },
-	{ name: 'Gob', value: 'gob' },
-	{ name: 'Gruvbox', value: 'gruvbox' },
-	{ name: 'Gruvbox Dark Hard', value: 'gruvbox_dark_hard' },
-	{ name: 'idle Fingers', value: 'idle_fingers' },
-	{ name: 'krTheme', value: 'kr_theme' },
-	{ name: 'Merbivore', value: 'merbivore' },
-	{ name: 'Merbivore Soft', value: 'merbivore_soft' },
-	{ name: 'Mono Industrial', value: 'mono_industrial' },
-	{ name: 'Monokai', value: 'monokai' },
-	{ name: 'Nord Dark', value: 'nord_dark' },
-	{ name: 'One Dark', value: 'one_dark' },
-	{ name: 'Pastel on Dark', value: 'pastel_on_dark' },
-	{ name: 'Solarized Dark', value: 'solarized_dark' },
-	{ name: 'Terminal', value: 'terminal' },
-	{ name: 'Tomorrow Night', value: 'tomorrow_night' },
-	{ name: 'Tomorrow Night Blue', value: 'tomorrow_night_blue' },
-	{ name: 'Tomorrow Night Bright', value: 'tomorrow_night_bright' },
-	{ name: 'Tomorrow Night Eighties', value: 'tomorrow_night_eighties' },
-	{ name: 'Twilight', value: 'twilight' },
-	{ name: 'Vibrant Ink', value: 'vibrant_ink' },
+const darkThemes: [string, string][] = [
+	['Ambiance', 'ambiance'],
+	['Chaos', 'chaos'],
+	['Cloud Editor Dark', 'cloud_editor_dark'],
+	['Cloud9 Night', 'cloud9_night'],
+	['Cloud9 Night Low Color', 'cloud9_night_low_color'],
+	['Clouds Midnight', 'clouds_midnight'],
+	['Cobalt', 'cobalt'],
+	['Dracula', 'dracula'],
+	['Github Dark', 'github_dark'],
+	['Gob', 'gob'],
+	['Gruvbox', 'gruvbox'],
+	['Gruvbox Dark Hard', 'gruvbox_dark_hard'],
+	['idle Fingers', 'idle_fingers'],
+	['krTheme', 'kr_theme'],
+	['Merbivore', 'merbivore'],
+	['Merbivore Soft', 'merbivore_soft'],
+	['Mono Industrial', 'mono_industrial'],
+	['Monokai', 'monokai'],
+	['Nord Dark', 'nord_dark'],
+	['One Dark', 'one_dark'],
+	['Pastel on Dark', 'pastel_on_dark'],
+	['Solarized Dark', 'solarized_dark'],
+	['Terminal', 'terminal'],
+	['Tomorrow Night', 'tomorrow_night'],
+	['Tomorrow Night Blue', 'tomorrow_night_blue'],
+	['Tomorrow Night Bright', 'tomorrow_night_bright'],
+	['Tomorrow Night Eighties', 'tomorrow_night_eighties'],
+	['Twilight', 'twilight'],
+	['Vibrant Ink', 'vibrant_ink'],
 ];
+
+export const AceDarkThemesList: Record<string, string>[] = darkThemes.map(
+	([name, value]) => ({ name, value })
+);
 
 export type AceDarkThemes = (typeof AceDarkThemesList);
 
