@@ -1009,8 +1009,8 @@ export class CustomThemeStudioView extends ItemView {
 			this.ruleSearch = '';
 			const ruleListEls: NodeListOf<Element> = this.containerEl.querySelectorAll('.rule-item');
 			ruleListEls.forEach((elt: HTMLElement) => {
-				elt.toggleClass('rule-item-show', true);
-				elt.toggleClass('rule-item-hide', false);
+				elt.toggleClass('show', true);
+				elt.toggleClass('hide', false);
 			});
 
 		});
@@ -1037,8 +1037,8 @@ export class CustomThemeStudioView extends ItemView {
 
 			const ruleEl = this.containerEl.querySelector(`[data-cts-uuid="${el.uuid}"]`);
 			if (ruleEl) {
-				ruleEl.toggleClass('rule-item-show', matchesQuery);
-				ruleEl.toggleClass('rule-item-hide', !matchesQuery);
+				ruleEl.toggleClass('show', matchesQuery);
+				ruleEl.toggleClass('hide', !matchesQuery);
 			}
 		});
 

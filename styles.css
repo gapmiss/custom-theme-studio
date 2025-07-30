@@ -717,11 +717,11 @@ body {
     }
 }
 
-.cst-view .rule-item-show {
+.cst-view .rule-item.show {
     display: block;
 }
 
-.cts-view .rule-item-hide {
+.cts-view .rule-item.hide {
     display: none;
 }
 
