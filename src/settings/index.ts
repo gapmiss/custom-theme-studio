@@ -460,7 +460,9 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 					this.plugin.settings.exportThemeName = value;
 					await this.plugin.saveSettings();
 					let varInput: HTMLInputElement | null = window.document.querySelector('.cts-view .export-form-theme-name');
-					varInput!.value = value;
+					if (varInput) {
+						varInput!.value = value;
+					}
 				}));
 
 		new Setting(containerEl)
