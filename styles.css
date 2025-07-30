@@ -362,11 +362,11 @@ body {
         }
     }
 
-    .cts-view .variable-item-show {
+    .cts-view .variable-item.show {
         display: flex;
     }
 
-    .cts-view .variable-item-hide {
+    .cts-view .variable-item.hide {
         display: none;
     }
 }
@@ -416,11 +416,11 @@ body {
         }
     }
 
-    .cts-view .variable-item-show {
+    .cts-view .variable-item.show {
         display: grid;
     }
 
-    .cts-view .variable-item-hide {
+    .cts-view .variable-item.hide {
         display: none;
     }
 }
@@ -480,11 +480,11 @@ body {
     }
 }
 
-.cts-view .custom-variable-item-show {
+.cts-view .custom-variable-item.show {
     display: block;
 }
 
-.cts-view .custom-variable-item-hide {
+.cts-view .custom-variable-item.hide {
     display: none;
 }
 

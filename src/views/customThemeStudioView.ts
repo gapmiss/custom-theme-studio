@@ -277,7 +277,7 @@ export class CustomThemeStudioView extends ItemView {
 
 								// Check for visible children
 								for (var i = 0; i < children.length; i++) {
-									if (children[i].hasClass('variable-item-show') || children[i].hasClass('custom-variable-item-show')) {
+									if (children[i].hasClass('show')) {
 										hasVisibleChildren = true;
 										continue;
 									}
@@ -351,7 +351,7 @@ export class CustomThemeStudioView extends ItemView {
 				variableListEls.forEach((el: HTMLElement) => {
 					const children = Array.from(el.children);
 					const hasVisibleChildren = children.some(child =>
-						child.hasClass('variable-item-show') || child.hasClass('custom-variable-item-show')
+						child.hasClass('show')
 					);
 
 					const dataVarTag = el.getAttr('data-var-tag');
@@ -791,8 +791,8 @@ export class CustomThemeStudioView extends ItemView {
 				varDefaultValue.includes(searchTerm) ||
 				varValue.includes(searchTerm);
 
-			item.toggleClass('variable-item-show', matchesSearch);
-			item.toggleClass('variable-item-hide', !matchesSearch);
+			item.toggleClass('show', matchesSearch);
+			item.toggleClass('hide', !matchesSearch);
 		});
 		// Filter custom variables
 		const customVarItems: NodeListOf<Element> = this.containerEl.querySelectorAll('.custom-variable-item');
@@ -805,8 +805,8 @@ export class CustomThemeStudioView extends ItemView {
 				varName.includes(searchTerm) ||
 				varValue.includes(searchTerm);
 
-			item.toggleClass('custom-variable-item-show', matchesSearch);
-			item.toggleClass('custom-variable-item-hide', !matchesSearch);
+			item.toggleClass('show', matchesSearch);
+			item.toggleClass('hide', !matchesSearch);
 		});
 	}
 
