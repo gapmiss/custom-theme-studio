@@ -221,7 +221,7 @@ export class CustomThemeStudioView extends ItemView {
 					text: tag,
 					cls: 'tag tag-filter-' + tag + ((tag === 'all') ? ' tag-filter-active' : ''),
 					attr: {
-						'data-tag-filter': tag,
+						'data-tag-filter': tag.toLowerCase(),
 						'tabindex': '0',
 						'role': 'button',
 						'aria-label': 'Show ' + tag + ' variables',
@@ -233,7 +233,7 @@ export class CustomThemeStudioView extends ItemView {
 						let filterTag: string | null = (ev.currentTarget as HTMLElement).getAttr('data-tag-filter');
 						this.activeTag = filterTag;
 						tags.forEach((tag: string) => {
-							let tagButton: Element | null = filterTags.querySelector(`[data-tag-filter="${tag}"]`);
+							let tagButton: Element | null = filterTags.querySelector(`[data-tag-filter="${tag.toLowerCase()}"]`);
 							tagButton!.removeClass('tag-filter-active');
 						});
 						(ev.currentTarget as HTMLElement).addClass('tag-filter-active');
@@ -421,7 +421,7 @@ export class CustomThemeStudioView extends ItemView {
 				cls: 'variable-list',
 				attr: {
 					'data-var-category': category.category,
-					'data-var-tag': category.tag,
+					'data-var-tag': category.tag
 				}
 			});
 			variableListEl.addClass('variable-list-hide');
@@ -458,7 +458,6 @@ export class CustomThemeStudioView extends ItemView {
 					}, 100);
 				}
 			});
-
 			// List variables
 			if (category.category === 'custom') {
 				const items = this.plugin.settings.cssVariables
