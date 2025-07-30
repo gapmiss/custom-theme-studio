@@ -31,7 +31,7 @@ export class ElementSelectorManager {
 
 		// Create tooltip
 		this.tooltip = document.body.appendChild(
-			createDiv({ cls: ['cts-element-picker-tooltip', 'cts-element-picker-tooltip-hide'] })
+			createDiv('cts-element-picker-tooltip cts-element-picker-tooltip-hide')
 		);
 
 		// Add event listeners
@@ -61,16 +61,26 @@ export class ElementSelectorManager {
 	}) {
 		const notice = new Notice(
 			createFragment((e) => {
-				e.createDiv({ text: message, cls: 'cts-notice-with-cancel' });
-				e.createDiv({ cls: 'cts-notice-cancel-button' }, (div) => {
-					this.cancelButton = new ButtonComponent(div)
-						.setButtonText(cancelText)
-						.setClass('cts-element-picker-cancel')
-						.setTooltip('Stop element selection');
-					this.cancelButton.onClick((e) => {
-						new Notice('Element selection cancelled');
-					});
-				});
+				e.createDiv(
+					{
+						text: message,
+						cls: 'cts-notice-with-cancel'
+					}
+				);
+				e.createDiv(
+					{
+						cls: 'cts-notice-cancel-button'
+					},
+					(div) => {
+						this.cancelButton = new ButtonComponent(div)
+							.setButtonText(cancelText)
+							.setClass('cts-element-picker-cancel')
+							.setTooltip('Stop element selection');
+						this.cancelButton.onClick((e) => {
+							new Notice('Element selection cancelled');
+						});
+					}
+				);
 			}),
 			timeout
 		);
@@ -245,54 +255,129 @@ export class ElementSelectorManager {
 
 		// Set tooltip content
 		this.tooltip.createDiv()
-			.createEl('strong', { text: "Tag: " })
-			.createEl('code', { text: tagName });
+			.createEl(
+				'strong',
+				{
+					text: "Tag: "
+				}
+			)
+			.createEl(
+				'code',
+				{
+					text: tagName
+				}
+			);
 
 		// Add aria-label if present (highlight it prominently)
 		if (ariaLabel) {
-			this.tooltip.createDiv({ cls: 'attribute-highlight aria-label-highlight' })
-				.createEl('strong', { text: 'aria-label: ' })
-				.createSpan({ text: `"${ariaLabel}"` })
-				.createDiv({ cls: 'attribute-note', text: '(High priority selector)' });
+			this.tooltip.createDiv('attribute-highlight aria-label-highlight')
+				.createEl(
+					'strong',
+					{
+						text: 'aria-label: '
+					}
+				)
+				.createSpan(
+					{
+						text: `"${ariaLabel}"`
+					}
+				)
+				.createDiv(
+					{
+						cls: 'attribute-note',
+						text: '(High priority selector)'
+					}
+				);
 		}
 
 		// Add data attributes (highlight them)
 		if (dataAttributes.length > 0) {
-			this.tooltip.createDiv({ cls: 'attribute-highlight' })
-				.createEl('strong', { text: 'Data Attributes:' });
-			let attrList: HTMLElement = this.tooltip.createEl('ul', { cls: 'data-attributes-list' });
+			this.tooltip.createDiv('attribute-highlight')
+				.createEl(
+					'strong',
+					{
+						text: 'Data Attributes:'
+					}
+				);
+			let attrList: HTMLElement = this.tooltip.createEl(
+				'ul',
+				{
+					cls: 'data-attributes-list'
+				}
+			);
 			dataAttributes.forEach(attr => {
 				attrList.appendChild(
-					attrList.createEl('li', { text: `${attr.name}="${attr.value}"` })
+					attrList.createEl(
+						'li',
+						{
+							text: `${attr.name}="${attr.value}"`
+						}
+					)
 				);
 			});
 		}
 
 		// Add classes if present
 		if (classes) {
-			this.tooltip.createDiv({ cls: 'tooltip-classes' })
-				.createEl('strong', { text: 'Classes: ' })
-				.createSpan({ text: `${classes.replace('.cts-element-picker-hover', '')}` });
+			this.tooltip.createDiv('tooltip-classes')
+				.createEl(
+					'strong',
+					{
+						text: 'Classes: '
+					}
+				)
+				.createSpan(
+					{
+						text: `${classes.replace('.cts-element-picker-hover', '')}`
+					}
+				);
 		}
 
 		// Add selector options
 		// Helper to create a labeled selector line
 		const createSelectorLine = (label: string, value: string) => {
 			const line = this.tooltip!.createDiv();
-			line.createEl('strong', { text: `${label}: ` });
-			line.createSpan({ cls: 'selector-highlight', text: value });
+			line.createEl(
+				'strong',
+				{
+					text: `${label}: `
+				}
+			);
+			line.createSpan(
+				{
+					cls: 'selector-highlight',
+					text: value
+				}
+			);
 		};
 
 		// Helper to create a shortcut instruction line
 		const createShortcutLine = (keys: string[], description: string, isFirst = false) => {
-			const line = this.tooltip!.createDiv({ cls: isFirst ? 'keys first' : 'keys' });
+			const line = this.tooltip!.createDiv(
+				{
+					cls: isFirst ? 'keys first' : 'keys'
+				}
+			);
 			keys.forEach((key, i) => {
-				line.createEl('kbd', { text: key });
+				line.createEl(
+					'kbd',
+					{
+						text: key
+					}
+				);
 				if (i < keys.length - 1) {
-					line.createSpan({ text: ' + ' });
+					line.createSpan(
+						{
+							text: ' + '
+						}
+					);
 				}
 			});
-			line.createSpan({ text: ` ${description}` });
+			line.createSpan(
+				{
+					text: ` ${description}`
+				}
+			);
 		};
 
 		// Add selector info

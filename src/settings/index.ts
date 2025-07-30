@@ -148,9 +148,16 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 							new Notice('Failed to reload view. Check developer console for details.', 10000);
 						}
 					}
-				}));
+				})
+			);
 
-		containerEl.createEl('h3', { cls: 'cts-settings-h3', text: 'CSS variables' });
+		containerEl.createEl(
+			'h3',
+			{
+				cls: 'cts-settings-h3',
+				text: 'CSS variables'
+			}
+		);
 
 		new Setting(containerEl)
 			.setName('Variable input listener')
@@ -179,7 +186,13 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				})
 			);
 
-		containerEl.createEl('h3', { cls: 'cts-settings-h3', text: 'CSS rules' });
+		containerEl.createEl(
+			'h3',
+			{
+				cls: 'cts-settings-h3',
+				text: 'CSS rules'
+			}
+		);
 
 		new Setting(containerEl)
 			.setName('Font import')
@@ -214,7 +227,13 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				})
 			);
 
-		containerEl.createEl('h3', { cls: 'cts-settings-h3', text: 'CSS editor' });
+		containerEl.createEl(
+			'h3',
+			{
+				cls: 'cts-settings-h3',
+				text: 'CSS editor'
+			}
+		);
 
 		new Setting(containerEl)
 			.setName('Auto-apply changes')
@@ -227,11 +246,11 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				})
 			);
 
-		let noticeDiv = this.containerEl.createDiv({ cls: 'cts-auto-apply-changes-notice' });
-		let noticeIcon = noticeDiv.createDiv({ cls: 'cts-auto-apply-changes-notice-icon' });
+		let noticeDiv = this.containerEl.createDiv('cts-auto-apply-changes-notice');
+		let noticeIcon = noticeDiv.createDiv('cts-auto-apply-changes-notice-icon');
 		noticeIcon.setAttribute('aria-label', 'Notice');
 		noticeIcon.setAttribute('data-tooltip-position', 'top');
-		let noticeText = noticeDiv.createDiv({ cls: 'cts-auto-apply-changes-notice-text' });
+		let noticeText = noticeDiv.createDiv('cts-auto-apply-changes-notice-text');
 		noticeText.textContent = 'When enabled, every keystroke triggers a "live" refresh of your theme. This can lead to unwanted styling and possibly make Obsidian unusable.';
 		setIcon((noticeIcon), 'alert-triangle');
 
@@ -360,10 +379,13 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 					this.plugin.settings.editorFontSize = value;
 					this.plugin.saveSettings();
 				}))
-			.settingEl.createDiv('cts-font-size-setting', (el) => {
-				fontSizeText = el;
-				el.innerText = ' ' + this.plugin.settings.editorFontSize.toString();
-			});
+			.settingEl.createDiv(
+				'cts-font-size-setting',
+				(el) => {
+					fontSizeText = el;
+					el.innerText = ' ' + this.plugin.settings.editorFontSize.toString();
+				}
+			);
 
 		new Setting(containerEl)
 			.setName('Font family')
@@ -411,10 +433,23 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				.onChange(async (value) => {
 					this.plugin.settings.editorLineNumbers = value;
 					await this.plugin.saveSettings();
-				}));
+				})
+			);
 
-		containerEl.createEl('h3', { cls: 'cts-settings-h3', text: 'Theme export' });
-		containerEl.createDiv({ cls: 'cts-theme-export-description', text: 'These settings can also be changed at time of export.' });
+		containerEl.createEl(
+			'h3',
+			{
+				cls: 'cts-settings-h3',
+				text: 'Theme export'
+			}
+		);
+
+		containerEl.createDiv(
+			{
+				cls: 'cts-theme-export-description',
+				text: 'These settings can also be changed at time of export.'
+			}
+		);
 
 		new Setting(containerEl)
 			.setName('Theme name')
@@ -495,7 +530,13 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				})
 			);
 
-		containerEl.createEl('h3', { cls: 'cts-settings-h3', text: 'Scroll helper' });
+		containerEl.createEl(
+			'h3',
+			{
+				cls: 'cts-settings-h3',
+				text: 'Scroll helper'
+			}
+		);
 
 		new Setting(containerEl)
 			.setName('Scroll to top')
@@ -508,7 +549,13 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				})
 			);
 
-		containerEl.createEl('h3', { cls: 'cts-settings-h3', text: 'Settings backup' });
+		containerEl.createEl(
+			'h3',
+			{
+				cls: 'cts-settings-h3',
+				text: 'Settings backup'
+			}
+		);
 
 		new Setting(containerEl)
 			.setName('Export & import settings')
@@ -534,7 +581,13 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				});
 			});
 
-		containerEl.createEl('h3', { text: 'Reset', cls: 'reset-options-heading' });
+		containerEl.createEl(
+			'h3',
+			{
+				text: 'Reset',
+				cls: 'reset-options-heading'
+			}
+		);
 
 		new Setting(containerEl)
 			.setName('Reset theme')

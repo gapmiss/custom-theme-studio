@@ -17,7 +17,12 @@ export class AddVariableModal extends Modal {
     async onOpen() {
         const { contentEl } = this;
         contentEl.parentElement!.addClass('cts-add-variable-modal');
-        contentEl.createEl('h3', { text: 'Add CSS variable' });
+        contentEl.createEl(
+            'h3',
+            {
+                text: 'Add CSS variable'
+            }
+        );
         // Variable name input
         const variableNameInput = new Setting(contentEl)
             .setName('Name')
@@ -104,7 +109,7 @@ export class AddVariableModal extends Modal {
                                     });
                                 }
                             }
-                            
+
                             const customVarListWrapper: HTMLElement | null = view.containerEl.querySelector('#variable-category-custom');
                             if (!customVarListWrapper) return;
 

@@ -22,7 +22,16 @@ class ConfirmModal extends Modal {
         callback?: (evt: MouseEvent) => any,
     ) {
         this.buttonContainerEl
-            .createEl('button', { cls, text, attr: { 'tabindex': 0 } })
+            .createEl(
+                'button',
+                {
+                    cls,
+                    text,
+                    attr: {
+                        'tabindex': 0
+                    }
+                }
+            )
             .addEventListener('click', async (evt) => {
                 callback && (await callback(evt));
                 this.close();

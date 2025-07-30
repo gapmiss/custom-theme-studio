@@ -100,7 +100,12 @@ export class CustomThemeStudioView extends ItemView {
 	// Render header section
 	private renderHeader(): void {
 		const headerEl: HTMLDivElement = this.containerEl.createDiv('theme-studio-header');
-		headerEl.createEl('h3', { text: 'Custom Theme Studio' });
+		headerEl.createEl(
+			'h3',
+			{
+				text: 'Custom Theme Studio'
+			}
+		);
 
 		// Theme enabled toggle
 		const toggleContainer: HTMLDivElement = headerEl.createDiv('theme-toggle-container');
@@ -117,11 +122,16 @@ export class CustomThemeStudioView extends ItemView {
 		toggleSwitch.addEventListener('change', async () => {
 			this.plugin.themeManager.toggleCustomTheme();
 		});
-		const toggleLabel: HTMLLabelElement = toggleContainer.createEl('label', { text: 'Enable theme' });
+		const toggleLabel: HTMLLabelElement = toggleContainer.createEl(
+			'label',
+			{
+				text: 'Enable theme'
+			}
+		);
 		toggleLabel.setAttr('for', 'theme-toggle-switch');
 
 		// Light/dark theme toggle
-		const toggleThemeWrapper = toggleContainer.createDiv({ cls: 'toggle-theme-wrapper' });
+		const toggleThemeWrapper = toggleContainer.createDiv('toggle-theme-wrapper');
 		const toggleThemeButton = toggleThemeWrapper.createEl(
 			'button',
 			{
@@ -147,15 +157,19 @@ export class CustomThemeStudioView extends ItemView {
 		// Section header
 		const header: HTMLDivElement = section.createDiv('collapsible');
 		const headerTitle: HTMLDivElement = header.createDiv('collapsible-header');
-		headerTitle.createSpan({ text: 'CSS variables' });
+		headerTitle.createSpan(
+			{
+				text: 'CSS variables'
+			}
+		);
 
 		// Section header toggle button
 		const toggleIcon: HTMLButtonElement = headerTitle.createEl(
 			'button',
 			{
+				cls: 'collapse-icon clickable-icon',
 				attr: {
-					'class': 'collapse-icon clickable-icon',
-					'tabindex': '0',
+					tabindex: '0',
 					'aria-label': 'Expand section',
 					'data-tooltip-position': 'top'
 				}
@@ -191,10 +205,17 @@ export class CustomThemeStudioView extends ItemView {
 		const cssVariablesButtonContainer: HTMLDivElement = content.createDiv('css-variables-button-container');
 
 		// "New variable" button
-		const newVariableButton: HTMLButtonElement = cssVariablesButtonContainer.createEl('button', {
-			attr: { 'aria-label': 'Add CSS variable', 'data-tooltip-position': 'top', 'tabindex': 0 },
-			cls: 'new-variable-button'
-		});
+		const newVariableButton: HTMLButtonElement = cssVariablesButtonContainer.createEl(
+			'button',
+			{
+				cls: 'new-variable-button',
+				attr: {
+					'aria-label': 'Add CSS variable',
+					'data-tooltip-position': 'top',
+					tabindex: 0
+				}
+			}
+		);
 		setIcon(newVariableButton, 'square-pen');
 
 		newVariableButton.addEventListener('click', async () => {
@@ -222,7 +243,7 @@ export class CustomThemeStudioView extends ItemView {
 					cls: 'tag tag-filter-' + tag + ((tag === 'all') ? ' tag-filter-active' : ''),
 					attr: {
 						'data-tag-filter': tag.toLowerCase(),
-						'tabindex': '0',
+						tabindex: '0',
 						'role': 'button',
 						'aria-label': 'Show ' + tag + ' variables',
 						'data-tooltip-position': 'top'
@@ -292,13 +313,16 @@ export class CustomThemeStudioView extends ItemView {
 		const searchContainer: HTMLDivElement = content.createDiv('search-container');
 		const clearInputContainer: HTMLDivElement = searchContainer.createDiv('clear-search-input');
 
-		const searchInput: HTMLInputElement = clearInputContainer.createEl('input', {
-			attr: {
-				type: 'text',
-				placeholder: 'Search CSS variables…',
-				class: 'search-input'
+		const searchInput: HTMLInputElement = clearInputContainer.createEl(
+			'input',
+			{
+				cls: 'search-input',
+				attr: {
+					type: 'text',
+					placeholder: 'Search CSS variables…'
+				}
 			}
-		});
+		);
 
 		// Search on input event
 		searchInput.addEventListener('input', (e) => {
@@ -366,14 +390,17 @@ export class CustomThemeStudioView extends ItemView {
 		});
 
 		// Clear search button
-		const clearSearchButton: HTMLButtonElement = clearInputContainer.createEl('button', {
-			attr: {
-				class: 'clear-search-input-button',
-				'aria-label': 'Clear search',
-				'data-tooltip-position': 'top',
-				'tabindex': 0
+		const clearSearchButton: HTMLButtonElement = clearInputContainer.createEl(
+			'button',
+			{
+				cls: 'clear-search-input-button',
+				attr: {
+					'aria-label': 'Clear search',
+					'data-tooltip-position': 'top',
+					tabindex: 0
+				}
 			}
-		});
+		);
 		clearSearchButton.addEventListener('click', (evt) => {
 			searchInput.value = '';
 			searchInput.focus();
@@ -395,50 +422,60 @@ export class CustomThemeStudioView extends ItemView {
 
 		// Render all categories
 		allCategories.forEach((category: cssCategory) => {
-			const categoryEl: HTMLDivElement = content.createDiv({
-				cls: 'variable-category',
-				attr: {
-					id: 'variable-category-' + category.category,
-					'data-filter-tag': category.tag
+			const categoryEl: HTMLDivElement = content.createDiv(
+				{
+					cls: 'variable-category',
+					attr: {
+						id: 'variable-category-' + category.category,
+						'data-filter-tag': category.tag
+					}
 				}
-			});
+			);
 
 			const header: HTMLDivElement = categoryEl.createDiv('var-cat');
 			const catTitle: HTMLDivElement = header.createDiv('collapsible-header');
-			catTitle.createSpan({ text: category.title });
-			const catToggleIcon: HTMLButtonElement = catTitle.createEl('button', {
-				attr: {
-					'class': 'collapse-icon clickable-icon',
-					'tabindex': '0',
-					'aria-label': 'Expand category',
-					'data-tooltip-position': 'top'
+			catTitle.createSpan(
+				{
+					text: category.title
 				}
-			});
+			);
+			const catToggleIcon: HTMLButtonElement = catTitle.createEl(
+				'button',
+				{
+					cls: 'collapse-icon clickable-icon',
+					attr: {
+						tabindex: '0',
+						'aria-label': 'Expand category',
+						'data-tooltip-position': 'top'
+					}
+				}
+			);
 			setIcon(catToggleIcon, 'chevron-right');
 
 			// Variable list
-			const variableListEl: HTMLDivElement = categoryEl.createDiv({
-				cls: 'variable-list',
-				attr: {
-					'data-var-category': category.category,
-					'data-var-tag': category.tag
+			const variableListEl: HTMLDivElement = categoryEl.createDiv(
+				{
+					cls: 'variable-list',
+					attr: {
+						'data-var-category': category.category,
+						'data-var-tag': category.tag
+					}
 				}
-			});
+			);
 			variableListEl.addClass('variable-list-hide');
 
 			// Category help hints
 			if (category.help) {
-				const variableListHelp = variableListEl.createDiv({
-					cls: 'variable-category-help-container',
-				});
-				const variableListIcon = variableListHelp.createSpan({
-					cls: 'variable-category-help-icon',
-				});
+				const variableListHelp = variableListEl.createDiv('variable-category-help-container');
+				const variableListIcon = variableListHelp.createSpan('variable-category-help-icon');
 				setIcon(variableListIcon, 'info')
-				variableListHelp.createEl('span', {
-					cls: 'variable-category-help',
-					text: category.help,
-				});
+				variableListHelp.createEl(
+					'span',
+					{
+						cls: 'variable-category-help',
+						text: category.help,
+					}
+				);
 			}
 
 			// Make header title clickable to toggle visibility
@@ -481,27 +518,17 @@ export class CustomThemeStudioView extends ItemView {
 		});
 	}
 
-	// debounce applyCustomTheme and showNotice
-	debounceUpdate = debounce(
-		() => {
-			if (this.plugin.settings.themeEnabled) {
-				this.plugin.themeManager.applyCustomTheme();
-			}
-			showNotice('Variable updated successfully', 5000, 'success');
-		},
-		500,
-		true
-	);
-
 	// Create variable input elements
 	private createVariableItemInput(container: HTMLElement, variable: { name: string; value: string; }, category: string): void {
-		const item = container.createDiv({
-			cls: 'variable-item',
-			attr: {
-				'data-var-name': variable.name,
-				'data-var-value': variable.value,
+		const item = container.createDiv(
+			{
+				cls: 'variable-item',
+				attr: {
+					'data-var-name': variable.name,
+					'data-var-value': variable.value,
+				}
 			}
-		});
+		);
 
 		// Get current value
 		let currentVarValue: string = '';
@@ -513,12 +540,15 @@ export class CustomThemeStudioView extends ItemView {
 
 		// Variable name
 		const nameEl: HTMLDivElement = item.createDiv('variable-name');
-		nameEl.createSpan({
-			text: variable.name + ': ', attr: {
-				'aria-label': 'Copy "var(' + variable.name + ')" to clipboard',
-				'data-tooltip-position': 'top'
+		nameEl.createSpan(
+			{
+				text: variable.name + ': ',
+				attr: {
+					'aria-label': 'Copy "var(' + variable.name + ')" to clipboard',
+					'data-tooltip-position': 'top'
+				}
 			}
-		});
+		);
 		nameEl.addEventListener('click', () => {
 			copyStringToClipboard('var(' + variable.name + ')', 'var(' + variable.name + ')');
 		});
@@ -526,14 +556,17 @@ export class CustomThemeStudioView extends ItemView {
 		// Variable value input
 		const inputWrapper: HTMLDivElement = item.createDiv('variable-input-wrapper');
 		const clearInputContainer: HTMLDivElement = inputWrapper.createDiv('clear-variable-input');
-		const valueInput: HTMLInputElement = clearInputContainer.createEl('input', {
-			cls: 'variable-value-input',
-			attr: {
-				type: 'text',
-				placeholder: variable.value as string,
-				value: currentVarValue
+		const valueInput: HTMLInputElement = clearInputContainer.createEl(
+			'input',
+			{
+				cls: 'variable-value-input',
+				attr: {
+					type: 'text',
+					placeholder: variable.value as string,
+					value: currentVarValue
+				}
 			}
-		});
+		);
 
 		// For clear input button
 		if (currentVarValue) {
@@ -574,14 +607,17 @@ export class CustomThemeStudioView extends ItemView {
 		}
 
 		// Clear input button
-		const clearInputButton: HTMLButtonElement = clearInputContainer.createEl('button', {
-			attr: {
-				class: 'clear-variable-input-button',
-				'aria-label': 'Clear input',
-				'data-tooltip-position': 'top',
-				'tabindex': '0'
+		const clearInputButton: HTMLButtonElement = clearInputContainer.createEl(
+			'button',
+			{
+				cls: 'clear-variable-input-button',
+				attr: {
+					'aria-label': 'Clear input',
+					'data-tooltip-position': 'top',
+					tabindex: '0'
+				}
 			}
-		});
+		);
 		clearInputButton.addEventListener('click', (evt) => {
 			valueInput.value = '';
 			valueInput.focus();
@@ -606,7 +642,8 @@ export class CustomThemeStudioView extends ItemView {
 		});
 
 		// Copy to clipboard button
-		const copyDefault = inputWrapper.createEl('button',
+		const copyDefault = inputWrapper.createEl(
+			'button',
 			{
 				cls: 'copy-default-value clickable-icon',
 				attr: {
@@ -623,36 +660,44 @@ export class CustomThemeStudioView extends ItemView {
 
 	// Create variable input elements
 	createCustomVariableItemInput(container: HTMLElement, variable: { uuid: string, name: string; value: string; }, category: string): void {
-		const item = container.createDiv({
-			cls: 'custom-variable-item',
-			attr: {
-				'data-var-name': variable.name,
-				'data-var-value': variable.value,
+		const item = container.createDiv(
+			{
+				cls: 'custom-variable-item',
+				attr: {
+					'data-var-name': variable.name,
+					'data-var-value': variable.value,
+				}
 			}
-		});
+		);
 
 		// Variable value input
 		const inputWrapper: HTMLDivElement = item.createDiv('custom-variable-input-wrapper');
 
-		const nameInput: HTMLInputElement = inputWrapper.createEl('input', {
-			cls: 'variable-name-input',
-			attr: {
-				type: 'text',
-				placeholder: 'Variable name',
-				value: variable.name
+		const nameInput: HTMLInputElement = inputWrapper.createEl(
+			'input',
+			{
+				cls: 'variable-name-input',
+				attr: {
+					type: 'text',
+					placeholder: 'Variable name',
+					value: variable.name
+				}
 			}
-		});
+		);
 
 		const inputButtonWrapper: HTMLDivElement = inputWrapper.createDiv('custom-variable-input-button-wrapper');
 
-		const valueInput: HTMLInputElement = inputButtonWrapper.createEl('input', {
-			cls: 'variable-value-input',
-			attr: {
-				type: 'text',
-				placeholder: 'Variable value',
-				value: variable.value
+		const valueInput: HTMLInputElement = inputButtonWrapper.createEl(
+			'input',
+			{
+				cls: 'variable-value-input',
+				attr: {
+					type: 'text',
+					placeholder: 'Variable value',
+					value: variable.value
+				}
 			}
-		});
+		);
 
 		// Listen for input changes and update theme
 		nameInput.addEventListener(this.plugin.settings.variableInputListener, (e) => {
@@ -685,7 +730,8 @@ export class CustomThemeStudioView extends ItemView {
 		});
 
 		// Delete button
-		const deleteVariableButton = inputButtonWrapper.createEl('button',
+		const deleteVariableButton = inputButtonWrapper.createEl(
+			'button',
 			{
 				cls: 'delete-variable-button clickable-icon mod-destructive',
 				attr: {
@@ -772,15 +818,22 @@ export class CustomThemeStudioView extends ItemView {
 		const section: HTMLDivElement = this.containerEl.createDiv('rules-section')
 		const header: HTMLDivElement = section.createDiv('collapsible');
 		const headerTitle: HTMLDivElement = header.createDiv('collapsible-header');
-		headerTitle.createSpan({ text: 'CSS rules' });
-		const toggleIcon: HTMLButtonElement = headerTitle.createEl('button', {
-			attr: {
-				'class': 'collapse-icon clickable-icon',
-				'tabindex': '0',
-				'aria-label': 'Expand section',
-				'data-tooltip-position': 'top'
+		headerTitle.createSpan(
+			{
+				text: 'CSS rules'
 			}
-		});
+		);
+		const toggleIcon: HTMLButtonElement = headerTitle.createEl(
+			'button',
+			{
+				cls: 'collapse-icon clickable-icon',
+				attr: {
+					tabindex: '0',
+					'aria-label': 'Expand section',
+					'data-tooltip-position': 'top'
+				}
+			}
+		);
 
 		const content: HTMLDivElement = header.createDiv('collapsible-content');
 		// Check saved toggle state
@@ -809,10 +862,16 @@ export class CustomThemeStudioView extends ItemView {
 		const cssRulesButtonContainer: HTMLDivElement = content.createDiv('css-rules-button-container');
 
 		// "New CSS rule" button
-		const addElementButton = cssRulesButtonContainer.createEl('button', {
-			attr: { 'aria-label': 'Add CSS rule', 'data-tooltip-position': 'top' },
-			cls: 'add-rule-button',
-		});
+		const addElementButton = cssRulesButtonContainer.createEl(
+			'button',
+			{
+				cls: 'add-rule-button',
+				attr: {
+					'aria-label': 'Add CSS rule',
+					'data-tooltip-position': 'top'
+				}
+			}
+		);
 		setIcon(addElementButton, 'square-pen');
 		addElementButton.addEventListener('click', async () => {
 			// Check if editor section is already visible
@@ -852,10 +911,17 @@ export class CustomThemeStudioView extends ItemView {
 
 
 		// "Select element" button
-		const selectElementButton: HTMLButtonElement = cssRulesButtonContainer.createEl('button', {
-			attr: { 'aria-label': 'Select an element', 'data-tooltip-position': 'top', 'tabindex': 0 },
-			cls: 'select-element-button'
-		});
+		const selectElementButton: HTMLButtonElement = cssRulesButtonContainer.createEl(
+			'button',
+			{
+				cls: 'select-element-button',
+				attr: {
+					'aria-label': 'Select an element',
+					'data-tooltip-position': 'top',
+					tabindex: 0
+				}
+			}
+		);
 		setIcon(selectElementButton, 'mouse-pointer-square-dashed');
 		selectElementButton.addEventListener('click', async () => {
 			// Check if editor section is already visible
@@ -882,10 +948,16 @@ export class CustomThemeStudioView extends ItemView {
 
 		// @font-face rule Modal
 		if (this.plugin.settings.enableFontImport) {
-			const addFontFaceButton = cssRulesButtonContainer.createEl('button', {
-				attr: { 'aria-label': 'Import font', 'data-tooltip-position': 'top' },
-				cls: 'add-font-face-button'
-			});
+			const addFontFaceButton = cssRulesButtonContainer.createEl(
+				'button',
+				{
+					cls: 'add-font-face-button',
+					attr: {
+						'aria-label': 'Import font',
+						'data-tooltip-position': 'top'
+					}
+				}
+			);
 			setIcon(addFontFaceButton, 'file-type');
 			addFontFaceButton.addEventListener('click', async () => {
 				new FontImportModal(this.app, this.plugin).open();
@@ -899,13 +971,16 @@ export class CustomThemeStudioView extends ItemView {
 		// CSS rules search
 		const searchContainer: HTMLDivElement = content.createDiv('search-rules-container');
 		const clearInputContainer: HTMLDivElement = searchContainer.createDiv('clear-search-rules-input');
-		const searchInput: HTMLInputElement = clearInputContainer.createEl('input', {
-			attr: {
-				type: 'text',
-				placeholder: 'Search CSS rules…',
-				class: 'search-rules-input'
+		const searchInput: HTMLInputElement = clearInputContainer.createEl(
+			'input',
+			{
+				cls: 'search-rules-input',
+				attr: {
+					type: 'text',
+					placeholder: 'Search CSS rules…'
+				}
 			}
-		});
+		);
 		searchInput.addEventListener('input', async (e) => {
 			const searchTerm: string = (e.target as HTMLInputElement).value.trim();
 			this.ruleSearch = searchTerm;
@@ -920,14 +995,17 @@ export class CustomThemeStudioView extends ItemView {
 		});
 
 		// Clear search button
-		const clearSearchButton: HTMLButtonElement = clearInputContainer.createEl('button', {
-			attr: {
-				class: 'clear-search-rules-input-button',
-				'aria-label': 'Clear search',
-				'data-tooltip-position': 'top',
-				'tabindex': 0
+		const clearSearchButton: HTMLButtonElement = clearInputContainer.createEl(
+			'button',
+			{
+				cls: 'clear-search-rules-input-button',
+				attr: {
+					'aria-label': 'Clear search',
+					'data-tooltip-position': 'top',
+					tabindex: 0
+				}
 			}
-		});
+		);
 		clearSearchButton.addEventListener('click', (evt) => {
 			searchInput.value = '';
 			searchInput.focus();
@@ -975,16 +1053,23 @@ export class CustomThemeStudioView extends ItemView {
 		const section: HTMLDivElement = this.containerEl.createDiv('export-section');
 		const header: HTMLDivElement = section.createDiv('collapsible');
 		const headerTitle: HTMLDivElement = header.createDiv('collapsible-header');
-		headerTitle.createSpan({ text: 'Export theme' });
-
-		const toggleIcon: HTMLButtonElement = headerTitle.createEl('button', {
-			attr: {
-				'class': 'collapse-icon clickable-icon',
-				'tabindex': '0',
-				'aria-label': 'Expand section',
-				'data-tooltip-position': 'top'
+		headerTitle.createSpan(
+			{
+				text: 'Export theme'
 			}
-		});
+		);
+
+		const toggleIcon: HTMLButtonElement = headerTitle.createEl(
+			'button',
+			{
+				cls: 'collapse-icon clickable-icon',
+				attr: {
+					tabindex: '0',
+					'aria-label': 'Expand section',
+					'data-tooltip-position': 'top'
+				}
+			}
+		);
 
 		const content: HTMLDivElement = header.createDiv('collapsible-content');
 		// Check saved toggle state
@@ -1010,75 +1095,116 @@ export class CustomThemeStudioView extends ItemView {
 		});
 
 		const description: HTMLDivElement = content.createDiv('export-description');
-		description.createSpan({
-			text: 'Export your custom variables and rules as CSS and manifest files to create a shareable theme.',
-		});
+		description.createSpan(
+			{
+				text: 'Export your custom variables and rules as CSS and manifest files to create a shareable theme.',
+			}
+		);
 
 		const formContainer: HTMLDivElement = content.createDiv('export-form');
 
 		// Theme name input
 		const nameContainer: HTMLDivElement = formContainer.createDiv('export-form-item');
-		nameContainer.createSpan({ text: 'Theme Name:' });
-		const nameInput: HTMLInputElement = nameContainer.createEl('input', {
-			attr: {
-				type: 'text',
-				value: this.plugin.settings.exportThemeName || DEFAULT_SETTINGS.exportThemeName,
-				class: 'export-form-theme-name'
+		nameContainer.createSpan(
+			{
+				text: 'Theme Name:'
 			}
-		});
+		);
+		const nameInput: HTMLInputElement = nameContainer.createEl(
+			'input',
+			{
+				cls: 'export-form-theme-name',
+				attr: {
+					type: 'text',
+					value: this.plugin.settings.exportThemeName || DEFAULT_SETTINGS.exportThemeName
+				}
+			}
+		);
 
 		// Theme author input
 		const authorContainer: HTMLDivElement = formContainer.createDiv('export-form-item');
-		authorContainer.createSpan({ text: 'Author:' });
-		const authorInput: HTMLInputElement = authorContainer.createEl('input', {
-			attr: {
-				type: 'text',
-				value: this.plugin.settings.exportThemeAuthor || DEFAULT_SETTINGS.exportThemeAuthor,
-				class: 'export-form-theme-author'
+		authorContainer.createSpan(
+			{
+				text: 'Author:'
 			}
-		});
+		);
+		const authorInput: HTMLInputElement = authorContainer.createEl(
+			'input',
+			{
+				cls: 'export-form-theme-author',
+				attr: {
+					type: 'text',
+					value: this.plugin.settings.exportThemeAuthor || DEFAULT_SETTINGS.exportThemeAuthor
+				}
+			}
+		);
 
 		// Theme author URL input
 		const urlContainer: HTMLDivElement = formContainer.createDiv('export-form-item');
-		urlContainer.createSpan({ text: 'URL:' });
-		const urlInput: HTMLInputElement = urlContainer.createEl('input', {
-			attr: {
-				type: 'text',
-				value: this.plugin.settings.exportThemeURL || DEFAULT_SETTINGS.exportThemeURL,
-				class: 'export-form-theme-url'
+		urlContainer.createSpan(
+			{
+				text: 'URL:'
 			}
-		});
+		);
+		const urlInput: HTMLInputElement = urlContainer.createEl(
+			'input',
+			{
+				cls: 'export-form-theme-url',
+				attr: {
+					type: 'text',
+					value: this.plugin.settings.exportThemeURL || DEFAULT_SETTINGS.exportThemeURL
+				}
+			}
+		);
 
 		// Toggle for option to include disabled CSS rules
 		const includeDisabledContainer: HTMLDivElement = formContainer.createDiv('export-form-item include-disabled-toggle');
-		const includeDisabledToggleSwitch: HTMLInputElement = includeDisabledContainer.createEl('input', {
-			attr: {
-				type: 'checkbox',
-				id: 'include-disabled-switch'
+		const includeDisabledToggleSwitch: HTMLInputElement = includeDisabledContainer.createEl(
+			'input',
+			{
+				attr: {
+					type: 'checkbox',
+					id: 'include-disabled-switch'
+				}
 			}
-		});
+		);
 		includeDisabledToggleSwitch.checked = this.plugin.settings.exportThemeIncludeDisabled;
+		// Save export settings when changed
 		includeDisabledToggleSwitch.addEventListener('change', async () => {
 			this.plugin.settings.exportThemeIncludeDisabled = includeDisabledToggleSwitch.checked;
 			await this.plugin.saveSettings();
 		});
-		const includeDisabledToggleLabel: HTMLLabelElement = includeDisabledContainer.createEl('label', { text: 'Include disabled CSS rules when exporting' });
+		const includeDisabledToggleLabel: HTMLLabelElement = includeDisabledContainer.createEl(
+			'label',
+			{
+				text: 'Include disabled CSS rules when exporting'
+			}
+		);
 		includeDisabledToggleLabel.setAttr('for', 'include-disabled-switch');
 
 		// Toggle for option to use prettier
 		const enablePrettierContainer: HTMLDivElement = formContainer.createDiv('export-form-item enable-prettier-toggle');
-		const enablePrettierToggleSwitch: HTMLInputElement = enablePrettierContainer.createEl('input', {
-			attr: {
-				type: 'checkbox',
-				id: 'enable-prettier-switch'
+		const enablePrettierToggleSwitch: HTMLInputElement = enablePrettierContainer.createEl(
+			'input',
+			{
+				attr: {
+					type: 'checkbox',
+					id: 'enable-prettier-switch'
+				}
 			}
-		});
+		);
 		enablePrettierToggleSwitch.checked = this.plugin.settings.exportPrettierFormat;
+		// Save export settings when changed
 		enablePrettierToggleSwitch.addEventListener('change', async () => {
 			this.plugin.settings.exportPrettierFormat = enablePrettierToggleSwitch.checked;
 			await this.plugin.saveSettings();
 		});
-		const enablePrettierToggleLabel: HTMLLabelElement = enablePrettierContainer.createEl('label', { text: 'Format CSS with Prettier formatter' });
+		const enablePrettierToggleLabel: HTMLLabelElement = enablePrettierContainer.createEl(
+			'label',
+			{
+				text: 'Format CSS with Prettier formatter'
+			}
+		);
 		enablePrettierToggleLabel.setAttr('for', 'enable-prettier-switch');
 
 		// Save export settings when changed
@@ -1098,45 +1224,96 @@ export class CustomThemeStudioView extends ItemView {
 		// Export buttons
 		const buttonContainer: HTMLDivElement = content.createDiv('button-container');
 
+		// Export CSS button
 		const exportCSSButtons = buttonContainer.createDiv('export-css-buttons');
-		exportCSSButtons.createSpan({ text: 'CSS: ' });
-		const exportCSSButton: HTMLButtonElement = exportCSSButtons.createEl('button', {
-			attr: { 'aria-label': 'Export CSS', 'data-tooltip-position': 'top', 'tabindex': 0 }
-		});
+		exportCSSButtons.createSpan(
+			{
+				text: 'CSS: '
+			}
+		);
+		const exportCSSButton: HTMLButtonElement = exportCSSButtons.createEl(
+			'button',
+			{
+				attr: {
+					'aria-label': 'Export CSS',
+					'data-tooltip-position': 'top',
+					tabindex: 0
+				}
+			}
+		);
 		setIcon(exportCSSButton, 'download');
 		exportCSSButton.addEventListener('click', async () => {
 			this.plugin.themeManager.exportThemeCSS();
 
 		});
-		const copyCSSButton: HTMLButtonElement = exportCSSButtons.createEl('button', {
-			cls: 'copy-css-button',
-			attr: { 'aria-label': 'Copy CSS to clipboard', 'data-tooltip-position': 'top', 'tabindex': 0 }
-		});
+		// Copy CSS button
+		const copyCSSButton: HTMLButtonElement = exportCSSButtons.createEl(
+			'button',
+			{
+				cls: 'copy-css-button',
+				attr: {
+					'aria-label': 'Copy CSS to clipboard',
+					'data-tooltip-position': 'top',
+					tabindex: 0
+				}
+			}
+		);
 		setIcon(copyCSSButton, 'copy');
 		copyCSSButton.addEventListener('click', () => {
 			this.plugin.themeManager.copyThemeToClipboard();
 		});
-
+		// Export manifest button
 		const exportManifestButtons = buttonContainer.createDiv('export-manifest-buttons');
-		exportManifestButtons.createSpan({ text: 'Manifest: ' });
-		const exportManifestButton: HTMLButtonElement = exportManifestButtons.createEl('button', {
-			attr: { 'aria-label': 'Export manifest JSON', 'data-tooltip-position': 'top', 'tabindex': 0 }
-		});
+		exportManifestButtons.createSpan(
+			{
+				text: 'Manifest: '
+			}
+		);
+		const exportManifestButton: HTMLButtonElement = exportManifestButtons.createEl(
+			'button',
+			{
+				attr: {
+					'aria-label': 'Export manifest JSON',
+					'data-tooltip-position': 'top',
+					tabindex: 0
+				}
+			}
+		);
 		setIcon(exportManifestButton, 'download');
 		exportManifestButton.addEventListener('click', async () => {
 			this.plugin.themeManager.exportThemeManifest();
 
 		});
-		const copyManifestButton: HTMLButtonElement = exportManifestButtons.createEl('button', {
-			cls: 'copy-manifest-button',
-			attr: { 'aria-label': 'Copy manifest JSON to clipboard', 'data-tooltip-position': 'top', 'tabindex': 0 }
-		});
+		// Copy manifest button
+		const copyManifestButton: HTMLButtonElement = exportManifestButtons.createEl(
+			'button',
+			{
+				cls: 'copy-manifest-button',
+				attr: {
+					'aria-label': 'Copy manifest JSON to clipboard',
+					'data-tooltip-position': 'top',
+					tabindex: 0
+				}
+			}
+		);
 		setIcon(copyManifestButton, 'copy');
 		copyManifestButton.addEventListener('click', () => {
 			this.plugin.themeManager.copyManifestToClipboard();
 		});
 
 	}
+
+	// debounce applyCustomTheme and showNotice
+	debounceUpdate = debounce(
+		() => {
+			if (this.plugin.settings.themeEnabled) {
+				this.plugin.themeManager.applyCustomTheme();
+			}
+			showNotice('Variable updated successfully', 5000, 'success');
+		},
+		500,
+		true
+	);
 
 	async onClose(): Promise<void> {
 		// Clean up any active element selection
@@ -1150,7 +1327,6 @@ export class CustomThemeStudioView extends ItemView {
 			const container = this.containerEl;
 			if (container && target) {
 				const top = (target as HTMLElement).offsetTop - 10;
-				// container.scrollTop = top;
 				(container as HTMLElement).scrollTo({
 					top: top,
 					behavior: "smooth"

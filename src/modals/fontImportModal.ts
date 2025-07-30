@@ -29,9 +29,11 @@ export class FontImportModal extends Modal {
 		contentEl.createEl('h3', { text: 'Import font' });
 
 		// Help notice regarding performance
-		contentEl.createDiv({
-			text: 'Embedding assets increases the file size of your theme, which may lead to poor performance in the following situations:'
-		});
+		contentEl.createDiv(
+			{
+				text: 'Embedding assets increases the file size of your theme, which may lead to poor performance in the following situations:'
+			}
+		);
 
 		// Create a <ul> list with <li> items
 		const listItems = [
@@ -48,17 +50,24 @@ export class FontImportModal extends Modal {
 
 		// Link with supporting documentation
 		const linkContainer = contentEl.createDiv('cts-font-import-modal-desc');
-		linkContainer.createSpan({ text: 'See: ' });
-		linkContainer.createEl('a', {
-			href: 'https://docs.obsidian.md/Themes/App+themes/Embed+fonts+and+images+in+your+theme#Consider+file+size',
-			text: 'Embed fonts and images in your theme - Developer Documentation',
-			attr: {
-				'aria-label': 'https://docs.obsidian.md/Themes/App+themes/Embed+fonts+and+images+in+your+theme#Consider+file+size',
-				class: 'external-link',
-				'data-tooltip-position': 'top',
-				tabindex: '0'
+		linkContainer.createSpan(
+			{
+				text: 'See: '
 			}
-		});
+		);
+		linkContainer.createEl(
+			'a',
+			{
+				cls: 'external-link',
+				href: 'https://docs.obsidian.md/Themes/App+themes/Embed+fonts+and+images+in+your+theme#Consider+file+size',
+				text: 'Embed fonts and images in your theme - Developer Documentation',
+				attr: {
+					'aria-label': 'https://docs.obsidian.md/Themes/App+themes/Embed+fonts+and+images+in+your+theme#Consider+file+size',
+					'data-tooltip-position': 'top',
+					tabindex: '0'
+				}
+			}
+		);
 
 		// Font name input
 		const fontNameInput = new Setting(contentEl)

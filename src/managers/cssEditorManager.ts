@@ -47,30 +47,43 @@ export class CSSEditorManager {
 		this.editorSection = containerEl.createDiv('css-editor-section');
 
 		// UUID
-		this.editorUUID = this.editorSection.createEl('input', {
-			cls: 'css-editor-uuid',
-			attr: {
-				type: 'hidden'
+		this.editorUUID = this.editorSection.createEl(
+			'input',
+			{
+				cls: 'css-editor-uuid',
+				attr: {
+					type: 'hidden'
+				}
 			}
-		});
+		);
 
 		// CSS Rule input
 		const ruleContainer = this.editorSection.createDiv('editor-rule-container');
-		ruleContainer.createSpan({ text: 'CSS rule:' });
-		this.ruleInputEl = ruleContainer.createEl('input', {
-			attr: {
-				type: 'text',
-				placeholder: 'Enter a descriptive name '
+		ruleContainer.createSpan(
+			{
+				text: 'CSS rule:'
 			}
-		});
+		);
+		this.ruleInputEl = ruleContainer.createEl(
+			'input',
+			{
+				attr: {
+					type: 'text',
+					placeholder: 'Enter a descriptive name '
+				}
+			}
+		);
 
 		// CSS editor
-		this.editorEl = this.editorSection.createEl('textarea', {
-			attr: {
-				placeholder: 'Enter CSS rules here...',
-				class: 'css-editor'
+		this.editorEl = this.editorSection.createEl(
+			'textarea',
+			{
+				cls: 'css-editor',
+				attr: {
+					placeholder: 'Enter CSS rules here...'
+				}
 			}
-		});
+		);
 
 		this.editor = this.aceService.createEditor(this.editorEl);
 
@@ -87,26 +100,35 @@ export class CSSEditorManager {
 			snippetManager.register(snippets, 'css');
 		}
 		// Editor options
-		const editorOptions = this.editorSection.createDiv('editor-options-container', (el) => {
-			el.addClass('editor-options-container-hide');
-		});
+		const editorOptions = this.editorSection.createDiv(
+			'editor-options-container',
+			(el) => {
+				el.addClass('editor-options-container-hide');
+			}
+		);
 
 		// Wordwrap
 		const wordwrapOptionContainer = editorOptions.createDiv('wordwrap-toggle-container');
-		wordwrapOptionContainer.createEl('label', {
-			text: 'Wordwrap:',
-			attr: {
-				'for': 'toggle-wordwrap-checkbox'
+		wordwrapOptionContainer.createEl(
+			'label',
+			{
+				text: 'Wordwrap:',
+				attr: {
+					'for': 'toggle-wordwrap-checkbox'
+				}
 			}
-		})
+		);
 		const wordWrapCheckboxContainer = wordwrapOptionContainer.createDiv('checkbox-container');
-		const wordWrapCheckbox = wordWrapCheckboxContainer.createEl('input', {
-			attr: {
-				class: 'toggle-wordwrap-checkbox',
-				id: 'toggle-wordwrap-checkbox',
-				type: 'checkbox',
+		const wordWrapCheckbox = wordWrapCheckboxContainer.createEl(
+			'input',
+			{
+				cls: 'toggle-wordwrap-checkbox',
+				attr: {
+					id: 'toggle-wordwrap-checkbox',
+					type: 'checkbox',
+				}
 			}
-		});
+		);
 		if (this.plugin.settings.editorWordWrap) {
 			wordWrapCheckbox.checked = true;
 			wordWrapCheckboxContainer.addClass('is-enabled');
@@ -119,28 +141,37 @@ export class CSSEditorManager {
 
 		// Font-size
 		const fontsizeOptionContainer = editorOptions.createDiv('font-size-container');
-		fontsizeOptionContainer.createEl('label', {
-			text: 'Font size:',
-			attr: {
-				'for': 'fontsize-slider'
+		fontsizeOptionContainer.createEl(
+			'label',
+			{
+				text: 'Font size:',
+				attr: {
+					'for': 'fontsize-slider'
+				}
 			}
-		})
+		);
 		const fontsizeSliderContainer = fontsizeOptionContainer.createDiv('slider-container');
-		const fontsizeSlider = fontsizeSliderContainer.createEl('input', {
-			attr: {
-				class: 'slider',
-				id: 'fontsize-slider',
-				type: 'range',
-				min: 5,
-				max: 30,
-				step: 1,
-				value: this.plugin.settings.editorFontSize
+		const fontsizeSlider = fontsizeSliderContainer.createEl(
+			'input',
+			{
+				cls: 'slider',
+				attr: {
+					id: 'fontsize-slider',
+					type: 'range',
+					min: 5,
+					max: 30,
+					step: 1,
+					value: this.plugin.settings.editorFontSize
+				}
 			}
-		});
+		);
 
-		const fontsizeDisplayValue = fontsizeOptionContainer.createDiv('slider-value', (el) => {
-			el.innerText = ' ' + this.plugin.settings.editorFontSize.toString();
-		});
+		const fontsizeDisplayValue = fontsizeOptionContainer.createDiv(
+			'slider-value',
+			(el) => {
+				el.innerText = ' ' + this.plugin.settings.editorFontSize.toString();
+			}
+		);
 
 		fontsizeSlider.addEventListener('change', (e) => {
 			let sliderValue: number = Number((e.target! as HTMLInputElement).value);
@@ -152,31 +183,43 @@ export class CSSEditorManager {
 		const buttonContainer = this.editorSection.createDiv('button-container');
 
 		if (!this.plugin.settings.autoApplyChanges) {
-			const applyButton = buttonContainer.createEl('button', {
-				text: 'Apply Changes'
-			});
+			const applyButton = buttonContainer.createEl(
+				'button',
+				{
+					text: 'Apply Changes'
+				}
+			);
 			// Apply button
 			applyButton.addEventListener('click', () => {
 				this.applyChanges(this.aceService.getValue());
 			});
 		}
 
-		const saveButton = buttonContainer.createEl('button', {
-			text: 'Save rule',
-			cls: 'mod-cta'
-		});
-
-		const cancelButton = buttonContainer.createEl('button', {
-			text: 'Cancel'
-		});
-
-		const settingsButton = buttonContainer.createEl('button', {
-			cls: 'clickable-icon',
-			attr: {
-				'aria-label': 'Show editor options',
-				'data-tooltip-position': 'top'
+		const saveButton = buttonContainer.createEl(
+			'button',
+			{
+				text: 'Save rule',
+				cls: 'mod-cta'
 			}
-		});
+		);
+
+		const cancelButton = buttonContainer.createEl(
+			'button',
+			{
+				text: 'Cancel'
+			}
+		);
+
+		const settingsButton = buttonContainer.createEl(
+			'button',
+			{
+				cls: 'clickable-icon',
+				attr: {
+					'aria-label': 'Show editor options',
+					'data-tooltip-position': 'top'
+				}
+			}
+		);
 		setIcon(settingsButton, 'settings-2');
 
 		settingsButton.addEventListener('click', () => {
@@ -545,36 +588,46 @@ export class CSSEditorManager {
 	}
 
 	createRuleItem(containerEl: HTMLElement, rule: CSSrule): HTMLElement {
-		const item = containerEl.createDiv({
-			cls: 'rule-item',
-			attr: {
-				'data-cts-uuid': rule.uuid,
-				'data-tooltip-position': 'top'
+		const item = containerEl.createDiv(
+			{
+				cls: 'rule-item',
+				attr: {
+					'data-cts-uuid': rule.uuid,
+					'data-tooltip-position': 'top'
+				}
 			}
-		});
+		);
 
 		let currentEnabled = rule.enabled;
 
 		const ruleHeader = item.createDiv('rule-item-header');
 
 		const titleEl = ruleHeader.createDiv('rule-item-title');
-		titleEl.createDiv({
-			text: rule.rule,
-		});
+		titleEl.createDiv(
+			{
+				text: rule.rule,
+			}
+		);
 
 		const actionsEl = ruleHeader.createDiv('rule-item-actions');
 
-		const editButton = actionsEl.createEl('button', {
-			cls: 'clickable-icon'
-		});
+		const editButton = actionsEl.createEl(
+			'button',
+			{
+				cls: 'clickable-icon'
+			}
+		);
 		editButton.setAttr('aria-label', 'Edit this rule');
 		editButton.setAttr('data-tooltip-position', 'top');
 		editButton.setAttr('tabindex', '0');
 		setIcon(editButton, 'edit');
 
-		const enabledButton = actionsEl.createEl('button', {
-			cls: 'clickable-icon'
-		});
+		const enabledButton = actionsEl.createEl(
+			'button',
+			{
+				cls: 'clickable-icon'
+			}
+		);
 		enabledButton.setAttr('data-tooltip-position', 'top');
 		enabledButton.setAttr('tabindex', '0');
 		if (currentEnabled) {
@@ -587,9 +640,12 @@ export class CSSEditorManager {
 			enabledButton.setAttr('data-tooltip-position', 'top');
 		}
 
-		const deleteButton = actionsEl.createEl('button', {
-			cls: 'rule-item-delete-button clickable-icon mod-destructive'
-		});
+		const deleteButton = actionsEl.createEl(
+			'button',
+			{
+				cls: 'rule-item-delete-button clickable-icon mod-destructive'
+			}
+		);
 		deleteButton.setAttr('aria-label', 'Delete this rule');
 		deleteButton.setAttr('data-tooltip-position', 'top');
 		deleteButton.setAttr('tabindex', '0');
@@ -619,9 +675,7 @@ export class CSSEditorManager {
 			this.currentEditingElement = item;
 
 			// Create inline editor container
-			const inlineEditor = item.createDiv({
-				cls: 'inline-rule-editor'
-			});
+			const inlineEditor = item.createDiv('inline-rule-editor');
 
 			// Clone the editor section into the inline editor
 			if (this.editorSection) {
