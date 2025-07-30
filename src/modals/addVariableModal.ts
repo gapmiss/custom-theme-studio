@@ -123,7 +123,7 @@ export class AddVariableModal extends Modal {
 
                             // Variable list
                             const variableList = customVarListWrapper.querySelector<HTMLElement>('[data-var-category="custom"]');
-                            variableList?.classList.replace('variable-list-hide', 'variable-list-show');
+                            variableList?.classList.replace('hide', 'show');
 
                             // Scroll to top if setting is enabled
                             if (this.plugin.settings.viewScrollToTop) {

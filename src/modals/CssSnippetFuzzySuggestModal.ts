@@ -83,7 +83,7 @@ export class CssSnippetFuzzySuggestModal extends FuzzySuggestModal<Snippets> {
                     const toggleIcon: HTMLElement | null = rulesSection!.querySelector('.collapse-icon');
 
                     if (ruleSection && toggleIcon) {
-                        ruleSection.classList.replace('collapsible-content-hide', 'collapsible-content-show');
+                        ruleSection.classList.replace('hide', 'show');
 
                         setIcon(toggleIcon, 'chevron-down');
                         toggleIcon.setAttr('aria-label', 'Collapse section');

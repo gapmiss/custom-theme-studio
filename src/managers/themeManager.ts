@@ -116,7 +116,7 @@ export class ThemeManager {
 				const content = section?.querySelector<HTMLDivElement>('.collapsible-content');
 
 				if (content && icon) {
-					content.classList.replace('collapsible-content-hide', 'collapsible-content-show');
+					content.classList.replace('hide', 'show');
 
 					setIcon(icon, 'chevron-down');
 					icon.setAttr('aria-label', 'Collapse section');
@@ -139,7 +139,7 @@ export class ThemeManager {
 							const content = section?.querySelector<HTMLDivElement>('.collapsible-content');
 
 							if (content && icon) {
-								content.classList.replace('collapsible-content-hide', 'collapsible-content-show');
+								content.classList.replace('hide', 'show');
 
 								setIcon(icon, 'chevron-down');
 								icon.setAttr('aria-label', 'Collapse section');

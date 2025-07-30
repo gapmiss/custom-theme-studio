@@ -181,19 +181,18 @@ export class CustomThemeStudioView extends ItemView {
 
 		// Check saved toggle state
 		const shouldExpand = this.plugin.settings.expandCSSVariables;
-		content.toggleClass('collapsible-content-show', shouldExpand);
-		content.toggleClass('collapsible-content-hide', !shouldExpand);
+		content.toggleClass('show', shouldExpand);
+		content.toggleClass('hide', !shouldExpand);
 		setIcon(toggleIcon, shouldExpand ? 'chevron-down' : 'chevron-right');
 		toggleIcon.setAttr('aria-label', shouldExpand ? 'Collapse section' : 'Expand section');
 		toggleIcon.setAttr('data-tooltip-position', 'top');
 
 		// Make header title clickable to toggle visibility
 		headerTitle.addEventListener('click', () => {
-			const isCurrentlyHidden = content.hasClass('collapsible-content-hide');
+			const shouldExpand = content.hasClass('hide');
 			// Expand if it's currently hidden
-			const shouldExpand = isCurrentlyHidden;
-			content.toggleClass('collapsible-content-show', shouldExpand);
-			content.toggleClass('collapsible-content-hide', !shouldExpand);
+			content.toggleClass('show', shouldExpand);
+			content.toggleClass('hide', !shouldExpand);
 			setIcon(toggleIcon, shouldExpand ? 'chevron-down' : 'chevron-right');
 			toggleIcon.setAttr('aria-label', shouldExpand ? 'Collapse section' : 'Expand section');
 			toggleIcon.setAttr('data-tooltip-position', 'top');
@@ -264,8 +263,8 @@ export class CustomThemeStudioView extends ItemView {
 							const showCategory =
 								(this.activeTag === 'all' && (tag === 'all' || filter === filterTag)) ||
 								(this.activeTag !== 'all' && filter === filterTag);
-							elt.toggleClass('variable-category-show', showCategory);
-							elt.toggleClass('variable-category-hide', !showCategory);
+							elt.toggleClass('show', showCategory);
+							elt.toggleClass('hide', !showCategory);
 						});
 						// Check for variable search
 						if (this.variableSearch !== '') {
@@ -286,14 +285,14 @@ export class CustomThemeStudioView extends ItemView {
 
 								// Hide/show
 								const showCategory = hasVisibleChildren && (filterTag === dataVarTag || filterTag === 'all');
-								el?.toggleClass('variable-list-show', showCategory);
-								el?.toggleClass('variable-list-hide', !showCategory);
-								el?.parentElement?.toggleClass('variable-category-show', showCategory);
-								el?.parentElement?.toggleClass('variable-category-hide', !showCategory);
+								el?.toggleClass('show', showCategory);
+								el?.toggleClass('hide', !showCategory);
+								el?.parentElement?.toggleClass('show', showCategory);
+								el?.parentElement?.toggleClass('hide', !showCategory);
 
 								// Toggle icon
 								let variableListicon: HTMLElement | null = (el.previousSibling as HTMLElement)!.querySelector('.collapse-icon.clickable-icon');
-								setIcon(variableListicon!, 'chevron-down')
+								setIcon(variableListicon!, 'chevron-down');
 								variableListicon?.setAttr('aria-label', 'Collapse category');
 								variableListicon?.setAttr('data-tooltip-position', 'top');
 								// Scroll variable list to the top of view
@@ -339,11 +338,11 @@ export class CustomThemeStudioView extends ItemView {
 					const variableListIcon: HTMLElement | null = (el.previousSibling as HTMLElement)?.querySelector('.collapse-icon.clickable-icon');
 					const shouldShowCategory = activeTagFilter === 'all' || dataVarTag === activeTagFilter;
 					// Always hide the variable list
-					el.addClass('variable-list-hide');
-					el.removeClass('variable-list-show');
+					el.addClass('hide');
+					el.removeClass('show');
 					// Show/hide the category based on filter
-					el.parentElement?.toggleClass('variable-category-show', shouldShowCategory);
-					el.parentElement?.toggleClass('variable-category-hide', !shouldShowCategory);
+					el.parentElement?.toggleClass('show', shouldShowCategory);
+					el.parentElement?.toggleClass('hide', !shouldShowCategory);
 					setIcon(variableListIcon!, 'chevron-right');
 					variableListIcon?.setAttr('aria-label', 'Expand category');
 					variableListIcon?.setAttr('data-tooltip-position', 'top');
@@ -360,10 +359,10 @@ export class CustomThemeStudioView extends ItemView {
 					const shouldExpand = (activeTagFilter === 'all' || dataVarTag === activeTagFilter) && hasVisibleChildren;
 
 					// Toggle visibility
-					el.toggleClass('variable-list-show', shouldExpand);
-					el.toggleClass('variable-list-hide', !shouldExpand);
-					el.parentElement?.toggleClass('variable-category-show', shouldExpand);
-					el.parentElement?.toggleClass('variable-category-hide', !shouldExpand);
+					el.toggleClass('show', shouldExpand);
+					el.toggleClass('hide', !shouldExpand);
+					el.parentElement?.toggleClass('show', shouldExpand);
+					el.parentElement?.toggleClass('hide', !shouldExpand);
 
 					// Icon and accessibility
 					const iconName = shouldExpand ? 'chevron-down' : 'chevron-right';
@@ -382,9 +381,9 @@ export class CustomThemeStudioView extends ItemView {
 			}
 			// Clear search
 			if ((e.currentTarget! as HTMLInputElement).value && !searchInput.classList.contains('clear-search-input--touched')) {
-				searchInput.classList.add('clear-search-input--touched')
+				searchInput.classList.add('clear-search-input--touched');
 			} else if (!(e.currentTarget! as HTMLInputElement).value && searchInput.classList.contains('clear-search-input--touched')) {
-				searchInput.classList.remove('clear-search-input--touched')
+				searchInput.classList.remove('clear-search-input--touched');
 			}
 
 		});
@@ -408,8 +407,8 @@ export class CustomThemeStudioView extends ItemView {
 			searchInput.classList.remove('clear-search-input--touched');
 			const variableListEls: NodeListOf<Element> = this.containerEl.querySelectorAll('.variable-list');
 			variableListEls.forEach((elt: HTMLElement) => {
-				elt.toggleClass('variable-list-show', false);
-				elt.toggleClass('variable-list-hide', true);
+				elt.toggleClass('show', false);
+				elt.toggleClass('hide', true);
 				const variableListIcon: HTMLElement | null = (elt.previousSibling as HTMLElement)?.querySelector('.collapse-icon.clickable-icon');
 				if (variableListIcon) {
 					setIcon(variableListIcon, 'chevron-right');
@@ -417,8 +416,7 @@ export class CustomThemeStudioView extends ItemView {
 					variableListIcon.setAttr('data-tooltip-position', 'top');
 				}
 			});
-
-		})
+		});
 
 		// Render all categories
 		allCategories.forEach((category: cssCategory) => {
@@ -462,15 +460,14 @@ export class CustomThemeStudioView extends ItemView {
 					}
 				}
 			);
-			variableListEl.addClass('variable-list-hide');
+			variableListEl.addClass('hide');
 
 			// Category help hints
 			if (category.help) {
 				const variableListHelp = variableListEl.createDiv('variable-category-help-container');
 				const variableListIcon = variableListHelp.createSpan('variable-category-help-icon');
-				setIcon(variableListIcon, 'info')
-				variableListHelp.createEl(
-					'span',
+				setIcon(variableListIcon, 'info');
+				variableListHelp.createSpan(
 					{
 						cls: 'variable-category-help',
 						text: category.help,
@@ -480,10 +477,10 @@ export class CustomThemeStudioView extends ItemView {
 
 			// Make header title clickable to toggle visibility
 			header.addEventListener('click', () => {
-				const shouldExpand = variableListEl.hasClass('variable-list-hide');
+				const shouldExpand = variableListEl.hasClass('hide');
 
-				variableListEl.toggleClass('variable-list-show', shouldExpand);
-				variableListEl.toggleClass('variable-list-hide', !shouldExpand);
+				variableListEl.toggleClass('show', shouldExpand);
+				variableListEl.toggleClass('hide', !shouldExpand);
 
 				setIcon(catToggleIcon, shouldExpand ? 'chevron-down' : 'chevron-right');
 				catToggleIcon.setAttr('aria-label', shouldExpand ? 'Collapse category' : 'Expand category');
@@ -623,7 +620,7 @@ export class CustomThemeStudioView extends ItemView {
 			valueInput.focus();
 			valueInput.trigger(this.plugin.settings.variableInputListener);
 			valueInput.classList.remove('clear-variable-input--touched');
-		})
+		});
 
 		// Listen for input changes and update theme
 		// TODO: how do deal with auto-apply changes with variables, maybe instead of on input save on change?
@@ -635,9 +632,9 @@ export class CustomThemeStudioView extends ItemView {
 			this.cssVariableManager.updateVariable(newValue !== '' ? existingUUID : '', variable.name as string, newValue, category);
 			this.debounceUpdate();
 			if ((e.currentTarget! as HTMLInputElement).value && !valueInput.classList.contains('clear-variable-input--touched')) {
-				valueInput.classList.add('clear-variable-input--touched')
+				valueInput.classList.add('clear-variable-input--touched');
 			} else if (!(e.currentTarget! as HTMLInputElement).value && valueInput.classList.contains('clear-variable-input--touched')) {
-				valueInput.classList.remove('clear-variable-input--touched')
+				valueInput.classList.remove('clear-variable-input--touched');
 			}
 		});
 
@@ -815,7 +812,7 @@ export class CustomThemeStudioView extends ItemView {
 
 	// Render CSS rules section
 	private renderCSSRules(): void {
-		const section: HTMLDivElement = this.containerEl.createDiv('rules-section')
+		const section: HTMLDivElement = this.containerEl.createDiv('rules-section');
 		const header: HTMLDivElement = section.createDiv('collapsible');
 		const headerTitle: HTMLDivElement = header.createDiv('collapsible-header');
 		headerTitle.createSpan(
@@ -838,19 +835,18 @@ export class CustomThemeStudioView extends ItemView {
 		const content: HTMLDivElement = header.createDiv('collapsible-content');
 		// Check saved toggle state
 		const shouldExpand = this.plugin.settings.expandCSSRules;
-		content.toggleClass('collapsible-content-show', shouldExpand);
-		content.toggleClass('collapsible-content-hide', !shouldExpand);
+		content.toggleClass('show', shouldExpand);
+		content.toggleClass('hide', !shouldExpand);
 		setIcon(toggleIcon, shouldExpand ? 'chevron-down' : 'chevron-right');
 		toggleIcon.setAttr('aria-label', shouldExpand ? 'Collapse section' : 'Expand section');
 		toggleIcon.setAttr('data-tooltip-position', 'top');
 
 		// Make header title clickable to toggle visibility
 		headerTitle.addEventListener('click', () => {
-			const isCurrentlyHidden = content.hasClass('collapsible-content-hide');
+			const shouldExpand = content.hasClass('hide');
 			// Expand if it's currently hidden
-			const shouldExpand = isCurrentlyHidden;
-			content.toggleClass('collapsible-content-show', shouldExpand);
-			content.toggleClass('collapsible-content-hide', !shouldExpand);
+			content.toggleClass('show', shouldExpand);
+			content.toggleClass('hide', !shouldExpand);
 			setIcon(toggleIcon, shouldExpand ? 'chevron-down' : 'chevron-right');
 			toggleIcon.setAttr('aria-label', shouldExpand ? 'Collapse section' : 'Expand section');
 			toggleIcon.setAttr('data-tooltip-position', 'top');
@@ -988,9 +984,9 @@ export class CustomThemeStudioView extends ItemView {
 			await this.filterCSSRules(searchTerm);
 
 			if ((e.currentTarget! as HTMLInputElement).value && !searchInput.classList.contains('clear-search-rules-input--touched')) {
-				searchInput.classList.add('clear-search-rules-input--touched')
+				searchInput.classList.add('clear-search-rules-input--touched');
 			} else if (!(e.currentTarget! as HTMLInputElement).value && searchInput.classList.contains('clear-search-rules-input--touched')) {
-				searchInput.classList.remove('clear-search-rules-input--touched')
+				searchInput.classList.remove('clear-search-rules-input--touched');
 			}
 		});
 
@@ -1017,7 +1013,7 @@ export class CustomThemeStudioView extends ItemView {
 				elt.toggleClass('rule-item-hide', false);
 			});
 
-		})
+		});
 
 		// Rule list
 		const ruleListContainer = content.createDiv('css-rule-container');
@@ -1074,19 +1070,18 @@ export class CustomThemeStudioView extends ItemView {
 		const content: HTMLDivElement = header.createDiv('collapsible-content');
 		// Check saved toggle state
 		const shouldExpand = this.plugin.settings.expandExportTheme;
-		content.toggleClass('collapsible-content-show', shouldExpand);
-		content.toggleClass('collapsible-content-hide', !shouldExpand);
+		content.toggleClass('show', shouldExpand);
+		content.toggleClass('hide', !shouldExpand);
 		setIcon(toggleIcon, shouldExpand ? 'chevron-down' : 'chevron-right');
 		toggleIcon.setAttr('aria-label', shouldExpand ? 'Collapse section' : 'Expand section');
 		toggleIcon.setAttr('data-tooltip-position', 'top');
 
 		// Make header title clickable to toggle visibility
 		headerTitle.addEventListener('click', () => {
-			const isCurrentlyHidden = content.hasClass('collapsible-content-hide');
+			const shouldExpand = content.hasClass('hide');
 			// Expand if it's currently hidden
-			const shouldExpand = isCurrentlyHidden;
-			content.toggleClass('collapsible-content-show', shouldExpand);
-			content.toggleClass('collapsible-content-hide', !shouldExpand);
+			content.toggleClass('show', shouldExpand);
+			content.toggleClass('hide', !shouldExpand);
 			setIcon(toggleIcon, shouldExpand ? 'chevron-down' : 'chevron-right');
 			toggleIcon.setAttr('aria-label', shouldExpand ? 'Collapse section' : 'Expand section');
 			toggleIcon.setAttr('data-tooltip-position', 'top');

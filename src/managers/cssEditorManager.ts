@@ -103,7 +103,7 @@ export class CSSEditorManager {
 		const editorOptions = this.editorSection.createDiv(
 			'editor-options-container',
 			(el) => {
-				el.addClass('editor-options-container-hide');
+				el.addClass('hide');
 			}
 		);
 
@@ -177,7 +177,7 @@ export class CSSEditorManager {
 			let sliderValue: number = Number((e.target! as HTMLInputElement).value);
 			this.editor?.setFontSize(sliderValue);
 			fontsizeDisplayValue.innerText = sliderValue.toString();
-		})
+		});
 
 		// Button container
 		const buttonContainer = this.editorSection.createDiv('button-container');
@@ -223,12 +223,9 @@ export class CSSEditorManager {
 		setIcon(settingsButton, 'settings-2');
 
 		settingsButton.addEventListener('click', () => {
-			const isHidden: boolean = editorOptions.hasClass('editor-options-container-hide');
-			const shouldExpand: boolean = isHidden;
-
-			editorOptions.toggleClass('editor-options-container-show', shouldExpand);
-			editorOptions.toggleClass('editor-options-container-hide', !shouldExpand);
-
+			const shouldExpand: boolean = editorOptions.hasClass('hide');
+			editorOptions.toggleClass('show', shouldExpand);
+			editorOptions.toggleClass('hide', !shouldExpand);
 			settingsButton.setAttr(
 				'aria-label',
 				shouldExpand ? 'Hide editor options' : 'Show editor options'
@@ -283,7 +280,7 @@ export class CSSEditorManager {
 
 		this.workspace.on('css-change', async () => {
 			this.aceService.updateTheme();
-		})
+		});
 	}
 
 	// Auto-apply changes when typing (with debounce)
