@@ -53,48 +53,53 @@ export class CustomThemeStudioView extends ItemView {
 
 	// On view open
 	async onOpen(): Promise<void> {
+		this.prepareContainer();
+		this.renderSections();
+		this.setupAccessibility();
+		this.setupEditorFocusKeymap();
+	}
+
+	private prepareContainer(): void {
 		const { containerEl } = this;
 		containerEl.empty();
 		containerEl.addClass('cts-view');
+	}
 
-		// Render main sections
+	private renderSections(): void {
 		this.renderHeader();
 		this.renderCSSVariables();
 		this.renderCSSRules();
 		this.renderExportSection();
+	}
 
-		// Make filters <a> tags act as buttons for "Enter" key and "Spacebar"
-		containerEl.addEventListener('keydown', function (e) {
-			const target: EventTarget | null = e.target;
-			// Check if the target is an 'A' tag with role="button"
-			if (target && (target as HTMLElement).getAttribute('role') === 'button' && (target as HTMLElement).tagName === 'A') {
-				const key: string | number = e.key !== undefined ? e.key : e.keyCode;
-				const isEnter: boolean = key === 'Enter' || key === 13;
-				const isSpace: boolean = key === ' ' || key === 'Spacebar' || key === 32;
+	private setupAccessibility(): void {
+		this.containerEl.addEventListener('keydown', (e: KeyboardEvent) => {
+			const target = e.target as HTMLElement | null;
+			if (
+				target?.getAttribute('role') === 'button' &&
+				target.tagName === 'A'
+			) {
+				const key = e.key;
+				const isEnter = key === 'Enter' || e.keyCode === 13;
+				const isSpace = key === ' ' || key === 'Spacebar' || e.keyCode === 32;
 				if (isEnter || isSpace) {
-					e.preventDefault(); // Prevent scrolling on space
-					(target as HTMLElement).click();
+					e.preventDefault();
+					target.click();
 				}
 			}
 		});
+	}
 
-		// Keymap scope
-		this.registerDomEvent(
-			(this.cssEditorManager.editor as unknown as HTMLElement),
-			"focus",
-			() => {
-				this.app.keymap.pushScope(this.editorScope);
-			},
-			true
-		);
-		this.registerDomEvent(
-			(this.cssEditorManager.editor as unknown as HTMLElement),
-			"blur",
-			() => {
-				this.app.keymap.popScope(this.editorScope);
-			},
-			true
-		);
+	private setupEditorFocusKeymap(): void {
+		const editorEl = this.cssEditorManager.editor as unknown as HTMLElement;
+
+		this.registerDomEvent(editorEl, 'focus', () => {
+			this.app.keymap.pushScope(this.editorScope);
+		}, true);
+
+		this.registerDomEvent(editorEl, 'blur', () => {
+			this.app.keymap.popScope(this.editorScope);
+		}, true);
 	}
 
 	// Render header section
@@ -1304,7 +1309,7 @@ export class CustomThemeStudioView extends ItemView {
 			if (this.plugin.settings.themeEnabled) {
 				this.plugin.themeManager.applyCustomTheme();
 			}
-			showNotice('Variable updated successfully', 5000, 'success');
+			showNotice('Variable updated successfully', 1500, 'success');
 		},
 		500,
 		true
