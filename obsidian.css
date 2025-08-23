@@ -1,4 +1,4 @@
-
+/* v1.9.10 */
 /* Obsidian theme variables */
 /* ------------------------ */
 body {
@@ -43,11 +43,10 @@ body {
   --bases-table-cell-shadow-active: 0 0 0 2px var(--interactive-accent);
   --bases-table-cell-background-active: var(--background-primary);
   --bases-table-cell-background-disabled: var(--background-primary-alt);
-  --bases-table-white-space: nowrap;
-  --bases-cards-container-background: var(--background-primary);
+  --bases-cards-container-background: transparent;
   --bases-cards-background: var(--background-primary);
   --bases-cards-cover-background: var(--background-primary-alt);
-  --bases-cards-width: 200px;
+  --bases-cards-scale: 1;
   --bases-cards-group-padding: var(--size-4-3);
   --bases-cards-line-height: 24px;
   --bases-cards-border-width: 1px;
@@ -121,6 +120,7 @@ body {
   --code-white-space: pre-wrap;
   --code-border-width: 0px;
   --code-border-color: var(--background-modifier-border);
+  --code-bracket-background: var(--background-modifier-hover);
   --code-radius: var(--radius-s);
   --code-size: var(--font-smaller);
   --code-background: var(--background-primary-alt);
@@ -155,9 +155,7 @@ body {
   --drag-ghost-background: rgba(0, 0, 0, 0.85);
   --drag-ghost-text-color: #fff;
   /* Dropdowns */
-  --dropdown-background: var(--interactive-normal);
   --dropdown-background-blend-mode: hard-light;
-  --dropdown-background-hover: var(--interactive-hover);
   --dropdown-background-position: right 0.5em top 50%, 0 0;
   --dropdown-background-size: 1em auto, 100%;
   --dropdown-padding: 0 1.9em 0 0.8em;
@@ -322,9 +320,11 @@ body {
   --inline-title-margin-bottom: 0.5em;
   /* Inputs */
   --input-height: 30px;
+  --input-padding: var(--size-4-1) var(--size-4-2);
   --input-radius: 5px;
   --input-font-weight: var(--font-normal);
   --input-border-width: 1px;
+  --input-border-width-focus: 2px;
   --input-placeholder-color: var(--text-faint);
   --input-date-separator: var(--text-faint);
   /* Italic */
@@ -515,6 +515,10 @@ body {
   --ribbon-width: 44px;
   --ribbon-padding: var(--size-4-2) var(--size-4-1) var(--size-4-3);
   /* Scrollbars */
+  --scrollbar-width: 12px;
+  --scrollbar-height: 12px;
+  --scrollbar-border-width: 3px 3px 3px 2px;
+  --scrollbar-radius: var(--radius-l);
   --scrollbar-active-thumb-bg: rgba(var(--mono-rgb-100), 0.2);
   --scrollbar-bg: rgba(var(--mono-rgb-100), 0.05);
   --scrollbar-thumb-bg: rgba(var(--mono-rgb-100), 0.1);
@@ -574,8 +578,8 @@ body {
   --sync-avatar-color-8: var(--color-pink);
   /* Swatch for color inputs */
   --swatch-radius: 14px;
-  --swatch-height: 24px;
-  --swatch-width: 24px;
+  --swatch-height: 22px;
+  --swatch-width: 22px;
   --swatch-shadow: inset 0 0 0 1px rgba(var(--mono-rgb-100), 0.15);
   /* Tabs */
   --tab-background-active: var(--background-primary);
@@ -717,6 +721,7 @@ body {
   --background-modifier-message: rgba(0, 0, 0, 0.9);
   /* Inputs */
   --background-modifier-form-field: var(--color-base-00);
+  --background-modifier-form-field-hover: var(--background-modifier-form-field);
   /* Text */
   --text-normal: var(--color-base-100);
   --text-muted: var(--color-base-70);
@@ -737,6 +742,7 @@ body {
   --interactive-accent: var(--color-accent-1);
   --interactive-accent-hover: var(--color-accent-2);
 }
+
 body {
   --font-default: ui-sans-serif, -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI", Roboto, "Inter", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
   --font-monospace-default: ui-monospace, SFMono-Regular, "Cascadia Mono", "Roboto Mono", "DejaVu Sans Mono", "Liberation Mono", Menlo, Monaco, "Consolas", "Source Code Pro", monospace;
@@ -754,6 +760,7 @@ body {
   --font-text-size: 16px;
   --font-mermaid: var(--font-text);
 }
+
 .theme-light {
   color-scheme: light;
   --highlight-mix-blend-mode: darken;
@@ -799,6 +806,7 @@ body {
   --shadow-s: 0px 1px 2px rgba(0, 0, 0, 0.028), 0px 3.4px 6.7px rgba(0, 0, 0, 0.042), 0px 15px 30px rgba(0, 0, 0, 0.07);
   --shadow-l: 0px 1.8px 7.3px rgba(0, 0, 0, 0.071), 0px 6.3px 24.7px rgba(0, 0, 0, 0.112), 0px 30px 90px rgba(0, 0, 0, 0.2);
 }
+
 .theme-dark {
   color-scheme: dark;
   --highlight-mix-blend-mode: lighten;
