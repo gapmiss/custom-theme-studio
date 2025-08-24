@@ -439,7 +439,7 @@ export class CustomThemeStudioView extends ItemView {
 			const catTitle: HTMLDivElement = header.createDiv('collapsible-header');
 			catTitle.createSpan(
 				{
-					text: category.title
+					text: category.title.replace('+', ' ')
 				}
 			);
 			const catToggleIcon: HTMLButtonElement = catTitle.createEl(
