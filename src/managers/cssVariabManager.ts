@@ -46,7 +46,7 @@ function createHelpFragment(text: string, parent = '', category = ''): DocumentF
 
 const variableCategories: Record<string, { text?: string; parent?: string; category?: string }> = {
 	animation: { parent: 'Foundations', category: 'Animation', text: 'Animation variables' },
-	bases: { parent: 'Plugins', category: 'Bases', text: 'Catalyst license feature - currently not released for PUBLIC availability. Subject to change as the Bases core plugin is in development.' },
+	bases: { parent: 'Editor', category: 'Bases' },
 	blockquote: { parent: 'Editor', category: 'Blockquote' },
 	borders: { parent: 'Foundations', category: 'Borders' },
 	button: { parent: 'Components', category: 'Button' },
