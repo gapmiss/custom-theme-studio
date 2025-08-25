@@ -151,13 +151,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				})
 			);
 
-		containerEl.createEl(
-			'h3',
-			{
-				cls: 'cts-settings-h3',
-				text: 'CSS variables'
-			}
-		);
+		new Setting(containerEl).setName('CSS variables').setHeading();
 
 		new Setting(containerEl)
 			.setName('Variable input listener')
@@ -186,13 +180,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				})
 			);
 
-		containerEl.createEl(
-			'h3',
-			{
-				cls: 'cts-settings-h3',
-				text: 'CSS rules'
-			}
-		);
+		new Setting(containerEl).setName('CSS rules').setHeading();
 
 		new Setting(containerEl)
 			.setName('Font import')
@@ -227,13 +215,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				})
 			);
 
-		containerEl.createEl(
-			'h3',
-			{
-				cls: 'cts-settings-h3',
-				text: 'CSS editor'
-			}
-		);
+		new Setting(containerEl).setName('CSS editor').setHeading();
 
 		new Setting(containerEl)
 			.setName('Auto-apply changes')
@@ -436,13 +418,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				})
 			);
 
-		containerEl.createEl(
-			'h3',
-			{
-				cls: 'cts-settings-h3',
-				text: 'Theme export'
-			}
-		);
+		new Setting(containerEl).setName('Theme export').setHeading();
 
 		containerEl.createDiv(
 			{
@@ -532,13 +508,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				})
 			);
 
-		containerEl.createEl(
-			'h3',
-			{
-				cls: 'cts-settings-h3',
-				text: 'Scroll helper'
-			}
-		);
+		new Setting(containerEl).setName('Scroll helper').setHeading();
 
 		new Setting(containerEl)
 			.setName('Scroll to top')
@@ -551,13 +521,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				})
 			);
 
-		containerEl.createEl(
-			'h3',
-			{
-				cls: 'cts-settings-h3',
-				text: 'Settings backup'
-			}
-		);
+		new Setting(containerEl).setName('Settings backup').setHeading();
 
 		new Setting(containerEl)
 			.setName('Export & import settings')
@@ -583,13 +547,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				});
 			});
 
-		containerEl.createEl(
-			'h3',
-			{
-				text: 'Reset',
-				cls: 'reset-options-heading'
-			}
-		);
+		new Setting(containerEl).setName('Reset').setClass('reset-options-heading').setHeading();
 
 		new Setting(containerEl)
 			.setName('Reset theme')

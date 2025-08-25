@@ -1,4 +1,4 @@
-import { type App, Setting, debounce, Modal } from "obsidian";
+import { type App, Setting, debounce, Modal, arrayBufferToBase64 } from "obsidian";
 import type CustomThemeStudioPlugin from "../main";
 import { CustomThemeStudioView, VIEW_TYPE_CTS } from "../views/customThemeStudioView";
 import { generateUniqueId, showNotice } from "../utils";
@@ -159,18 +159,6 @@ export class FontImportModal extends Modal {
 		contentEl.empty();
 	}
 
-	private arrayBufferToBase64(buffer: ArrayBuffer): string {
-		let binary = '';
-		const bytes = new Uint8Array(buffer);
-		const len = bytes.byteLength;
-
-		for (let i = 0; i < len; i++) {
-			binary += String.fromCharCode(bytes[i]);
-		}
-
-		return window.btoa(binary);
-	}
-
 	private generateFontFaceRule(): string {
 		let mimeType: string;
 		let ext = path.extname(this.fontFilePath);
@@ -212,9 +200,9 @@ export class FontImportModal extends Modal {
 		}
 
 		this.fontFilePath = filePaths[0];
-		const fileContent = fs.readFileSync(filePaths[0]);
+		const fileContent: any = fs.readFileSync(this.fontFilePath);
 
-		return this.arrayBufferToBase64(fileContent);
+		return arrayBufferToBase64(fileContent);
 	}
 
 }
