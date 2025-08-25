@@ -905,8 +905,8 @@ export class CustomThemeStudioView extends ItemView {
 			if (this.plugin.settings.viewScrollToTop) {
 				setTimeout(() => {
 					this.scrollToDiv(editorSection as HTMLElement);
-					this.cssEditorManager.ruleInputEl!.focus();
 				}, 100);
+				// this.cssEditorManager.ruleInputEl!.focus();
 			}
 		});
 

@@ -482,8 +482,8 @@ export class ElementSelectorManager {
 			if (this.plugin.settings.viewScrollToTop) {
 				setTimeout(() => {
 					this.scrollToDivByUUID(uuid);
-					this.view.cssEditorManager.ruleInputEl!.focus();
 				}, 100);
+				// this.view.cssEditorManager.ruleInputEl!.focus();
 			}
 		}
 	}

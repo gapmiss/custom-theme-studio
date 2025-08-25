@@ -687,8 +687,9 @@ export class CSSEditorManager {
 				if (this.plugin.settings.viewScrollToTop) {
 					setTimeout(() => {
 						this.scrollToDivByUUID(rule.uuid);
-						this.ruleInputEl!.focus();
+						
 					}, 100);
+					// this.ruleInputEl!.focus();
 				}
 			}
 		});
@@ -794,7 +795,7 @@ export class CSSEditorManager {
 			if (container && target) {
 				const top = (target as HTMLElement).offsetTop - 10;
 				// container.scrollTop = top;
-				(container as HTMLElement).scrollTo({
+				container.scrollTo({
 					top: top,
 					behavior: "smooth"
 				});
