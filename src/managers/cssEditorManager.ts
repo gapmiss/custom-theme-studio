@@ -775,8 +775,10 @@ export class CSSEditorManager {
 				}
 
 				// remove editor
-				// NOT necessary ?
-				// this.removeInlineEditor();
+				const hasEditor: HTMLElement | null | undefined = this.view.containerEl.querySelector(`[data-cts-uuid="${rule.uuid}"]`)?.querySelector('.css-editor-section.show');
+				if (hasEditor) {
+					this.removeInlineEditor();
+				}
 
 				// Remove from DOM
 				item.remove();
