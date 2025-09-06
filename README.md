@@ -1,50 +1,54 @@
 # Custom Theme Studio
 
-An Obsidian.md plugin that empowers users to create, edit, and export custom themes with a built-in CSS editor and visual styling tools. It streamlines the process of modifying UI styles, managing variables, and styling individual elements—all without leaving Obsidian.
+An Obsidian.md plugin to create and tweak custom themes with live CSS editing, element styling, and instant previews. All without leaving Obsidian.
 
-## Features
+## Features at a Glance
 
-- Modify Obsidian's CSS variable
-    - Modify colors, fonts, UI styles and more
-- Integrated CSS editor powered by Ace for live theme customization
-- Real-time preview of style changes
-- Visual element picker for targeting styles
-- Fuzzy search modal for importing CSS snippet
-- Freeze UI feature for design inspection
-- Theme management (enable, disable)
-- Export your customized theme as a shareable theme
+| Feature              | Description                                                                                  |
+| -------------------- | -------------------------------------------------------------------------------------------- |
+| **CSS Variables**    | Edit colors, fonts, and other UI styles. Variables are searchable and organized by category. |
+| **Font Import**      | Import custom fonts and create base64 `@font-face` rules for your theme.                     |
+| **Live Editor**      | Ace editor with syntax highlighting, auto-complete, and built-in color picker.               |
+| **Visual Tools**     | Pick elements to style, preview changes in real-time, freeze UI for inspection.              |
+| **Theme Management** | Enable, disable, switch themes, or export as CSS with a manifest.                            |
+| **Settings**         | Backup, import/export, reset customizations, toggle themes.                                  |
 
-### CSS variable customization
+---
 
-- Modify Obsidian's built-in CSS variables
-- Variables organized by categories (components, editor, foundations, plugins, window, theme-dark, theme-light)
-- Filter and search functionality to easily find specific variables
-- Color picker for variables with HEX color values
+## Detailed Features
 
-### CSS rules
+### CSS Variables
 
-- Interactive element picker to target specific UI components
+- Edit built-in CSS variables for colors, fonts, and UI components
+- Organized into categories: components, editor, foundations, plugins, window, dark/light themes
+- Search and filter to quickly find variables
+- Color picker for HEX values
+- Import fonts and generate base64 `@font-face` CSS rules
+
+### CSS Rules
+
+- Pick elements visually to target specific UI components
 - Advanced CSS editor with syntax highlighting
-- Live preview of changes
-- Filter and search functionality to easily find specific rules
-- Save and manage multiple custom CSS rules
+- Live preview while editing
+- Search and filter rules
+- Save and manage multiple custom rules
+- Apply imported fonts to any element
 
-### CSS Editor Features
+### CSS Editor
 
-- Built-in Ace code editor with syntax highlighting
-- Customizable editor settings (theme, font size, tab width)
+- Built-in Ace editor with syntax highlighting and auto-complete
+- Customize editor settings: theme, font size, tab width
 - Optional line numbers and word wrap
 - Embedded color picker
-- Keyboard shortcuts support
-- Auto-completion with snippets
-    - Including all Obsidian variables
+- Keyboard shortcuts for faster editing
+- Auto-completion includes all Obsidian variables
 
 ### Theme Export
 
-- Export custom theme as CSS file
-- Generate theme manifest file for distribution
+- Export your theme as a CSS file
+- Generate a manifest file for distribution
 - Copy CSS or manifest to clipboard
-- Configure theme metadata (name, author, URL)
+- Configure metadata: name, author, URL
 
 ### Settings Management
 
@@ -54,7 +58,7 @@ An Obsidian.md plugin that empowers users to create, edit, and export custom the
 
 ## Installation
 
-[Find at Obsidian.md/plugins](https://obsidian.md/plugins?search=custom-theme-studio)
+[Available on Obsidian.md/plugins](https://obsidian.md/plugins?search=custom-theme-studio)
 
 ### From Obsidian
 
