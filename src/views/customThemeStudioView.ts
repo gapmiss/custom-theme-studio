@@ -375,13 +375,6 @@ export class CustomThemeStudioView extends ItemView {
 					setIcon(variableListIcon!, iconName);
 					variableListIcon?.setAttr('aria-label', ariaLabel);
 					variableListIcon?.setAttr('data-tooltip-position', 'top');
-
-					// Optional scroll helper
-					if (shouldExpand && this.plugin.settings.viewScrollToTop) {
-						setTimeout(() => {
-							this.scrollToDiv(el);
-						}, 100);
-					}
 				});
 			}
 			// Clear search
