@@ -785,9 +785,9 @@ export class CustomThemeStudioView extends ItemView {
 
 			const matchesSearch =
 				searchTerm === '' ||
-				varName.includes(searchTerm) ||
-				varDefaultValue.includes(searchTerm) ||
-				varValue.includes(searchTerm);
+				varName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+				varDefaultValue.toLowerCase().includes(searchTerm.toLowerCase()) ||
+				varValue.toLowerCase().includes(searchTerm.toLowerCase());
 
 			item.toggleClass('show', matchesSearch);
 			item.toggleClass('hide', !matchesSearch);
@@ -1031,7 +1031,7 @@ export class CustomThemeStudioView extends ItemView {
 		// Filter all rules
 		this.plugin.settings.cssRules.forEach((el) => {
 			const matchesQuery =
-				el.rule?.includes(query) || el.css?.includes(query);
+				el.rule.toLowerCase()?.includes(query.toLowerCase()) || el.css.toLowerCase()?.includes(query.toLowerCase());
 
 			const ruleEl = this.containerEl.querySelector(`[data-cts-uuid="${el.uuid}"]`);
 			if (ruleEl) {
