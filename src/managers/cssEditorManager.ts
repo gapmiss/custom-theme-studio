@@ -291,7 +291,12 @@ export class CSSEditorManager {
 			let css = this.aceService.getValue();
 			// if (css && this.plugin.settings.autoApplyChanges) {
 			if (this.plugin.settings.autoApplyChanges) {
-				this.applyChanges(css!);
+				setTimeout(() => {
+					const css = this.aceService.getValue();
+					if (css !== '') {
+						this.applyChanges(css);
+					}
+				}, 500);
 			}
 		}, 10);
 	}
@@ -700,7 +705,7 @@ export class CSSEditorManager {
 					setTimeout(() => {
 						this.scrollToDivByUUID(rule.uuid);
 					}, 100);
-					// this.ruleInputEl!.focus();
+					this.ruleInputEl!.focus();
 				}
 			}
 		});
