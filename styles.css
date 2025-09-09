@@ -725,6 +725,27 @@ body {
     display: none;
 }
 
+/* Define a CSS animation named "blink" */
+@keyframes blink {
+
+    0%,
+    100% {
+        /* background-color: var(--background-primary); */
+        background-color: var(--background-modifier-active-hover);
+    }
+
+    50% {
+        background-color: transparent;
+    }
+}
+
+/* Apply the "blink" animation to 
+        elements with class "blinking-effect" */
+.cts-view .blinking-effect {
+    animation: blink .5s linear infinite;
+    /* The animation will run indefinitely */
+}
+
 .cts-view .rule-item-header {
     width: 100%;
     display: grid;
@@ -861,7 +882,7 @@ body {
 }
 
 .cts-view .enable-prettier-toggle,
-.cts-view .include-disabled-toggle{
+.cts-view .include-disabled-toggle {
     flex-wrap: nowrap;
 }
 
@@ -920,7 +941,7 @@ body {
     }
 }
 
-.cts-add-variable-modal .setting-item-control > input {
+.cts-add-variable-modal .setting-item-control>input {
     min-width: 300px !important;
 }
 

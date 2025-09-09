@@ -500,6 +500,18 @@ export class CSSEditorManager {
 			}
 		}
 
+		// Scroll editor to the top of view
+		if (this.plugin.settings.viewScrollToTop) {
+			setTimeout(() => {
+				this.scrollToDivByUUID(uuid);
+				const target = this.view.containerEl.querySelector(`[data-cts-uuid="${uuid}"]`);
+				target?.addClass('blinking-effect');
+				setTimeout(() => {
+					target?.removeClass('blinking-effect');
+				}, 3000);
+			}, 100);
+		}
+
 		showNotice('Rule saved successfully', 5000, 'success');
 		return true;
 	}
@@ -687,7 +699,6 @@ export class CSSEditorManager {
 				if (this.plugin.settings.viewScrollToTop) {
 					setTimeout(() => {
 						this.scrollToDivByUUID(rule.uuid);
-						
 					}, 100);
 					// this.ruleInputEl!.focus();
 				}
