@@ -10,7 +10,7 @@ export interface cssCategory {
 	help: DocumentFragment | null;
 }
 
-export interface CssVariable {
+interface CssVariable {
 	cat: string;
 	variable: string;
 	default: string;
