@@ -24,7 +24,9 @@ export class FontImportModal extends Modal {
 	async onOpen() {
 		const { contentEl } = this;
 
-		contentEl.parentElement!.addClass('cts-font-import-modal');
+		if (contentEl.parentElement) {
+			contentEl.parentElement.addClass('cts-font-import-modal');
+		}
 
 		contentEl.createEl('h3', { text: 'Import font' });
 
@@ -87,11 +89,18 @@ export class FontImportModal extends Modal {
 			.addButton((button) => {
 				button.setButtonText('Choose');
 				button.onClick(async () => {
-					this.fontName = fontNameInput.settingEl.querySelector('input')!.value;
+					const nameInput = fontNameInput.settingEl.querySelector('input');
+					if (!nameInput) {
+						console.error('Font name input element not found');
+						showNotice('Font import interface error - please try again', 5000, 'error');
+						return;
+					}
+
+					this.fontName = nameInput.value;
 
 					if (!this.fontName) {
 						showNotice('Please enter a name for the font you want to import', 5000, 'error');
-						fontNameInput.settingEl.querySelector('input')?.focus();
+						nameInput.focus();
 						return;
 					}
 					this.base64Content = await this.importFontFile();
@@ -146,7 +155,10 @@ export class FontImportModal extends Modal {
 
 		let debounceFocus = debounce(
 			() => {
-				fontNameInput.settingEl.querySelector('input')!.focus();
+				const nameInput = fontNameInput.settingEl.querySelector('input');
+				if (nameInput) {
+					nameInput.focus();
+				}
 			},
 			10,
 			true

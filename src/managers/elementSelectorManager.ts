@@ -498,8 +498,8 @@ export class ElementSelectorManager {
 			return selector; // ID is unique, so we can return immediately
 		}
 
-		if (includeParent) {
-			const parent = element.parentElement!;
+		if (includeParent && element.parentElement) {
+			const parent = element.parentElement;
 			const classSelector = Array.from(parent.classList)
 				.filter(cls => !cls.includes('cts-element-picker-highlight'))
 				.map(cls => `.${cls}`)
@@ -586,12 +586,14 @@ export class ElementSelectorManager {
 		let selector = element.tagName.toLowerCase();
 
 		// Parent
-		const parent = element.parentElement!;
-		const classSelector = Array.from(parent.classList)
-			.filter(cls => !cls.includes('cts-element-picker-highlight'))
-			.map(cls => `.${cls}`)
-			.join('');
-		selector = `${parent.tagName.toLowerCase()}${classSelector} > ${selector}`;
+		if (element.parentElement) {
+			const parent = element.parentElement;
+			const classSelector = Array.from(parent.classList)
+				.filter(cls => !cls.includes('cts-element-picker-highlight'))
+				.map(cls => `.${cls}`)
+				.join('');
+			selector = `${parent.tagName.toLowerCase()}${classSelector} > ${selector}`;
+		}
 
 		// Add id if present (highest priority for both modes)
 		if (element.id) {

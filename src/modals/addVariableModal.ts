@@ -16,7 +16,9 @@ export class AddVariableModal extends Modal {
 
     async onOpen() {
         const { contentEl } = this;
-        contentEl.parentElement!.addClass('cts-add-variable-modal');
+        if (contentEl.parentElement) {
+            contentEl.parentElement.addClass('cts-add-variable-modal');
+        }
         contentEl.createEl(
             'h3',
             {

@@ -26,19 +26,14 @@ function createHelpFragment(text: string, parent = '', category = ''): DocumentF
 	}
 
 	if (parent && category) {
-		helpFragment.createEl(
-			'a', 
-			{
-				cls: 'external-link',
-				href: `https://docs.obsidian.md/Reference/CSS+variables/${parent}/${category}`,
-				text: `${category} - Developer Documentation`,
-				attr: {
-					'aria-label': `https://docs.obsidian.md/Reference/${parent}/${category}`,
-					'data-tooltip-position': 'top',
-					tabindex: '0',
-				},
-			}
-		);
+		const link = document.createElement('a');
+		link.className = 'external-link';
+		link.href = `https://docs.obsidian.md/Reference/CSS+variables/${parent}/${category}`;
+		link.textContent = `${category} - Developer Documentation`;
+		link.setAttribute('aria-label', `https://docs.obsidian.md/Reference/${parent}/${category}`);
+		link.setAttribute('data-tooltip-position', 'top');
+		link.setAttribute('tabindex', '0');
+		helpFragment.appendChild(link);
 	}
 
 	return helpFragment;

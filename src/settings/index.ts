@@ -584,11 +584,8 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 	/** Reloads the plugin */
 	async reload() {
-		// @ts-ignore
 		await this.app.plugins.disablePlugin('custom-theme-studio');
-		// @ts-ignore
 		await this.app.plugins.enablePlugin('custom-theme-studio');
-		// @ts-ignore
 		this.app.setting.openTabById('custom-theme-studio').display();
 	}
 

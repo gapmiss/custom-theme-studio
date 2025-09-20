@@ -83,10 +83,6 @@ body {
     margin-left: .5em;
 }
 
-.cts-view label[for="theme-toggle-switch"] {
-    margin-left: .3em;
-}
-
 /* search section */
 .cts-view .search-container,
 .cts-view .search-rules-container {

@@ -2,18 +2,23 @@ import { Plugin, WorkspaceLeaf } from 'obsidian';
 import { CustomThemeStudioView, VIEW_TYPE_CTS } from './views/customThemeStudioView';
 import { ThemeManager } from './managers/themeManager';
 import { DEFAULT_SETTINGS, CustomThemeStudioSettings, CustomThemeStudioSettingTab } from './settings';
+import { SettingsManager } from './managers/SettingsManager';
 import { ICodeEditorConfig } from './interfaces/types';
 import { freezeTimer } from "./utils";
 import { CssSnippetFuzzySuggestModal } from "./modals/CssSnippetFuzzySuggestModal";
 
 export default class CustomThemeStudioPlugin extends Plugin {
 	settings: CustomThemeStudioSettings;
+	settingsManager: SettingsManager;
 	themeManager: ThemeManager;
 	config: ICodeEditorConfig;
 	freezeDelaySecs = 5;
 
 	async onload() {
 		await this.loadSettings();
+
+		// Initialize reactive settings manager
+		this.settingsManager = new SettingsManager(this);
 
 		// Initialize theme manager
 		this.themeManager = new ThemeManager(this);
@@ -114,6 +119,9 @@ export default class CustomThemeStudioPlugin extends Plugin {
 	}
 
 	onunload() {
+		// Clean up settings manager
+		this.settingsManager?.destroy();
+
 		// Remove any custom styles when plugin is disabled
 		this.themeManager.removeCustomTheme();
 	}

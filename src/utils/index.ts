@@ -1,4 +1,4 @@
-import { Notice, setIcon } from 'obsidian';
+import { Notice, setIcon, App } from 'obsidian';
 
 // https://github.com/chrisgrieser/obsidian-theme-design-utilities/blob/main/src/main.ts#L4
 // https://www.electronjs.org/docs/latest/api/web-contents#contentsopendevtoolsoptions
@@ -76,10 +76,8 @@ export function showNotice(message: string, duration: number = 4000, type: strin
 	new Notice(fragment, duration);
 }
 
-export function getCurrentTheme() {
-	// @ts-ignore
-	let currentTheme: string = this.app.getTheme() === 'obsidian' ? 'obsidian' : 'moonstone';
-	return currentTheme;
+export function getCurrentTheme(app: App): string {
+	return app.getTheme() === 'obsidian' ? 'obsidian' : 'moonstone';
 }
 
 // https://github.com/Yuichi-Aragi/Version-Control/blob/main/src/utils/id.ts
