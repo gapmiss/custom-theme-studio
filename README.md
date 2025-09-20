@@ -82,6 +82,63 @@ An Obsidian.md plugin to create and tweak custom themes with live CSS editing, e
 3. Enter this repository, gapmiss/custom-theme-studio
 4. Enable the "Custom Theme Studio" plugin in the community plugin list
 
+## Usage
+
+### Opening the Theme Studio
+
+After installation, you can access Custom Theme Studio in several ways:
+
+- **Ribbon Icon**: Click the paintbrush icon in the left ribbon
+- **Command Palette**: Use `Ctrl/Cmd + P` and search for "Custom Theme Studio: Open view"
+- **Hotkey**: Assign a custom hotkey in Settings > Hotkeys for "Custom Theme Studio: Open view"
+
+### Getting Started
+
+1. **Open the plugin view** using one of the methods above
+2. **Enable your custom theme** by toggling the switch at the top of the view
+3. **Start customizing** using the three main sections:
+
+### CSS Variables
+
+Edit Obsidian's built-in CSS variables to customize colors, fonts, and UI elements:
+
+- **Browse categories**: Variables are organized by components, editor, foundations, plugins, etc.
+- **Search variables**: Use the search box to quickly find specific variables
+- **Color picker**: Click the color square next to HEX values for visual color selection
+- **Real-time preview**: Changes apply immediately when "Auto-apply changes" is enabled
+
+### CSS Rules
+
+Create custom CSS rules to style specific elements:
+
+- **Element picker**: Use `Ctrl/Cmd + P` → "Custom Theme Studio: Select an element for new CSS rule" to visually pick elements
+- **CSS editor**: Write custom CSS with syntax highlighting and auto-completion
+- **Live preview**: See changes in real-time as you type
+- **Font import**: Import custom fonts and generate @font-face rules
+
+### Theme Export
+
+Export your customizations as a complete Obsidian theme:
+
+- **Theme metadata**: Set name, author, and URL information
+- **Export options**: Choose to include/exclude disabled rules and enable Prettier formatting
+- **Download files**: Get both CSS and manifest.json files for theme distribution
+
+### Keyboard Shortcuts & Commands
+
+- **Toggle custom theme**: Quickly enable/disable your theme
+- **Select element**: Pick UI elements for styling
+- **Freeze Obsidian**: Freeze the interface for 5 seconds to inspect hover states
+- **Import CSS snippet**: Import existing CSS snippets from your vault
+
+### Pro Tips
+
+- **Backup your work**: Use Settings > Export settings before major changes
+- **Element inspection**: Use the "Freeze Obsidian" command to inspect elements that disappear on hover
+- **Search efficiently**: Use the search boxes in CSS Variables and CSS Rules sections
+- **Test responsively**: Toggle your theme on/off to compare changes
+- **Share themes**: Export your theme and share the CSS/manifest files with others
+
 ## Credits
 
 Some code inspired by and derived from:
