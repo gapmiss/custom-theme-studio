@@ -178,6 +178,11 @@ body {
     color: unset;
 }
 
+/* chevron toggle animation */
+.chevron-animating {
+    transition: transform var(--chevron-transition-duration, 150ms) ease;
+}
+
 /* header */
 .cts-view .collapsible-header {
     display: flex;

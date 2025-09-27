@@ -94,8 +94,9 @@ class SettingsIO {
                 throw new Error('App reference not set');
             }
 
-            const electron = (window as any).require
-                ? (window as any).require('electron')
+            const windowWithRequire = window as typeof window & { require?: NodeRequire };
+            const electron = windowWithRequire.require
+                ? windowWithRequire.require('electron')
                 : null;
             const remote = electron ? electron.remote : null;
 

@@ -290,6 +290,7 @@ export class CSSVariablesSection extends UIComponent {
 			category,
 			settings: this.plugin.settings,
 			cssVariableManager: this.cssVariableManager,
+			app: this.app,
 			isCustom,
 			onUpdate: (updatedData) => {
 				this.eventManager.emit('variable:updated', {

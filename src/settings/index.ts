@@ -88,7 +88,7 @@ export const DEFAULT_SETTINGS: CustomThemeStudioSettings = {
 	viewScrollToTop: true
 };
 
-const THEME_COLOR: any = {
+const THEME_COLOR: Record<string, string> = {
 	Auto: 'Auto',
 	Light: 'Light',
 	Dark: 'Dark',

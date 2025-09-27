@@ -1,4 +1,4 @@
-import { setIcon } from 'obsidian';
+import { setIcon, App } from 'obsidian';
 import { SimpleDebouncer } from '../../../utils/Debouncer';
 import { ColorInput, ClearableInput, VariableColorInput, VariableClearableInput } from './FormInput';
 import { createIconButton } from '../../../utils/uiHelpers';
@@ -18,6 +18,7 @@ export interface VariableItemConfig {
 	category: string;
 	settings: CustomThemeStudioSettings;
 	cssVariableManager: CSSVariableManager;
+	app: App;
 	isCustom?: boolean;
 	onUpdate?: (data: VariableData) => void;
 	onDelete?: (uuid: string) => void;
@@ -27,7 +28,15 @@ export class VariableItem {
 	private container: HTMLElement;
 	private config: VariableItemConfig;
 	private element: HTMLElement;
-	private nameInput?: VariableClearableInput;
+	private nameInput?: VariableClearableInput | {
+		getValue(): string;
+		setValue(value: string): void;
+		focus(): void;
+		blur(): void;
+		getElement(): HTMLInputElement;
+		getContainer(): HTMLElement | undefined;
+		destroy(): void;
+	};
 	private valueInput?: VariableColorInput;
 	private debounceUpdate: SimpleDebouncer;
 
@@ -143,8 +152,11 @@ export class VariableItem {
 			getValue: () => nameInput.value,
 			setValue: (value: string) => { nameInput.value = value; },
 			focus: () => nameInput.focus(),
+			blur: () => nameInput.blur(),
+			getElement: () => nameInput,
+			getContainer: () => undefined,
 			destroy: () => nameInput.remove()
-		} as any;
+		};
 	}
 
 	private createCustomValueInput(container: HTMLElement): void {
@@ -302,7 +314,7 @@ export class VariableItem {
 		button.addClass('mod-loading');
 
 		try {
-			if (await confirm('Are you sure you want to delete this variable?', null as any)) {
+			if (await confirm('Are you sure you want to delete this variable?', this.config.app)) {
 				if (this.config.onDelete) {
 					this.config.onDelete(this.config.data.uuid);
 				}

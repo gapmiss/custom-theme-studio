@@ -46,20 +46,23 @@ export class ChevronToggle {
 		const iconName = this.isExpanded ? this.config.expandedIcon! : this.config.collapsedIcon!;
 
 		if (animate && this.config.animationDuration! > 0) {
-			this.element.style.transition = `transform ${this.config.animationDuration}ms ease`;
+			this.element.style.setProperty('--chevron-transition-duration', `${this.config.animationDuration}ms`);
+			this.element.addClass('chevron-animating');
 		}
 
 		setIcon(this.element, iconName);
 
 		if (animate && this.config.animationDuration! > 0) {
 			setTimeout(() => {
-				this.element.style.transition = '';
+				this.element.removeClass('chevron-animating');
+				this.element.style.removeProperty('--chevron-transition-duration');
 			}, this.config.animationDuration);
 		}
 	}
 
 	public destroy(): void {
-		this.element.style.transition = '';
+		this.element.removeClass('chevron-animating');
+		this.element.style.removeProperty('--chevron-transition-duration');
 	}
 }
 

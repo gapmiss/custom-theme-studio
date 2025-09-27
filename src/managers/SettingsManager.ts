@@ -138,7 +138,7 @@ export class SettingsManager {
 			for (const [key, value] of Object.entries(updates)) {
 				const settingKey = key as SettingKey;
 				oldValues.set(settingKey, this.plugin.settings[settingKey]);
-				(this.plugin.settings as any)[settingKey] = value;
+				(this.plugin.settings as Record<string, any>)[settingKey] = value;
 			}
 
 			// Persist if requested
@@ -160,7 +160,7 @@ export class SettingsManager {
 			console.error('Batch settings update failed:', error);
 			// Revert all changes
 			for (const [key, oldValue] of oldValues) {
-				(this.plugin.settings as any)[key] = oldValue;
+				(this.plugin.settings as Record<string, any>)[key] = oldValue;
 			}
 			return false;
 		} finally {
