@@ -147,6 +147,13 @@ export class CustomThemeStudioView extends ItemView {
 		}
 	}
 
+	refreshCustomVariables(): void {
+		const cssVariablesComponent = this.components.find(component => component instanceof CSSVariablesSection) as CSSVariablesSection;
+		if (cssVariablesComponent) {
+			cssVariablesComponent.refreshCustomVariables();
+		}
+	}
+
 	get variableSearch(): string {
 		const cssVariablesComponent = this.components.find(component => component instanceof CSSVariablesSection) as CSSVariablesSection;
 		return cssVariablesComponent?.variableSearch || '';

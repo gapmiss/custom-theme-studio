@@ -68,7 +68,7 @@ export class VariableItem {
 				}
 				showNotice('Variable updated successfully', 1500, 'success');
 			},
-			500,
+			1000,
 			true
 		);
 	}
@@ -151,6 +151,7 @@ export class VariableItem {
 			placeholder: 'Variable value',
 			value: this.config.data.value,
 			colorPicker: this.config.settings.enableColorPicker,
+			defaultColor: this.config.data.value && this.config.data.value.startsWith('#') ? this.config.data.value : '#000000',
 			onInput: (value) => this.handleValueChange(value)
 		});
 

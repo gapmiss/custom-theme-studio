@@ -432,56 +432,131 @@ export class VariableClearableInput {
  */
 export class VariableColorInput extends VariableClearableInput {
 	private colorPickerComponent?: ColorComponent;
+	private colorPickerContainer?: HTMLElement;
+	private config: ColorInputConfig;
+	private isUpdatingFromPicker: boolean = false;
 
 	constructor(container: HTMLElement, config: ColorInputConfig) {
 		super(container, config);
+		this.config = config;
 
-		if (config.colorPicker && this.isColorValue(config.value || config.defaultColor)) {
-			this.createVariableColorPicker(config);
+		if (config.colorPicker) {
+			const initialValue = config.value || config.defaultColor;
+			if (this.isColorValue(initialValue)) {
+				this.createVariableColorPicker();
+			}
+
+			// Watch for input changes to dynamically create/destroy picker
+			this.getElement().addEventListener('input', () => {
+				// Don't update picker if we're in the middle of updating from picker
+				if (!this.isUpdatingFromPicker) {
+					this.updateColorPicker();
+				}
+			});
 		}
 	}
 
 	private isColorValue(value?: string): boolean {
-		return value?.startsWith('#') || false;
+		// Check if value is a valid hex color: # followed by exactly 3 or 6 hex digits
+		return /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/.test(value || '');
 	}
 
-	private createVariableColorPicker(config: ColorInputConfig): void {
+	private expandShortHex(color: string): string {
+		// Expand 3-digit hex to 6-digit hex (#f00 -> #ff0000)
+		if (/^#[0-9A-Fa-f]{3}$/.test(color)) {
+			return '#' + color[1] + color[1] + color[2] + color[2] + color[3] + color[3];
+		}
+		return color;
+	}
+
+	private updateColorPicker(): void {
+		const value = this.getValue();
+		const isColor = this.isColorValue(value);
+
+		if (isColor && !this.colorPickerComponent) {
+			// Value became a color, create picker
+			this.createVariableColorPicker();
+			if (this.colorPickerComponent) {
+				const expandedColor = this.expandShortHex(value);
+				this.colorPickerComponent.setValue(expandedColor);
+			}
+		} else if (!isColor && this.colorPickerComponent) {
+			// Value is no longer a color, destroy picker
+			this.destroyColorPicker();
+		} else if (isColor && this.colorPickerComponent) {
+			// Value is still a color, sync it
+			const expandedColor = this.expandShortHex(value);
+			this.colorPickerComponent.setValue(expandedColor);
+		}
+	}
+
+	private createVariableColorPicker(): void {
 		// Find the variable input wrapper (parent of clear-variable-input)
 		const variableInputWrapper = this.getContainer()?.parentElement;
 		if (!variableInputWrapper) return;
 
-		const colorPickerContainer = variableInputWrapper.createDiv('variable-color-picker');
+		this.colorPickerContainer = variableInputWrapper.createDiv('variable-color-picker');
 
-		this.colorPickerComponent = new ColorComponent(colorPickerContainer)
-			.setValue(config.defaultColor || '#000000')
+		const currentValue = this.getValue();
+		const defaultValue = currentValue || this.config.defaultColor || '#000000';
+
+		// Track if this is the initial setup to avoid triggering onChange during initialization
+		let isInitializing = true;
+
+		this.colorPickerComponent = new ColorComponent(this.colorPickerContainer)
+			.setValue(defaultValue)
 			.onChange((color) => {
-				this.setValue(color);
-				if (config.onColorChange) {
-					config.onColorChange(color);
+				// Don't trigger onChange during initial setup
+				if (isInitializing) {
+					return;
 				}
+
+				// Set flag to prevent input event from triggering updateColorPicker
+				this.isUpdatingFromPicker = true;
+
+				// Update the input value directly without triggering events
+				const input = this.getElement();
+				input.value = color;
+				this.updateTouchedState();
+
+				// Call the onInput callback to notify VariableItem
+				if (this.config.onInput) {
+					this.config.onInput(color);
+				}
+
+				// Reset flag after a tick
+				setTimeout(() => {
+					this.isUpdatingFromPicker = false;
+				}, 0);
 			});
 
-		// Sync input changes to color picker
-		this.getElement().addEventListener('input', () => {
-			const value = this.getValue();
-			if (this.isColorValue(value)) {
-				this.colorPickerComponent?.setValue(value);
-			}
-		});
+		// Mark initialization as complete after a tick
+		setTimeout(() => {
+			isInitializing = false;
+		}, 0);
 
-		colorPickerContainer.setAttr('aria-label', 'Color picker');
-		colorPickerContainer.setAttr('data-tooltip-position', 'top');
+		this.colorPickerContainer.setAttr('aria-label', 'Color picker');
+		this.colorPickerContainer.setAttr('data-tooltip-position', 'top');
+	}
+
+	private destroyColorPicker(): void {
+		if (this.colorPickerContainer) {
+			this.colorPickerContainer.remove();
+			this.colorPickerContainer = undefined;
+		}
+		this.colorPickerComponent = undefined;
 	}
 
 	setValue(value: string): void {
 		super.setValue(value);
-		if (this.colorPickerComponent && this.isColorValue(value)) {
-			this.colorPickerComponent.setValue(value);
+		// Update picker state when value is set programmatically
+		if (this.config.colorPicker && !this.isUpdatingFromPicker) {
+			this.updateColorPicker();
 		}
 	}
 
 	destroy(): void {
+		this.destroyColorPicker();
 		super.destroy();
-		// ColorComponent cleanup is handled automatically by Obsidian
 	}
 }

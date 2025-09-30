@@ -517,106 +517,71 @@ export class CSSVariablesSection extends UIComponent {
 	}
 
 	public createCustomVariableItemInput(container: HTMLElement, variable: { uuid: string; name: string; value: string }, category: string): void {
-		this.createCustomVariableInput(container, variable, category);
+		// Use the new VariableItem component system for consistency and searchability
+		this.createVariableItemComponent(container, {
+			uuid: variable.uuid,
+			name: variable.name,
+			value: variable.value
+		}, category, true);
 	}
 
-	private createCustomVariableInput(container: HTMLElement, variable: { uuid: string; name: string; value: string }, category: string): void {
-		const item = container.createDiv({
-			cls: 'custom-variable-item',
-			attr: {
-				'data-var-name': variable.name,
-				'data-var-value': variable.value
-			}
-		});
-
-		const inputWrapper = item.createDiv('custom-variable-input-wrapper');
-
-		const nameInput = inputWrapper.createEl('input', {
-			cls: 'variable-name-input',
-			attr: {
-				type: 'text',
-				placeholder: 'Variable name',
-				value: variable.name
-			}
-		});
-
-		const buttonWrapper = inputWrapper.createDiv('custom-variable-input-button-wrapper');
-
-		const valueInput = buttonWrapper.createEl('input', {
-			cls: 'variable-value-input',
-			attr: {
-				type: 'text',
-				placeholder: 'Variable value',
-				value: variable.value
-			}
-		});
-
-		this.addCustomVariableListeners(nameInput, valueInput, variable, category);
-		this.addDeleteButton(buttonWrapper, variable, item);
-	}
-
-	private addCustomVariableListeners(nameInput: HTMLInputElement, valueInput: HTMLInputElement, variable: { uuid: string; name: string; value: string }, category: string): void {
-		const updateVariable = () => {
-			if (!nameInput.value || !valueInput.value) {
-				showNotice('Both fields are required', 5000, 'error');
-				return;
-			}
-
-			if (!nameInput.value.match(/^--[a-zA-Z0-9-_\p{Emoji}]+/gui)) {
-				showNotice('Please enter a valid variable name', 5000, 'error');
-				nameInput.focus();
-				return;
-			}
-
-			this.cssVariableManager.updateVariable(variable.uuid, nameInput.value, valueInput.value, category);
-			this.debounceUpdate.execute();
-		};
-
-		nameInput.addEventListener(this.plugin.settings.variableInputListener, updateVariable);
-		valueInput.addEventListener(this.plugin.settings.variableInputListener, updateVariable);
-	}
-
-	private addDeleteButton(container: HTMLElement, variable: { uuid: string; name: string; value: string }, item: HTMLElement): void {
-		const deleteButton = createIconButton(container, {
-			icon: 'trash',
-			label: 'Delete this variable',
-			classes: ['delete-variable-button', 'mod-destructive'],
-			onClick: async () => {
-				await this.handleDeleteVariable(variable, item, deleteButton);
-			}
-		});
-	}
-
-	private async handleDeleteVariable(variable: { uuid: string }, item: HTMLElement, button: HTMLElement): Promise<void> {
-		const { confirm } = await import('../../modals/confirmModal');
-
-		button.addClass('mod-loading');
-
-		if (await confirm('Are you sure you want to delete this variable?', this.plugin.app)) {
-			this.plugin.settings.cssVariables = this.plugin.settings.cssVariables.filter(
-				el => el.uuid !== variable.uuid
-			);
-
-			let fullCSS = '';
-			this.plugin.settings.cssRules.forEach(rule => {
-				if (rule.enabled) {
-					fullCSS += `/* ${rule.rule} */\n${rule.css}\n\n`;
-				}
-			});
-
-			this.plugin.settings.customCSS = fullCSS;
-			await this.saveSettings();
-
-			if (this.plugin.settings.themeEnabled) {
-				this.plugin.themeManager.applyCustomTheme();
-			}
-
-			item.remove();
-			showNotice('Variable deleted', 5000, 'success');
+	/**
+	 * Refresh the custom variables category by clearing and re-rendering all custom variables.
+	 * This ensures all custom variables are properly tracked in this.variableItems.
+	 */
+	public refreshCustomVariables(): void {
+		// Find the custom variables container
+		const customVarList = this.container.querySelector('[data-var-category="custom"]') as HTMLElement;
+		if (!customVarList) {
+			console.warn('Custom variables container not found');
+			return;
 		}
 
-		button.removeClass('mod-loading');
+		// Remove existing custom variable items from tracking
+		const customKeys = Array.from(this.variableItems.keys()).filter(key =>
+			this.variableItems.get(key)?.getData().uuid !== undefined
+		);
+		customKeys.forEach(key => {
+			const item = this.variableItems.get(key);
+			item?.destroy();
+			this.variableItems.delete(key);
+		});
+
+		// Clear the container
+		customVarList.empty();
+
+		// Re-render all custom variables using the proper component system
+		this.renderCustomVariables(customVarList, 'custom');
+
+		// Ensure the custom category is expanded
+		const customVarCategory = this.container.querySelector('#variable-category-custom') as HTMLElement;
+		if (customVarCategory) {
+			const variableList = customVarCategory.querySelector('[data-var-category="custom"]') as HTMLElement;
+			const icon = customVarCategory.querySelector('.collapse-icon.clickable-icon') as HTMLElement;
+
+			if (variableList) {
+				variableList.removeClass('hide');
+				variableList.addClass('show');
+			}
+
+			if (icon) {
+				setIcon(icon, 'chevron-down');
+				icon.setAttr('aria-label', 'Collapse category');
+			}
+
+			// Scroll to category if setting is enabled
+			if (this.plugin.settings.viewScrollToTop) {
+				setTimeout(() => {
+					const top = customVarCategory.offsetTop - 10;
+					this.container.scrollTo({
+						top: top,
+						behavior: 'smooth'
+					});
+				}, 100);
+			}
+		}
 	}
+
 
 	private getCurrentVariableValue(variableName: string, category: string): string {
 		const customVars = this.plugin.settings.cssVariables;

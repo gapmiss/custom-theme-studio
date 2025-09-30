@@ -1,4 +1,4 @@
-import { type App, Setting, setIcon, Modal } from "obsidian";
+import { type App, Setting, Modal } from "obsidian";
 import type CustomThemeStudioPlugin from "../main";
 import { CustomThemeStudioView, VIEW_TYPE_CTS } from "../views/customThemeStudioView";
 import { generateUniqueId, showNotice } from "../utils";
@@ -95,43 +95,10 @@ export class AddVariableModal extends Modal {
                     this.close();
 
                     let leaf = this.app.workspace.getLeavesOfType(VIEW_TYPE_CTS).first();
-                    if (leaf) {
-                        if (leaf.view instanceof CustomThemeStudioView) {
-                            showNotice('The variable has been added', 5000, 'success');
-                            let view = leaf.view;
-                            const customVarList: HTMLElement | null = view.containerEl.querySelector('[data-var-category="custom"]');
-                            if (customVarList) {
-                                customVarList.empty();
-                                const items = this.plugin.settings.cssVariables
-                                    .filter(v => v.parent === 'custom')
-                                    .sort((a, b) => a.variable!.localeCompare(b.variable!)); // Sort by "variable" ASC
-                                if (items.length) {
-                                    items.forEach((item) => {
-                                        view.createCustomVariableItemInput(customVarList, { uuid: item.uuid!, name: item.variable, value: item.value }, 'custom');
-                                    });
-                                }
-                            }
-
-                            const customVarListWrapper: HTMLElement | null = view.containerEl.querySelector('#variable-category-custom');
-                            if (!customVarListWrapper) return;
-
-                            // Toggle icon
-                            const icon = customVarListWrapper.querySelector<HTMLElement>('.collapse-icon.clickable-icon');
-                            if (icon) {
-                                setIcon(icon, 'chevron-down');
-                                icon.setAttr('aria-label', 'Collapse category');
-                                icon.setAttr('data-tooltip-position', 'top');
-                            }
-
-                            // Variable list
-                            const variableList = customVarListWrapper.querySelector<HTMLElement>('[data-var-category="custom"]');
-                            variableList?.classList.replace('hide', 'show');
-
-                            // Scroll to top if setting is enabled
-                            if (this.plugin.settings.viewScrollToTop) {
-                                setTimeout(() => view.scrollToDiv(customVarListWrapper), 100);
-                            }
-                        }
+                    if (leaf && leaf.view instanceof CustomThemeStudioView) {
+                        showNotice('The variable has been added', 5000, 'success');
+                        // Use the clean refresh method to re-render custom variables
+                        leaf.view.refreshCustomVariables();
                     }
                 });
             });
