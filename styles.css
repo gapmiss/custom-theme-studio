@@ -229,7 +229,6 @@ body {
 
 .cts-view .collapsible-header:hover {
     color: var(--interactive-accent) !important;
-    background-color: var(--background-modifier-hover);
 
     &>button>svg {
         stroke: var(--interactive-accent) !important;
@@ -487,7 +486,7 @@ body {
         padding: .5em;
         margin-bottom: .5em;
 
-        & > .variable-input-wrapper:first-child {
+        &>.variable-input-wrapper:first-child {
             width: 100%;
 
             & input.variable-value-input,
@@ -542,7 +541,7 @@ body {
         grid-template: "name value delete" auto / 1fr 2fr auto;
         align-items: center;
 
-        & > .variable-input-wrapper:first-child {
+        &>.variable-input-wrapper:first-child {
             grid-area: name;
             margin-right: .5em;
 
@@ -1069,7 +1068,7 @@ body {
 }
 
 /* Style the section labels */
-.cts-view .export-section .button-container div > span {
+.cts-view .export-section .button-container div>span {
     font-weight: 600 !important;
     min-width: 80px;
 }
