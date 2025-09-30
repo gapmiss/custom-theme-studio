@@ -1,7 +1,6 @@
 import type { CustomThemeStudioSettings } from '.';
 import { Notice, TFile } from 'obsidian';
 import type { App } from 'obsidian';
-import fs from 'fs';
 import { Logger } from '../utils';
 
 // source: https://github.com/al0cam/AutoMover/blob/master/IO/SettingsIO.ts
@@ -23,7 +22,8 @@ class SettingsIO {
     }
 
     /**
-     * Exports the plugin settings to a JSON file.
+     * Exports the plugin settings to a JSON file in the vault.
+     * The file will be created as CTS_settings.json in the vault root.
      *
      * @param settings - The settings object to export.
      * @returns A promise that resolves to true if the export was successful, false otherwise.
@@ -35,28 +35,7 @@ class SettingsIO {
             }
 
             const settingsData = JSON.stringify(settings, null, 2);
-            const remote = window.require('electron').remote || null;
-
-            if (!remote || !remote.dialog) {
-                // Fall back to saving in vault if Electron APIs are not available
-                return this.exportToVault(settingsData, app);
-            }
-
-            const { canceled, filePath } = await remote.dialog.showSaveDialog({
-                title: 'Export CTS Settings',
-                defaultPath: 'CTS_settings.json',
-                filters: [{ name: 'JSON Files', extensions: ['json'] }],
-                properties: ['createDirectory'],
-            });
-
-            if (canceled || !filePath) {
-                return false;
-            }
-
-            fs.writeFileSync(filePath, settingsData);
-
-            new Notice('Settings exported successfully');
-            return true;
+            return this.exportToVault(settingsData, app);
         } catch (error) {
             Logger.error('Failed to export settings:', error);
             new Notice('Failed to export settings');
@@ -85,7 +64,8 @@ class SettingsIO {
     }
 
     /**
-     * Imports settings from a JSON file.
+     * Imports settings from a JSON file in the vault.
+     * Looks for CTS_settings.json in the vault root.
      *
      * @returns The imported settings or null if the import failed.
      */
@@ -95,36 +75,7 @@ class SettingsIO {
                 throw new Error('App reference not set');
             }
 
-            const windowWithRequire = window as typeof window & { require?: NodeRequire };
-            const electron = windowWithRequire.require
-                ? windowWithRequire.require('electron')
-                : null;
-            const remote = electron ? electron.remote : null;
-
-            if (!remote || !remote.dialog) {
-                // Fall back to importing from vault if Electron APIs are not available
-                return this.importFromVault(app);
-            }
-
-            const { canceled, filePaths } = await remote.dialog.showOpenDialog({
-                title: 'Import CFG Settings',
-                filters: [{ name: 'JSON Files', extensions: ['json'] }],
-                properties: ['openFile'],
-            });
-
-            if (canceled || !filePaths || filePaths.length === 0) {
-                return null;
-            }
-
-            const fileContent = fs.readFileSync(filePaths[0], 'utf8');
-            const importedSettings = JSON.parse(fileContent);
-
-            if (!this.validateSettings(importedSettings)) {
-                new Notice('Invalid settings file format');
-                return null;
-            }
-
-            return importedSettings;
+            return this.importFromVault(app);
         } catch (error) {
             Logger.error('Failed to import settings:', error);
             new Notice('Failed to import settings');

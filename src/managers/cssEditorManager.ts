@@ -278,9 +278,11 @@ export class CSSEditorManager {
 			this.clearAppliedChanges();
 		});
 
-		this.workspace.on('css-change', async () => {
-			this.aceService.updateTheme();
-		});
+		this.plugin.registerEvent(
+			this.workspace.on('css-change', async () => {
+				this.aceService.updateTheme();
+			})
+		);
 	}
 
 	// Auto-apply changes when typing (with debounce)
