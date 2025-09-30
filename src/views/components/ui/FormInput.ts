@@ -432,8 +432,8 @@ export class VariableClearableInput {
  * Color input for variables that uses original CSS structure
  */
 export class VariableColorInput extends VariableClearableInput {
-	private colorPickerComponent?: ColorComponent;
-	private colorPickerContainer?: HTMLElement;
+	private dynamicColorPicker?: ColorComponent;
+	private dynamicColorPickerContainer?: HTMLElement;
 	private colorConfig: ColorInputConfig;
 	private isUpdatingFromPicker: boolean = false;
 
@@ -474,21 +474,21 @@ export class VariableColorInput extends VariableClearableInput {
 		const value = this.getValue();
 		const isColor = this.isColorValue(value);
 
-		if (isColor && !this.colorPickerComponent) {
+		if (isColor && !this.dynamicColorPicker) {
 			// Value became a color, create picker
 			this.createVariableColorPicker();
 			// After creation, sync the value if picker was created successfully
-			if (this.colorPickerComponent) {
+			if (this.dynamicColorPicker) {
 				const expandedColor = this.expandShortHex(value);
-				this.colorPickerComponent.setValue(expandedColor);
+				this.dynamicColorPicker.setValue(expandedColor);
 			}
-		} else if (!isColor && this.colorPickerComponent) {
+		} else if (!isColor && this.dynamicColorPicker) {
 			// Value is no longer a color, destroy picker
 			this.destroyColorPicker();
-		} else if (isColor && this.colorPickerComponent) {
+		} else if (isColor && this.dynamicColorPicker) {
 			// Value is still a color, sync it
 			const expandedColor = this.expandShortHex(value);
-			this.colorPickerComponent.setValue(expandedColor);
+			this.dynamicColorPicker.setValue(expandedColor);
 		}
 	}
 
@@ -497,7 +497,7 @@ export class VariableColorInput extends VariableClearableInput {
 		const variableInputWrapper = this.getContainer()?.parentElement;
 		if (!variableInputWrapper) return;
 
-		this.colorPickerContainer = variableInputWrapper.createDiv('variable-color-picker');
+		this.dynamicColorPickerContainer = variableInputWrapper.createDiv('variable-color-picker');
 
 		const currentValue = this.getValue();
 		const defaultValue = currentValue || this.colorConfig.defaultColor || '#000000';
@@ -505,7 +505,7 @@ export class VariableColorInput extends VariableClearableInput {
 		// Track if this is the initial setup to avoid triggering onChange during initialization
 		let isInitializing = true;
 
-		this.colorPickerComponent = new ColorComponent(this.colorPickerContainer)
+		this.dynamicColorPicker = new ColorComponent(this.dynamicColorPickerContainer)
 			.setValue(defaultValue)
 			.onChange((color) => {
 				// Don't trigger onChange during initial setup
@@ -536,16 +536,16 @@ export class VariableColorInput extends VariableClearableInput {
 			isInitializing = false;
 		}, 0);
 
-		this.colorPickerContainer.setAttr('aria-label', 'Color picker');
-		this.colorPickerContainer.setAttr('data-tooltip-position', 'top');
+		this.dynamicColorPickerContainer.setAttr('aria-label', 'Color picker');
+		this.dynamicColorPickerContainer.setAttr('data-tooltip-position', 'top');
 	}
 
 	private destroyColorPicker(): void {
-		if (this.colorPickerContainer) {
-			this.colorPickerContainer.remove();
-			this.colorPickerContainer = undefined;
+		if (this.dynamicColorPickerContainer) {
+			this.dynamicColorPickerContainer.remove();
+			this.dynamicColorPickerContainer = undefined;
 		}
-		this.colorPickerComponent = undefined;
+		this.dynamicColorPicker = undefined;
 	}
 
 	setValue(value: string): void {
