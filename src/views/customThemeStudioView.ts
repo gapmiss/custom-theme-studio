@@ -1,7 +1,7 @@
 import { ItemView, WorkspaceLeaf, Workspace, Scope } from 'obsidian';
 import CustomThemeStudioPlugin from '../main';
-import { ElementSelectorManager } from '../managers/elementSelectorManager';
-import { CSSEditorManager } from '../managers/cssEditorManager';
+import { ElementSelectorManager } from '../managers/element/ElementSelectorManager';
+import { CSSEditorManager } from '../managers/css/CSSEditorManager';
 import { CSSVariableManager } from '../managers/cssVariabManager';
 import { ICodeEditorConfig } from '../interfaces/types';
 import { CustomThemeStudioSettings } from '../settings';

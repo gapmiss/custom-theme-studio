@@ -2,8 +2,8 @@ import { App } from 'obsidian';
 import CustomThemeStudioPlugin from '../../main';
 import { CustomThemeStudioSettings } from '../../settings';
 import { SettingsManager } from '../../managers/SettingsManager';
-import { CSSEditorManager } from '../../managers/cssEditorManager';
-import { ElementSelectorManager } from '../../managers/elementSelectorManager';
+import { CSSEditorManager } from '../../managers/css/CSSEditorManager';
+import { ElementSelectorManager } from '../../managers/element/ElementSelectorManager';
 import { CSSVariableManager } from '../../managers/cssVariabManager';
 import { DOMReferences } from '../../utils/DOMReferences';
 
