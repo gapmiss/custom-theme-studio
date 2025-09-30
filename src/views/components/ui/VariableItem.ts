@@ -96,8 +96,8 @@ export class VariableItem {
 	private renderCustomVariable(): void {
 		const inputWrapper = this.element.createDiv('custom-variable-input-wrapper');
 		this.createCustomNameInput(inputWrapper);
-		this.createCustomValueInput(inputWrapper);
-		this.createDeleteButton(inputWrapper);
+		const buttonWrapper = this.createCustomValueInput(inputWrapper);
+		this.createDeleteButton(buttonWrapper);
 	}
 
 	private createVariableName(): void {
@@ -132,34 +132,18 @@ export class VariableItem {
 	}
 
 	private createCustomNameInput(container: HTMLElement): void {
-		// For custom variables, we need a simple input without the clear container structure
-		const nameInput = container.createEl('input', {
-			cls: 'variable-name-input',
-			attr: {
-				type: 'text',
-				placeholder: 'Variable name',
-				value: this.config.data.name
-			}
+		// Use VariableClearableInput for consistency with value input
+		this.nameInput = new VariableClearableInput(container, {
+			type: 'text',
+			placeholder: 'Variable name',
+			value: this.config.data.name,
+			classes: ['variable-name-input'],
+			onInput: (value) => this.handleNameChange(value),
+			onClear: () => this.handleNameChange('')
 		});
-
-		nameInput.addEventListener('input', (e) => {
-			const value = (e.target as HTMLInputElement).value;
-			this.handleNameChange(value);
-		});
-
-		// Store a reference that matches the expected interface
-		this.nameInput = {
-			getValue: () => nameInput.value,
-			setValue: (value: string) => { nameInput.value = value; },
-			focus: () => nameInput.focus(),
-			blur: () => nameInput.blur(),
-			getElement: () => nameInput,
-			getContainer: () => undefined,
-			destroy: () => nameInput.remove()
-		};
 	}
 
-	private createCustomValueInput(container: HTMLElement): void {
+	private createCustomValueInput(container: HTMLElement): HTMLElement {
 		const buttonWrapper = container.createDiv('custom-variable-input-button-wrapper');
 
 		this.valueInput = new VariableColorInput(buttonWrapper, {
@@ -169,6 +153,8 @@ export class VariableItem {
 			colorPicker: this.config.settings.enableColorPicker,
 			onInput: (value) => this.handleValueChange(value)
 		});
+
+		return buttonWrapper;
 	}
 
 	private createCopyDefaultButton(): void {

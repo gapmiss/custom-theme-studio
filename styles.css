@@ -346,10 +346,16 @@ body {
         &>div.variable-input-wrapper {
             flex-grow: 2;
             display: flex;
+            align-items: center;
+            gap: .25em;
+
+            &>div.clear-variable-input {
+                flex: 1;
+                min-width: 0;
+            }
 
             &>div.variable-color-picker {
-                margin-left: .25em;
-                padding-top: .1em;
+                flex-shrink: 0;
                 border-radius: var(--input-radius);
             }
 
@@ -358,7 +364,7 @@ body {
             }
 
             &>button.copy-default-value {
-                margin-left: .4em;
+                flex-shrink: 0;
             }
         }
     }
@@ -396,14 +402,19 @@ body {
         }
 
         &>div.variable-input-wrapper {
-
             grid-area: input;
             min-width: 200px;
             display: flex;
+            align-items: center;
+            gap: .25em;
+
+            &>div.clear-variable-input {
+                flex: 1;
+                min-width: 0;
+            }
 
             &>div.variable-color-picker {
-                margin-left: .25em;
-                padding-top: .1em;
+                flex-shrink: 0;
                 border-radius: var(--input-radius);
             }
 
@@ -412,7 +423,7 @@ body {
             }
 
             &>button.copy-default-value {
-                margin-left: .4em;
+                flex-shrink: 0;
             }
         }
     }
@@ -435,12 +446,43 @@ body {
         padding: .5em;
         margin-bottom: .5em;
 
+        & > .variable-input-wrapper:first-child {
+            width: 100%;
+
+            & input.variable-value-input,
+            & input.variable-name-input {
+                width: 100%;
+            }
+        }
+
         & .custom-variable-input-button-wrapper {
             display: flex;
-            gap: .5em;
+            flex-direction: row;
+            gap: .25em;
+            align-items: center;
 
-            & input.variable-value-input {
-                flex-grow: 2;
+            & .variable-input-wrapper {
+                display: flex;
+                align-items: center;
+                gap: .25em;
+                flex: 1;
+
+                & .clear-variable-input {
+                    flex: 1;
+                    min-width: 0;
+                }
+
+                & .variable-color-picker {
+                    flex-shrink: 0;
+                }
+
+                & input.variable-value-input {
+                    width: 100%;
+                }
+            }
+
+            & button.delete-variable-button {
+                flex-shrink: 0;
             }
 
             & button.delete-variable-button:hover {
@@ -459,19 +501,45 @@ body {
         grid-template: "name value delete" auto / 1.25fr 1.25fr auto;
         align-items: center;
 
-        & input.variable-name-input {
+        & > .variable-input-wrapper:first-child {
             grid-area: name;
             margin-right: .5em;
+
+            & input.variable-value-input,
+            & input.variable-name-input {
+                width: 100%;
+            }
         }
 
         & .custom-variable-input-button-wrapper {
             grid-area: value;
             display: flex;
             flex-direction: row;
-            gap: .5em;
+            gap: .25em;
+            align-items: center;
 
-            & input.variable-value-input {
-                flex-grow: 2;
+            & .variable-input-wrapper {
+                display: flex;
+                align-items: center;
+                gap: .25em;
+                flex: 1;
+
+                & .clear-variable-input {
+                    flex: 1;
+                    min-width: 0;
+                }
+
+                & .variable-color-picker {
+                    flex-shrink: 0;
+                }
+
+                & input.variable-value-input {
+                    width: 100%;
+                }
+            }
+
+            & button.delete-variable-button {
+                flex-shrink: 0;
             }
 
             & button.delete-variable-button:hover {
@@ -569,8 +637,23 @@ body {
 /* color picker */
 .cts-view {
     --swatch-radius: 4px !important;
-    --swatch-width: 16px !important;
-    --swatch-height: 16px !important;
+    --swatch-width: 20px !important;
+    --swatch-height: 20px !important;
+}
+
+/* Ensure custom variables have same size color picker */
+.cts-view .custom-variable-item .variable-color-picker,
+.cts-view .custom-variable-item .variable-input-wrapper .variable-color-picker {
+    --swatch-radius: 4px !important;
+    --swatch-width: 20px !important;
+    --swatch-height: 20px !important;
+}
+
+/* Add visible border to color swatches for better visibility with dark colors */
+.cts-view .clickable-icon.color-picker-setting-icon,
+.cts-view .variable-color-picker .clickable-icon {
+    border: 1px solid var(--background-modifier-border) !important;
+    box-sizing: border-box !important;
 }
 
 /* element picker */
