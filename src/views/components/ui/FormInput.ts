@@ -477,8 +477,11 @@ export class VariableColorInput extends VariableClearableInput {
 		if (isColor && !this.colorPickerComponent) {
 			// Value became a color, create picker
 			this.createVariableColorPicker();
-			const expandedColor = this.expandShortHex(value);
-			this.colorPickerComponent?.setValue(expandedColor);
+			// After creation, sync the value if picker was created successfully
+			if (this.colorPickerComponent) {
+				const expandedColor = this.expandShortHex(value);
+				this.colorPickerComponent.setValue(expandedColor);
+			}
 		} else if (!isColor && this.colorPickerComponent) {
 			// Value is no longer a color, destroy picker
 			this.destroyColorPicker();
