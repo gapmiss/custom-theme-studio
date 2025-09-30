@@ -434,15 +434,15 @@ export class VariableClearableInput {
 export class VariableColorInput extends VariableClearableInput {
 	private colorPickerComponent?: ColorComponent;
 	private colorPickerContainer?: HTMLElement;
-	private config: ColorInputConfig;
+	private colorConfig: ColorInputConfig;
 	private isUpdatingFromPicker: boolean = false;
 
 	constructor(container: HTMLElement, config: ColorInputConfig) {
 		super(container, config);
-		this.config = config;
+		this.colorConfig = config;
 
-		if (config.colorPicker) {
-			const initialValue = config.value || config.defaultColor;
+		if (this.colorConfig.colorPicker) {
+			const initialValue = this.colorConfig.value || this.colorConfig.defaultColor;
 			if (this.isColorValue(initialValue)) {
 				this.createVariableColorPicker();
 			}
@@ -477,10 +477,8 @@ export class VariableColorInput extends VariableClearableInput {
 		if (isColor && !this.colorPickerComponent) {
 			// Value became a color, create picker
 			this.createVariableColorPicker();
-			if (this.colorPickerComponent) {
-				const expandedColor = this.expandShortHex(value);
-				this.colorPickerComponent.setValue(expandedColor);
-			}
+			const expandedColor = this.expandShortHex(value);
+			this.colorPickerComponent?.setValue(expandedColor);
 		} else if (!isColor && this.colorPickerComponent) {
 			// Value is no longer a color, destroy picker
 			this.destroyColorPicker();
@@ -499,7 +497,7 @@ export class VariableColorInput extends VariableClearableInput {
 		this.colorPickerContainer = variableInputWrapper.createDiv('variable-color-picker');
 
 		const currentValue = this.getValue();
-		const defaultValue = currentValue || this.config.defaultColor || '#000000';
+		const defaultValue = currentValue || this.colorConfig.defaultColor || '#000000';
 
 		// Track if this is the initial setup to avoid triggering onChange during initialization
 		let isInitializing = true;
@@ -518,11 +516,10 @@ export class VariableColorInput extends VariableClearableInput {
 				// Update the input value directly without triggering events
 				const input = this.getElement();
 				input.value = color;
-				this.updateTouchedState();
 
 				// Call the onInput callback to notify VariableItem
-				if (this.config.onInput) {
-					this.config.onInput(color);
+				if (this.colorConfig.onInput) {
+					this.colorConfig.onInput(color);
 				}
 
 				// Reset flag after a tick
@@ -551,7 +548,7 @@ export class VariableColorInput extends VariableClearableInput {
 	setValue(value: string): void {
 		super.setValue(value);
 		// Update picker state when value is set programmatically
-		if (this.config.colorPicker && !this.isUpdatingFromPicker) {
+		if (this.colorConfig.colorPicker && !this.isUpdatingFromPicker) {
 			this.updateColorPicker();
 		}
 	}

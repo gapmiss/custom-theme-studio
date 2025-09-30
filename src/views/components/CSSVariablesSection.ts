@@ -4,7 +4,7 @@ import { UIComponent, ComponentContext } from './UIComponent';
 import { createCollapsibleSection, createIconButton, createSearchInput } from '../../utils/uiHelpers';
 import { type cssVariable, allCategories, cssCategory, cssVariableDefaults } from '../../managers/cssVariabManager';
 import { CSSVariable } from '../../settings';
-import { copyStringToClipboard, showNotice } from '../../utils';
+import { copyStringToClipboard, showNotice, Logger } from '../../utils';
 import { AddVariableModal } from '../../modals/addVariableModal';
 import { VariableItem, VariableData } from './ui/VariableItem';
 import { EventManager, DOMEventManager } from '../../utils/EventManager';

@@ -1,6 +1,7 @@
 import { Notice, setIcon, App } from 'obsidian';
 
 export { Logger } from './Logger';
+import { Logger } from './Logger';
 
 // https://github.com/chrisgrieser/obsidian-theme-design-utilities/blob/main/src/main.ts#L4
 // https://www.electronjs.org/docs/latest/api/web-contents#contentsopendevtoolsoptions
