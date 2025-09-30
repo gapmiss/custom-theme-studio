@@ -6,6 +6,8 @@ import { saveAs } from 'file-saver';
 import * as prettier from 'prettier';
 import * as css from 'prettier/plugins/postcss';
 import { showNotice, Logger } from "../utils";
+import type { ThemeManifest } from '../interfaces/theme';
+import { TIMEOUT_DELAYS } from '../constants';
 
 export class ThemeManager {
 	plugin: CustomThemeStudioPlugin;
@@ -147,7 +149,7 @@ export class ThemeManager {
 							}
 						}
 					}
-				}, 300);
+				}, TIMEOUT_DELAYS.ELEMENT_SELECTION);
 			});
 		}
 	}
@@ -190,7 +192,7 @@ ${rulesCSS}`;
 				.toLowerCase()
 				.replace(/[^a-z0-9]+/g, '-');
 
-			const manifest: any = {
+			const manifest: ThemeManifest = {
 				name: themeId,
 				version: '1.0.0',
 				minAppVersion: '0.15.0',
@@ -247,7 +249,7 @@ ${rulesCSS}`;
 				.toLowerCase()
 				.replace(/[^a-z0-9]+/g, '-');
 
-			const manifest: any = {
+			const manifest: ThemeManifest = {
 				name: themeId,
 				version: '1.0.0',
 				minAppVersion: '0.15.0',

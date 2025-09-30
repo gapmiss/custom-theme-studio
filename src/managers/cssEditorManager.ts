@@ -8,6 +8,9 @@ import * as ace from 'ace-builds';
 import { confirm } from '../modals/confirmModal';
 import { CSSVariableManager } from './cssVariabManager';
 import { generateUniqueId, showNotice, Logger } from "../utils";
+import { DEBOUNCE_DELAYS, TIMEOUT_DELAYS } from '../constants';
+import * as prettier from 'prettier';
+import * as cssPlugin from 'prettier/plugins/postcss';
 
 export class CSSEditorManager {
 	plugin: CustomThemeStudioPlugin;
@@ -249,7 +252,7 @@ export class CSSEditorManager {
 
 		// Save button
 		saveButton.addEventListener('click', async () => {
-			if (this.saveElement()) {
+			if (await this.saveElement()) {
 				// Hide the editor section after saving
 				if (!this.isEditingExisting) {
 					this.showEditorSection(false);
@@ -298,7 +301,7 @@ export class CSSEditorManager {
 					if (css !== '') {
 						this.applyChanges(css);
 					}
-				}, 500);
+				}, DEBOUNCE_DELAYS.CSS_EDITOR_CHANGE);
 			}
 		}, 10);
 	}
@@ -385,6 +388,15 @@ export class CSSEditorManager {
 		}
 	}
 
+	/**
+	 * Apply CSS changes to the theme without validation.
+	 * Used for auto-apply/live-preview functionality.
+	 *
+	 * DESIGN DECISION: This method intentionally does NOT validate CSS syntax.
+	 * This preserves the live preview experience where users can see changes
+	 * as they type, even with incomplete CSS (e.g., unclosed brackets).
+	 * Validation only occurs on manual save via saveElement().
+	 */
 	applyChanges(css: string): void {
 		if (!this.editorEl || !this.ruleInputEl) return;
 
@@ -414,7 +426,7 @@ export class CSSEditorManager {
 		}
 	}
 
-	saveElement(): boolean {
+	async saveElement(): Promise<boolean> {
 		if (!this.editorEl || !this.ruleInputEl) return false;
 
 		const uuid = this.editorUUID.value;
@@ -423,6 +435,11 @@ export class CSSEditorManager {
 
 		if (!rule || !css) {
 			showNotice('Please enter both a rule (name) and CSS', 5000, 'error');
+			return false;
+		}
+
+		// Validate CSS syntax
+		if (!await this.validateCSS(css)) {
 			return false;
 		}
 
@@ -516,7 +533,7 @@ export class CSSEditorManager {
 				setTimeout(() => {
 					target?.removeClass('blinking-effect');
 				}, 3000);
-			}, 100);
+			}, TIMEOUT_DELAYS.SCROLL_DELAY);
 		}
 
 		showNotice('Rule saved successfully', 5000, 'success');
@@ -706,7 +723,7 @@ export class CSSEditorManager {
 				if (this.plugin.settings.viewScrollToTop) {
 					setTimeout(() => {
 						this.scrollToDivByUUID(rule.uuid);
-					}, 100);
+					}, TIMEOUT_DELAYS.SCROLL_DELAY);
 					this.ruleInputEl!.focus();
 				}
 			}
@@ -820,6 +837,31 @@ export class CSSEditorManager {
 					behavior: "smooth"
 				});
 			}
+		}
+	}
+
+	/**
+	 * Validate CSS syntax using Prettier's CSS parser.
+	 * Only called during manual save operations via saveElement().
+	 *
+	 * DESIGN DECISION: CSS Variables are NOT validated here.
+	 * CSS Variables are simple key-value pairs stored separately and don't
+	 * require CSS syntax validation. This method only validates CSS rules.
+	 *
+	 * @param cssCode The CSS code to validate
+	 * @returns true if valid, false if invalid
+	 */
+	private async validateCSS(cssCode: string): Promise<boolean> {
+		try {
+			await prettier.format(cssCode, {
+				parser: 'css',
+				plugins: [cssPlugin],
+			});
+			return true;
+		} catch (error) {
+			Logger.error('CSS validation failed:', error);
+			showNotice('Invalid CSS syntax. Please check your code.', 5000, 'error');
+			return false;
 		}
 	}
 }

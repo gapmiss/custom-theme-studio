@@ -5,6 +5,7 @@ import { createIconButton } from '../../../utils/uiHelpers';
 import { copyStringToClipboard, showNotice, Logger } from '../../../utils';
 import { CSSVariableManager } from '../../../managers/cssVariabManager';
 import { CustomThemeStudioSettings } from '../../../settings';
+import { DEBOUNCE_DELAYS } from '../../../constants';
 
 export interface VariableData {
 	name: string;
@@ -68,7 +69,7 @@ export class VariableItem {
 				}
 				showNotice('Variable updated successfully', 1500, 'success');
 			},
-			1000,
+			DEBOUNCE_DELAYS.VARIABLE_UPDATE,
 			true
 		);
 	}

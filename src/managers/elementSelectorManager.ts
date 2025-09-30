@@ -3,6 +3,7 @@ import CustomThemeStudioPlugin from '../main';
 import { CustomThemeStudioView } from '../views/customThemeStudioView';
 import { generateUniqueId } from '../utils';
 import { copyStringToClipboard } from '../utils';
+import { TIMEOUT_DELAYS } from '../constants';
 
 export class ElementSelectorManager {
 	plugin: CustomThemeStudioPlugin;
@@ -482,7 +483,7 @@ export class ElementSelectorManager {
 			if (this.plugin.settings.viewScrollToTop) {
 				setTimeout(() => {
 					this.scrollToDivByUUID(uuid);
-				}, 100);
+				}, TIMEOUT_DELAYS.SCROLL_DELAY);
 				// this.view.cssEditorManager.ruleInputEl!.focus();
 			}
 		}
