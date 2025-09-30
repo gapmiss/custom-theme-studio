@@ -432,8 +432,8 @@ export class VariableClearableInput {
  * Color input for variables that uses original CSS structure
  */
 export class VariableColorInput extends VariableClearableInput {
-	private dynamicColorPicker?: ColorComponent;
-	private dynamicColorPickerContainer?: HTMLElement;
+	private dynamicColorPicker: ColorComponent | undefined = undefined;
+	private dynamicColorPickerContainer: HTMLElement | undefined = undefined;
 	private colorConfig: ColorInputConfig;
 	private isUpdatingFromPicker: boolean = false;
 
