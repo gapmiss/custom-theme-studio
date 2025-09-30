@@ -111,6 +111,9 @@ export class ElementSelectorManager {
 		// Remove tooltip
 		this.highlighter.destroyTooltip();
 
+		// Unhighlight the current element
+		this.highlighter.unhighlightElement();
+
 		// Remove any hover classes that might be left
 		document.querySelectorAll('.cts-element-picker-hover').forEach(el => {
 			el.classList.remove('cts-element-picker-hover');
@@ -199,6 +202,9 @@ export class ElementSelectorManager {
 
 		// Skip the Notice "Cancel" button
 		if (!target.classList.contains('cts-element-picker-cancel')) {
+			// Remove hover class from target before selecting
+			target.classList.remove('cts-element-picker-hover');
+
 			// Select the element
 			this.selectElement(target, e);
 		}
