@@ -473,22 +473,21 @@ export class VariableColorInput extends VariableClearableInput {
 	private updateColorPicker(): void {
 		const value = this.getValue();
 		const isColor = this.isColorValue(value);
+		const expandedColor = this.expandShortHex(value);
 
 		if (isColor && !this.dynamicColorPicker) {
 			// Value became a color, create picker
 			this.createVariableColorPicker();
-			// After creation, sync the value if picker was created successfully
-			if (this.dynamicColorPicker) {
-				const expandedColor = this.expandShortHex(value);
-				this.dynamicColorPicker.setValue(expandedColor);
-			}
-		} else if (!isColor && this.dynamicColorPicker) {
-			// Value is no longer a color, destroy picker
-			this.destroyColorPicker();
-		} else if (isColor && this.dynamicColorPicker) {
-			// Value is still a color, sync it
-			const expandedColor = this.expandShortHex(value);
+		}
+
+		// Sync value for existing or newly created picker
+		if (isColor && this.dynamicColorPicker) {
 			this.dynamicColorPicker.setValue(expandedColor);
+		}
+
+		// Destroy picker if value is no longer a color
+		if (!isColor && this.dynamicColorPicker) {
+			this.destroyColorPicker();
 		}
 	}
 
