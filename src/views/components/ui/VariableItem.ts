@@ -2,7 +2,7 @@ import { setIcon, App } from 'obsidian';
 import { SimpleDebouncer } from '../../../utils/Debouncer';
 import { ColorInput, ClearableInput, VariableColorInput, VariableClearableInput } from './FormInput';
 import { createIconButton } from '../../../utils/uiHelpers';
-import { copyStringToClipboard, showNotice } from '../../../utils';
+import { copyStringToClipboard, showNotice, Logger } from '../../../utils';
 import { CSSVariableManager } from '../../../managers/cssVariabManager';
 import { CustomThemeStudioSettings } from '../../../settings';
 
@@ -76,7 +76,7 @@ export class VariableItem {
 	private applyThemeChanges(): void {
 		// This would typically call the theme manager
 		// For now, we'll use a placeholder
-		console.log('Applying theme changes for variable:', this.config.data.name);
+		Logger.debug('Applying theme changes for variable:', this.config.data.name);
 	}
 
 	private render(): void {
@@ -163,7 +163,7 @@ export class VariableItem {
 
 		const inputWrapper = this.element.querySelector('.variable-input-wrapper');
 		if (!inputWrapper) {
-			console.error('Variable input wrapper not found for default value button');
+			Logger.error('Variable input wrapper not found for default value button');
 			return;
 		}
 

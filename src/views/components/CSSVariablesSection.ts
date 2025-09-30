@@ -46,7 +46,7 @@ export class CSSVariablesSection extends UIComponent {
 	private setupEventListeners(): void {
 		// Set up event listeners after DOM is created
 		this.eventManager.on('variable:updated', (data) => {
-			console.log('Variable updated:', data);
+			Logger.debug('Variable updated:', data);
 		});
 
 		this.eventManager.on('variable:deleted', (data) => {
@@ -533,7 +533,7 @@ export class CSSVariablesSection extends UIComponent {
 		// Find the custom variables container
 		const customVarList = this.container.querySelector('[data-var-category="custom"]') as HTMLElement;
 		if (!customVarList) {
-			console.warn('Custom variables container not found');
+			Logger.warn('Custom variables container not found');
 			return;
 		}
 

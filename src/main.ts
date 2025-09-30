@@ -4,7 +4,7 @@ import { ThemeManager } from './managers/themeManager';
 import { DEFAULT_SETTINGS, CustomThemeStudioSettings, CustomThemeStudioSettingTab } from './settings';
 import { SettingsManager } from './managers/SettingsManager';
 import { ICodeEditorConfig } from './interfaces/types';
-import { freezeTimer } from "./utils";
+import { freezeTimer, Logger } from "./utils";
 import { CssSnippetFuzzySuggestModal } from "./modals/CssSnippetFuzzySuggestModal";
 
 export default class CustomThemeStudioPlugin extends Plugin {
@@ -16,6 +16,9 @@ export default class CustomThemeStudioPlugin extends Plugin {
 
 	async onload() {
 		await this.loadSettings();
+
+		// Initialize logger with plugin instance
+		Logger.init(this);
 
 		// Initialize reactive settings manager
 		this.settingsManager = new SettingsManager(this);
@@ -110,7 +113,7 @@ export default class CustomThemeStudioPlugin extends Plugin {
 		} else {
 			leaf = workspace.getRightLeaf(false);
 			if (!leaf) {
-				console.error("custom-theme-studio: failed to get or create leaf");
+				Logger.error("custom-theme-studio: failed to get or create leaf");
 				return;
 			}
 			await leaf.setViewState({ type: VIEW_TYPE_CTS, active: true });

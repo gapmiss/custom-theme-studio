@@ -1,3 +1,5 @@
+import { Logger } from './Logger';
+
 export type EventCallback<T = any> = (data: T) => void;
 
 export interface EventMap {
@@ -91,7 +93,7 @@ export class EventManager {
 				try {
 					callback(data);
 				} catch (error) {
-					console.error(`Error in event listener for ${event}:`, error);
+					Logger.error(`Error in event listener for ${event}:`, error);
 				}
 			});
 		}
@@ -107,7 +109,7 @@ export class EventManager {
 				try {
 					callback(data);
 				} catch (error) {
-					console.error(`Error in once event listener for ${event}:`, error);
+					Logger.error(`Error in once event listener for ${event}:`, error);
 				}
 			});
 		}

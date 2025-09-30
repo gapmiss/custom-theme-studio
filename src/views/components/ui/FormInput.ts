@@ -1,4 +1,5 @@
 import { ColorComponent } from 'obsidian';
+import { Logger } from '../../../utils';
 
 export interface FormInputConfig {
 	type?: 'text' | 'password' | 'email' | 'url';
@@ -184,7 +185,7 @@ export class ClearableInput extends FormInput {
 	private createClearButton(config: ClearableInputConfig): void {
 		const inputContainer = this.getElement().parentElement;
 		if (!inputContainer) {
-			console.error('Input container parent element not found for clear button');
+			Logger.error('Input container parent element not found for clear button');
 			return;
 		}
 
@@ -249,7 +250,7 @@ export class ColorInput extends ClearableInput {
 	private createColorPicker(config: ColorInputConfig): void {
 		const inputContainer = this.getElement().parentElement;
 		if (!inputContainer) {
-			console.error('Input container parent element not found for color picker');
+			Logger.error('Input container parent element not found for color picker');
 			return;
 		}
 		const colorPickerContainer = inputContainer.createDiv('form-input-color-picker');

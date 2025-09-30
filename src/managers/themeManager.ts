@@ -5,7 +5,7 @@ import { CSSVariable, CustomThemeStudioSettings, DEFAULT_SETTINGS } from '../set
 import { saveAs } from 'file-saver';
 import * as prettier from 'prettier';
 import * as css from 'prettier/plugins/postcss';
-import { showNotice } from "../utils";
+import { showNotice, Logger } from "../utils";
 
 export class ThemeManager {
 	plugin: CustomThemeStudioPlugin;
@@ -178,7 +178,7 @@ ${rulesCSS}`;
 			let prettierCSS: string = (this.plugin.settings.exportPrettierFormat) ? await this.formatCSS(themeCSS) : themeCSS;
 			saveAs(new Blob([prettierCSS], { type: 'text/css' }), 'theme.css');
 		} catch (error) {
-			console.error('Failed to export theme:\n', error);
+			Logger.error('Failed to export theme', error);
 			showNotice('Failed to export theme. Check the developer console for details', 10000, 'error');
 		}
 	}
@@ -204,7 +204,7 @@ ${rulesCSS}`;
 
 			saveAs(new Blob([manifestJSON], { type: 'application/json' }), 'manifest.json');
 		} catch (error) {
-			console.error('Failed to export manifest:', error);
+			Logger.error('Failed to export manifest:', error);
 			showNotice('Failed to export manifest. Check the developer console for details', 10000, 'error');
 		}
 	}
@@ -235,7 +235,7 @@ ${rulesCSS}`;
 				showNotice('Theme CSS copied to clipboard', 5000, 'success');
 			});
 		} catch (error) {
-			console.error('Failed to copy theme to clipboard:\n', error);
+			Logger.error('Failed to copy theme to clipboard:\n', error);
 			showNotice('Failed to copy theme to clipboard. Check the developer console for details', 10000, 'error');
 		}
 	}
@@ -260,7 +260,7 @@ ${rulesCSS}`;
 			});
 
 		} catch (error) {
-			console.error('Failed to copy manifest JSON to clipboard:', error);
+			Logger.error('Failed to copy manifest JSON to clipboard:', error);
 			showNotice('Failed to copy manifest JSON to clipboard. Check the developer console for details', 10000, 'error');
 		}
 	}

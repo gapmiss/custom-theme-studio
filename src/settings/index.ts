@@ -3,6 +3,7 @@ import { AceLightThemesList, AceDarkThemesList, AceKeyboardList } from '../ace/A
 import { confirm } from '../modals/confirmModal';
 import CustomThemeStudioPlugin from '../main';
 import settingsIO from './settingsIO';
+import { Logger } from '../utils';
 
 export interface CSSrule {
 	uuid: string;
@@ -51,6 +52,7 @@ export interface CustomThemeStudioSettings {
 	editorDarkTheme: string;
 	editorKeyboard: string;
 	viewScrollToTop: boolean;
+	debugLevel: 'none' | 'error' | 'warn' | 'info' | 'debug';
 }
 
 export const DEFAULT_SETTINGS: CustomThemeStudioSettings = {
@@ -85,7 +87,8 @@ export const DEFAULT_SETTINGS: CustomThemeStudioSettings = {
 	editorLightTheme: 'github_light_default',
 	editorDarkTheme: 'github_dark',
 	editorKeyboard: 'default',
-	viewScrollToTop: true
+	viewScrollToTop: true,
+	debugLevel: 'none'
 };
 
 const THEME_COLOR: Record<string, string> = {
@@ -144,7 +147,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 							await this.plugin.reloadView();
 							new Notice('The Custom Theme Studio view has been reloaded');
 						} catch (error) {
-							console.error(error);
+							Logger.error(error);
 							new Notice('Failed to reload view. Check developer console for details.', 10000);
 						}
 					}
@@ -546,6 +549,25 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 					}
 				});
 			});
+
+		// Troubleshooting Section
+		new Setting(containerEl).setName('Troubleshooting').setHeading();
+
+		// Debug Level Setting
+		new Setting(containerEl)
+			.setName('Debug level')
+			.setDesc('Control console logging verbosity for debugging')
+			.addDropdown(dropdown => dropdown
+				.addOption('none', 'None (No logs)')
+				.addOption('error', 'Errors only')
+				.addOption('warn', 'Warnings and errors')
+				.addOption('info', 'Info, warnings, and errors')
+				.addOption('debug', 'Debug (All logs)')
+				.setValue(this.plugin.settings.debugLevel)
+				.onChange(async (value: 'none' | 'error' | 'warn' | 'info' | 'debug') => {
+					this.plugin.settings.debugLevel = value;
+					await this.plugin.saveSettings();
+				}));
 
 		new Setting(containerEl).setName('Reset').setClass('reset-options-heading').setHeading();
 

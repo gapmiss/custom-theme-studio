@@ -1,7 +1,7 @@
 import { type App, Setting, debounce, Modal, arrayBufferToBase64 } from "obsidian";
 import type CustomThemeStudioPlugin from "../main";
 import { CustomThemeStudioView, VIEW_TYPE_CTS } from "../views/customThemeStudioView";
-import { generateUniqueId, showNotice } from "../utils";
+import { generateUniqueId, showNotice, Logger } from "../utils";
 import { confirm } from "./confirmModal";
 import fs from 'fs';
 import path from 'path';
@@ -91,7 +91,7 @@ export class FontImportModal extends Modal {
 				button.onClick(async () => {
 					const nameInput = fontNameInput.settingEl.querySelector('input');
 					if (!nameInput) {
-						console.error('Font name input element not found');
+						Logger.error('Font name input element not found');
 						showNotice('Font import interface error - please try again', 5000, 'error');
 						return;
 					}

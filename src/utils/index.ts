@@ -1,5 +1,7 @@
 import { Notice, setIcon, App } from 'obsidian';
 
+export { Logger } from './Logger';
+
 // https://github.com/chrisgrieser/obsidian-theme-design-utilities/blob/main/src/main.ts#L4
 // https://www.electronjs.org/docs/latest/api/web-contents#contentsopendevtoolsoptions
 declare const electronWindow: {
@@ -15,7 +17,7 @@ export function copyStringToClipboard(text: string, topic: string | undefined = 
 			showNotice('"' + (topic !== undefined ? topic + '"' : 'Text') + ' copied to clipboard', 5000, 'success');
 		})
 		.catch(function (error) {
-			console.error('Failed to copy to clipboard: ', error)
+			Logger.error('Failed to copy to clipboard: ', error)
 		});
 }
 

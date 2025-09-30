@@ -1,5 +1,6 @@
 import { CustomThemeStudioSettings } from '../settings';
 import CustomThemeStudioPlugin from '../main';
+import { Logger } from '../utils';
 
 export type SettingKey = keyof CustomThemeStudioSettings;
 export type SettingValue<K extends SettingKey> = CustomThemeStudioSettings[K];
@@ -71,7 +72,7 @@ export class SettingsManager {
 		if (validate) {
 			const validation = this.validateSetting(key, value);
 			if (!validation.valid) {
-				console.error(`Settings validation failed for ${key}:`, validation.error);
+				Logger.error(`Settings validation failed for ${key}:`, validation.error);
 				return false;
 			}
 			// Use sanitized value if provided
@@ -88,7 +89,7 @@ export class SettingsManager {
 			try {
 				await this.plugin.saveSettings();
 			} catch (error) {
-				console.error(`Failed to save settings:`, error);
+				Logger.error(`Failed to save settings:`, error);
 				// Revert on save failure
 				this.plugin.settings[key] = oldValue;
 				return false;
@@ -125,7 +126,7 @@ export class SettingsManager {
 				for (const [key, value] of Object.entries(updates)) {
 					const validation = this.validateSetting(key as SettingKey, value);
 					if (!validation.valid) {
-						console.error(`Batch validation failed for ${key}:`, validation.error);
+						Logger.error(`Batch validation failed for ${key}:`, validation.error);
 						return false;
 					}
 					if (validation.sanitizedValue !== undefined) {
@@ -157,7 +158,7 @@ export class SettingsManager {
 
 			return true;
 		} catch (error) {
-			console.error('Batch settings update failed:', error);
+			Logger.error('Batch settings update failed:', error);
 			// Revert all changes
 			for (const [key, oldValue] of oldValues) {
 				(this.plugin.settings as Record<string, any>)[key] = oldValue;
@@ -256,7 +257,7 @@ export class SettingsManager {
 				try {
 					callback(value, oldValue, key);
 				} catch (error) {
-					console.error(`Error in settings listener for ${key}:`, error);
+					Logger.error(`Error in settings listener for ${key}:`, error);
 				}
 			});
 		}

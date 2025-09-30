@@ -7,7 +7,7 @@ import { ICodeEditorConfig } from '../interfaces/types';
 import * as ace from 'ace-builds';
 import { confirm } from '../modals/confirmModal';
 import { CSSVariableManager } from './cssVariabManager';
-import { generateUniqueId, showNotice } from "../utils";
+import { generateUniqueId, showNotice, Logger } from "../utils";
 
 export class CSSEditorManager {
 	plugin: CustomThemeStudioPlugin;
@@ -378,7 +378,7 @@ export class CSSEditorManager {
 		try {
 			return document.querySelector(selector) as HTMLElement;
 		} catch (error) {
-			console.error('Invalid selector:', selector);
+			Logger.error('Invalid selector:', selector);
 			return null;
 		}
 	}

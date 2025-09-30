@@ -2,6 +2,7 @@ import type { CustomThemeStudioSettings } from '.';
 import { Notice, TFile } from 'obsidian';
 import type { App } from 'obsidian';
 import fs from 'fs';
+import { Logger } from '../utils';
 
 // source: https://github.com/al0cam/AutoMover/blob/master/IO/SettingsIO.ts
 class SettingsIO {
@@ -57,7 +58,7 @@ class SettingsIO {
             new Notice('Settings exported successfully');
             return true;
         } catch (error) {
-            console.error('Failed to export settings:', error);
+            Logger.error('Failed to export settings:', error);
             new Notice('Failed to export settings');
             return false;
         }
@@ -77,7 +78,7 @@ class SettingsIO {
             new Notice(`Settings exported to vault: ${filename}`);
             return true;
         } catch (error) {
-            console.error('Failed to export to vault:', error);
+            Logger.error('Failed to export to vault:', error);
             new Notice('Failed to export settings to vault');
             return false;
         }
@@ -125,7 +126,7 @@ class SettingsIO {
 
             return importedSettings;
         } catch (error) {
-            console.error('Failed to import settings:', error);
+            Logger.error('Failed to import settings:', error);
             new Notice('Failed to import settings');
             return null;
         }
@@ -158,7 +159,7 @@ class SettingsIO {
             new Notice('Settings imported from vault successfully');
             return importedSettings;
         } catch (error) {
-            console.error('Failed to import from vault:', error);
+            Logger.error('Failed to import from vault:', error);
             new Notice('Failed to import settings from vault');
             return null;
         }
