@@ -33,6 +33,8 @@ export interface CustomThemeStudioSettings {
 	expandCSSVariables: boolean;
 	expandCSSRules: boolean;
 	expandExportTheme: boolean;
+	expandedVariableCategories: string[];
+	activeVariableTagFilter: string;
 	autoApplyChanges: boolean;
 	variableInputListener: string;
 	generateComputedCSS: boolean;
@@ -69,6 +71,8 @@ export const DEFAULT_SETTINGS: CustomThemeStudioSettings = {
 	expandCSSVariables: false,
 	expandCSSRules: false,
 	expandExportTheme: false,
+	expandedVariableCategories: [],
+	activeVariableTagFilter: 'all',
 	autoApplyChanges: false,
 	variableInputListener: 'change',
 	generateComputedCSS: false,

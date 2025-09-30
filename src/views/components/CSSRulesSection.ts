@@ -147,6 +147,14 @@ export class CSSRulesSection extends UIComponent {
 		if (clearButton && !clearButton.classList.contains('clear-search-rules-input-button')) {
 			clearButton.classList.add('clear-search-rules-input-button');
 		}
+
+		this.renderResultsCounter(searchContainer);
+	}
+
+	private renderResultsCounter(container: HTMLElement): void {
+		const counter = container.createDiv('search-results-counter');
+		// Store reference for updates
+		(this as any).ruleSearchCounter = counter;
 	}
 
 	private updateSearchInputState(input: HTMLInputElement, searchTerm: string): void {
@@ -173,6 +181,8 @@ export class CSSRulesSection extends UIComponent {
 	}
 
 	public async filterCSSRules(query: string): Promise<void> {
+		let matchCount = 0;
+
 		this.plugin.settings.cssRules.forEach((rule) => {
 			const matchesQuery =
 				rule.rule.toLowerCase()?.includes(query.toLowerCase()) ||
@@ -182,8 +192,26 @@ export class CSSRulesSection extends UIComponent {
 			if (ruleEl) {
 				ruleEl.toggleClass('show', matchesQuery);
 				ruleEl.toggleClass('hide', !matchesQuery);
+				if (matchesQuery) matchCount++;
 			}
 		});
+
+		this.updateResultsCounter(query, matchCount);
+	}
+
+	private updateResultsCounter(term: string, results: number): void {
+		const counter = (this as any).ruleSearchCounter as HTMLElement;
+		if (counter) {
+			if (term) {
+				counter.textContent = `${results} rule${results !== 1 ? 's' : ''} found`;
+				counter.addClass('active');
+				counter.toggleClass('no-results', results === 0);
+			} else {
+				counter.textContent = '';
+				counter.removeClass('active');
+				counter.removeClass('no-results');
+			}
+		}
 	}
 
 	private resetRuleVisibility(): void {
@@ -192,6 +220,8 @@ export class CSSRulesSection extends UIComponent {
 			element.toggleClass('show', true);
 			element.toggleClass('hide', false);
 		});
+
+		this.updateResultsCounter('', 0);
 	}
 
 	private scrollToElement(target: HTMLElement): void {

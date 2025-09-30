@@ -21,6 +21,8 @@ export class CSSVariablesSection extends UIComponent {
 	constructor(context: ComponentContext) {
 		super(context);
 		this.eventManager = new EventManager();
+		// Load saved tag filter
+		this.activeTag = this.plugin.settings.activeVariableTagFilter || 'all';
 		this.setupDebounceUpdate();
 		this.setupEventListeners();
 	}
@@ -115,9 +117,10 @@ export class CSSVariablesSection extends UIComponent {
 		];
 
 		tags.forEach((tag) => {
+			const isActive = tag.toLowerCase() === this.activeTag;
 			const tagEl = filterTags.createEl('a', {
 				text: tag,
-				cls: 'tag tag-filter-' + tag + (tag === 'all' ? ' tag-filter-active' : ''),
+				cls: 'tag tag-filter-' + tag + (isActive ? ' tag-filter-active' : ''),
 				attr: {
 					'data-tag-filter': tag.toLowerCase(),
 					tabindex: '0',
@@ -136,6 +139,10 @@ export class CSSVariablesSection extends UIComponent {
 	private handleTagFilter(event: MouseEvent, tags: string[], filterContainer: HTMLElement): void {
 		const filterTag = (event.currentTarget as HTMLElement).getAttr('data-tag-filter');
 		this.activeTag = filterTag;
+
+		// Save active tag filter to settings
+		this.plugin.settings.activeVariableTagFilter = filterTag!;
+		this.saveSettings();
 
 		tags.forEach((tag) => {
 			const tagButton = filterContainer.querySelector(`[data-tag-filter="${tag.toLowerCase()}"]`);
@@ -161,7 +168,9 @@ export class CSSVariablesSection extends UIComponent {
 	}
 
 	private renderSearch(container: HTMLElement): void {
-		const { searchInput } = createSearchInput(container, {
+		const searchContainer = container.querySelector('.search-container') as HTMLElement;
+
+		const { searchInput } = createSearchInput(searchContainer || container, {
 			placeholder: 'Search CSS variables…',
 			onInput: (searchTerm) => {
 				this.variableSearch = searchTerm;
@@ -171,6 +180,24 @@ export class CSSVariablesSection extends UIComponent {
 			onClear: () => {
 				this.variableSearch = '';
 				this.resetVariableListVisibility();
+			}
+		});
+
+		this.renderResultsCounter(searchContainer || container);
+	}
+
+	private renderResultsCounter(container: HTMLElement): void {
+		const counter = container.createDiv('search-results-counter');
+
+		this.eventManager.on('search:variable', ({ term, results }) => {
+			if (term) {
+				counter.textContent = `${results} variable${results !== 1 ? 's' : ''} found`;
+				counter.addClass('active');
+				counter.toggleClass('no-results', results === 0);
+			} else {
+				counter.textContent = '';
+				counter.removeClass('active');
+				counter.removeClass('no-results');
 			}
 		});
 	}
@@ -190,6 +217,11 @@ export class CSSVariablesSection extends UIComponent {
 			}
 		});
 
+		// Apply saved tag filter visibility on initial render
+		const showCategory = this.activeTag === 'all' || category.tag === this.activeTag;
+		categoryEl.toggleClass('show', showCategory);
+		categoryEl.toggleClass('hide', !showCategory);
+
 		const { header, content: variableListEl } = this.createCategoryHeader(categoryEl, category);
 
 		if (category.help) {
@@ -203,6 +235,13 @@ export class CSSVariablesSection extends UIComponent {
 		const header = container.createDiv('var-cat');
 		const catTitle = header.createDiv('collapsible-header');
 		catTitle.createSpan({ text: category.title.replace('+', ' ') });
+
+		// Add item count badge
+		const itemCount = this.getCategoryItemCount(category.category);
+		catTitle.createSpan({
+			cls: 'category-item-count',
+			text: `${itemCount}`
+		});
 
 		const catToggleIcon = catTitle.createEl('button', {
 			cls: 'collapse-icon clickable-icon',
@@ -223,6 +262,17 @@ export class CSSVariablesSection extends UIComponent {
 		});
 		variableListEl.addClass('hide');
 
+		// Check if this category should be expanded based on saved settings
+		const categoryId = 'variable-category-' + category.category;
+		const shouldBeExpanded = this.plugin.settings.expandedVariableCategories.includes(categoryId);
+
+		if (shouldBeExpanded) {
+			variableListEl.removeClass('hide');
+			variableListEl.addClass('show');
+			setIcon(catToggleIcon, 'chevron-down');
+			catToggleIcon.setAttr('aria-label', 'Collapse category');
+		}
+
 		header.addEventListener('click', () => {
 			this.handleCategoryToggle(variableListEl, catToggleIcon, container);
 		});
@@ -239,6 +289,14 @@ export class CSSVariablesSection extends UIComponent {
 		});
 		// Clone the DocumentFragment to prevent it from being emptied after first use
 		helpSpan.appendChild(help.cloneNode(true));
+	}
+
+	private getCategoryItemCount(category: string): number {
+		if (category === 'custom') {
+			return this.plugin.settings.cssVariables.filter(v => v.parent === 'custom').length;
+		} else {
+			return cssVariableDefaults.filter(cat => cat.cat === category).length;
+		}
 	}
 
 	private renderCategoryVariables(container: HTMLElement, category: cssCategory): void {
@@ -696,7 +754,19 @@ export class CSSVariablesSection extends UIComponent {
 
 	// Event Handler Methods
 	private handleCategoryToggle(variableListEl: HTMLElement, catToggleIcon: HTMLElement, container: HTMLElement): void {
+		const categoryId = container.getAttribute('id');
 		const shouldExpand = variableListEl.hasClass('hide');
+
+		// Update settings
+		if (shouldExpand) {
+			if (!this.plugin.settings.expandedVariableCategories.includes(categoryId!)) {
+				this.plugin.settings.expandedVariableCategories.push(categoryId!);
+			}
+		} else {
+			this.plugin.settings.expandedVariableCategories =
+				this.plugin.settings.expandedVariableCategories.filter(id => id !== categoryId);
+		}
+		this.saveSettings();
 
 		variableListEl.toggleClass('show', shouldExpand);
 		variableListEl.toggleClass('hide', !shouldExpand);

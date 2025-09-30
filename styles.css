@@ -104,6 +104,39 @@ body {
     border: 1px solid var(--background-modifier-border);
 }
 
+/* Improve search input placeholder visibility */
+.cts-view .search-input::placeholder,
+.cts-view .search-rules-input::placeholder {
+    color: var(--text-muted);
+    opacity: 0.7;
+}
+
+/* Add focus state to search inputs */
+.cts-view .search-input:focus,
+.cts-view .search-rules-input:focus {
+    border-color: var(--interactive-accent);
+    outline: none;
+    box-shadow: 0 0 0 2px var(--interactive-accent-hover);
+}
+
+/* search results counter */
+.cts-view .search-results-counter {
+    font-size: var(--font-smaller);
+    color: var(--text-muted);
+    padding-block-end: 4px;
+    text-align: center;
+    width: 100%;
+    display: none;
+}
+
+.cts-view .search-results-counter.active {
+    display: block;
+}
+
+.cts-view .search-results-counter.no-results {
+    color: var(--text-error);
+}
+
 /* clear search button */
 .cts-view .clear-search-input,
 .cts-view .clear-search-rules-input {
@@ -190,14 +223,25 @@ body {
     align-items: center;
     padding: 8px;
     border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
 }
 
 .cts-view .collapsible-header:hover {
     color: var(--interactive-accent) !important;
+    background-color: var(--background-modifier-hover);
 
     &>button>svg {
         stroke: var(--interactive-accent) !important;
     }
+}
+
+/* category item count badge */
+.cts-view .category-item-count {
+    margin-left: auto;
+    font-size: var(--font-smaller);
+    opacity: 0.5;
+    font-weight: normal;
 }
 
 /* content */
@@ -231,13 +275,10 @@ body {
 }
 
 .cts-view .filter-tags {
-    padding: .5em;
     display: flex;
-    gap: .5em;
     flex-wrap: wrap;
-    align-content: flex-start;
-    align-items: center;
-    margin-block: .5em !important;
+    gap: 6px;
+    padding: 8px 0;
 }
 
 .cts-view a.tag-filter-active,
@@ -498,7 +539,7 @@ body {
         padding: .5em;
         max-width: 100%;
         display: grid;
-        grid-template: "name value delete" auto / 1.25fr 1.25fr auto;
+        grid-template: "name value delete" auto / 1fr 2fr auto;
         align-items: center;
 
         & > .variable-input-wrapper:first-child {
@@ -656,6 +697,12 @@ body {
     box-sizing: border-box !important;
 }
 
+/* Add hover interaction to color picker */
+.cts-view .variable-color-picker:hover .clickable-icon {
+    transform: scale(1.1);
+    border-color: var(--interactive-accent) !important;
+}
+
 /* element picker */
 .cts-element-picker-highlight,
 .cts-element-picker-hover {
@@ -745,13 +792,12 @@ body {
 
 /* css editor */
 :not(.inline-rule-editor)>.css-editor-section.css-editor-section.show {
-    border: 2px solid var(--background-modifier-border);
-    border-radius: var(--size-4-2);
-    padding: var(--size-4-2);
-    margin-block: var(--size-4-2);
-    padding-bottom: .15em;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 6px;
+    padding: 12px;
+    margin: 12px 0;
     width: 100%;
-    background-color: var(--background-primary);
+    background: var(--background-secondary);
 }
 
 .cts-view .css-editor-section .button-container {
@@ -765,9 +811,6 @@ body {
 }
 
 .cts-view .css-editor-section.show {
-    /* border: 2px solid var(--background-modifier-border); */
-    /* border-radius: var(--size-4-2); */
-    /* padding: var(--size-4-2); */
     margin-block: var(--size-4-2);
     display: block;
 }
@@ -778,6 +821,8 @@ body {
 
 /* main ACE editor element */
 .cts-view .ace_editor {
+    border: 1px solid var(--background-modifier-border-hover);
+    border-radius: 4px;
     height: 200px;
     resize: vertical;
 }
@@ -881,8 +926,15 @@ body {
     width: 100%;
 }
 
+/* Rule item styling improvements */
+.cts-view .rule-item {
+    padding-inline: 8px;
+    padding-block: var(--size-2-1);
+    border-radius: 4px;
+}
+
 .cts-view .rule-item:hover {
-    background-color: var(--background-primary);
+    background-color: var(--background-modifier-hover);
 }
 
 .cts-view .rule-item:has(.css-editor-section.show) .rule-item-title {
@@ -893,6 +945,14 @@ body {
 .cts-view .rule-item-actions {
     display: flex;
     flex-wrap: nowrap;
+    gap: 4px;
+}
+
+/* Increase touch targets for rule item buttons */
+.cts-view .rule-item-actions button.clickable-icon {
+    min-width: 28px !important;
+    min-height: 28px !important;
+    padding: 4px !important;
 }
 
 .cts-view .rule-item-delete-button:hover {
@@ -987,6 +1047,7 @@ body {
 .cts-view .export-section .button-container {
     display: flex;
     flex-wrap: wrap;
+    justify-content: space-between;
     align-content: flex-start;
     align-items: center;
     margin-block: .5em !important;
@@ -999,6 +1060,18 @@ body {
         align-content: flex-start;
         align-items: center;
     }
+}
+
+/* Make export buttons more prominent */
+.cts-view .export-section .button-container div button {
+    min-width: 32px !important;
+    min-height: 32px !important;
+}
+
+/* Style the section labels */
+.cts-view .export-section .button-container div > span {
+    font-weight: 600 !important;
+    min-width: 80px;
 }
 
 .snippet-import-confirmation .modal-content {
