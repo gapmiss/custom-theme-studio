@@ -237,7 +237,8 @@ export class CSSVariablesSection extends UIComponent {
 		const helpSpan = helpContainer.createSpan({
 			cls: 'variable-category-help'
 		});
-		helpSpan.appendChild(help);
+		// Clone the DocumentFragment to prevent it from being emptied after first use
+		helpSpan.appendChild(help.cloneNode(true));
 	}
 
 	private renderCategoryVariables(container: HTMLElement, category: cssCategory): void {
