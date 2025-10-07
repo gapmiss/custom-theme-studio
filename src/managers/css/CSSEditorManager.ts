@@ -695,6 +695,11 @@ export class CSSEditorManager {
 			// Fallback to DOM removal
 			item.remove();
 		}
+
+		// Update search counter if filtering is active
+		if (this.view.ruleSearch !== '') {
+			await this.view.filterCSSRules(this.view.ruleSearch);
+		}
 	}
 
 	scrollToDivByUUID(uuid: string) {

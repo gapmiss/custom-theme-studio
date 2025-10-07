@@ -299,6 +299,17 @@ export class CSSVariablesSection extends UIComponent {
 		}
 	}
 
+	private updateCategoryItemCount(category: string): void {
+		const categoryEl = this.container.querySelector(`#variable-category-${category}`);
+		if (categoryEl) {
+			const countBadge = categoryEl.querySelector('.category-item-count');
+			if (countBadge) {
+				const newCount = this.getCategoryItemCount(category);
+				countBadge.textContent = `${newCount}`;
+			}
+		}
+	}
+
 	private renderCategoryVariables(container: HTMLElement, category: cssCategory): void {
 		if (category.category === 'custom') {
 			this.renderCustomVariables(container, category.category);
@@ -397,6 +408,14 @@ export class CSSVariablesSection extends UIComponent {
 			uuid,
 			name: 'deleted'
 		});
+
+		// Update category count badge (always for custom category)
+		this.updateCategoryItemCount('custom');
+
+		// Update search counter if filtering is active
+		if (this.variableSearch !== '') {
+			this.filterVariables(this.variableSearch);
+		}
 	}
 
 	private handleVariableDeleted(uuid: string): void {
