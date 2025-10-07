@@ -1,12 +1,12 @@
 body {
-    --picker-highlight-outline: 1px dashed var(--interactive-accent);
-    --picker-highlight-background-color: hsla(var(--interactive-accent-hsl), 0.1);
-    --picker-tooltip-background-color: var(--background-primary);
-    --picker-tooltip-border: 1px solid var(--background-modifier-border);
-    --picker-tooltip-border-radius: var(--size-4-2);
-    --picker-tooltip-font-size: var(--font-smaller);
-    --picker-tooltip-padding: 1em;
-    --picker-tooltip-max-width: 400px;
+    --element-selector-highlight-outline: 1px dashed var(--interactive-accent);
+    --element-selector-highlight-background-color: hsla(var(--interactive-accent-hsl), 0.1);
+    --element-selector-tooltip-background-color: var(--background-primary);
+    --element-selector-tooltip-border: 1px solid var(--background-modifier-border);
+    --element-selector-tooltip-border-radius: var(--size-4-2);
+    --element-selector-tooltip-font-size: var(--font-smaller);
+    --element-selector-tooltip-padding: 1em;
+    --element-selector-tooltip-max-width: 400px;
 }
 
 .cts-view {
@@ -702,28 +702,28 @@ body {
     border-color: var(--interactive-accent) !important;
 }
 
-/* element picker */
-.cts-element-picker-highlight,
-.cts-element-picker-hover {
-    outline: var(--picker-highlight-outline) !important;
-    background-color: var(--picker-highlight-background-color) !important;
+/* element selector */
+.cts-element-selector-highlight,
+.cts-element-selector-hover {
+    outline: var(--element-selector-highlight-outline) !important;
+    background-color: var(--element-selector-highlight-background-color) !important;
 }
 
-/* cursor while element picker is active */
-.cts-element-picker-active:has(*) * {
+/* cursor while element selector is active */
+.cts-element-selector-active:has(*) * {
     cursor: var(--cursor) !important;
 }
 
 /* Tooltip styles */
-.cts-element-picker-tooltip {
+.cts-element-selector-tooltip {
     position: absolute;
-    background-color: var(--picker-tooltip-background-color);
-    border: var(--picker-tooltip-border);
-    padding: var(--picker-tooltip-padding);
-    border-radius: var(--picker-tooltip-border-radius);
-    font-size: var(--picker-tooltip-font-size);
+    background-color: var(--element-selector-tooltip-background-color);
+    border: var(--element-selector-tooltip-border);
+    padding: var(--element-selector-tooltip-padding);
+    border-radius: var(--element-selector-tooltip-border-radius);
+    font-size: var(--element-selector-tooltip-font-size);
     z-index: 10000000;
-    max-width: var(--picker-tooltip-max-width);
+    max-width: var(--element-selector-tooltip-max-width);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
     & div.keys.first {
@@ -735,16 +735,16 @@ body {
     }
 }
 
-.cts-element-picker-tooltip.show {
+.cts-element-selector-tooltip.show {
     display: block;
 }
 
-.cts-element-picker-tooltip.hide {
+.cts-element-selector-tooltip.hide {
     display: none;
 }
 
 /* Attribute selector highlighting */
-.cts-element-picker-tooltip .attribute-highlight {
+.cts-element-selector-tooltip .attribute-highlight {
     background-color: rgba(255, 255, 100, 0.2);
     padding: 2px 4px;
     border-radius: 3px;
@@ -758,7 +758,7 @@ body {
     font-size: var(--font-smaller);
 }
 
-.cts-element-picker-tooltip .selector-highlight {
+.cts-element-selector-tooltip .selector-highlight {
     background-color: rgba(100, 255, 100, 0.2);
     padding: 2px 4px;
     border-radius: 3px;
@@ -767,19 +767,19 @@ body {
     font-size: var(--font-smaller);
 }
 
-.cts-element-picker-tooltip .data-attributes-list {
+.cts-element-selector-tooltip .data-attributes-list {
     margin: 4px 0;
     padding-left: 20px;
     font-family: var(--font-monospace-default);
     font-size: var(--font-smaller);
 }
 
-.cts-element-picker-tooltip .tooltip-classes span {
+.cts-element-selector-tooltip .tooltip-classes span {
     font-family: var(--font-monospace-default);
     font-size: var(--font-smaller);
 }
 
-.cts-element-picker-tooltip kbd {
+.cts-element-selector-tooltip kbd {
     font-family: var(--font-monospace-default);
     background-color: var(--background-secondary);
     color: var(--text-normal);

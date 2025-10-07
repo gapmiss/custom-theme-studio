@@ -17,7 +17,7 @@ export class ElementHighlighter {
 	 */
 	createTooltip(): HTMLElement {
 		this.tooltip = document.body.appendChild(
-			createDiv('cts-element-picker-tooltip hide')
+			createDiv('cts-element-selector-tooltip hide')
 		);
 		return this.tooltip;
 	}
@@ -30,7 +30,7 @@ export class ElementHighlighter {
 		this.unhighlightElement();
 
 		// Add highlight to new element
-		element.classList.add('cts-element-picker-highlight');
+		element.classList.add('cts-element-selector-highlight');
 		this.highlightedElement = element;
 	}
 
@@ -39,7 +39,7 @@ export class ElementHighlighter {
 	 */
 	unhighlightElement(): void {
 		if (this.highlightedElement) {
-			this.highlightedElement.classList.remove('cts-element-picker-highlight');
+			this.highlightedElement.classList.remove('cts-element-selector-highlight');
 			this.highlightedElement = null;
 		}
 	}
@@ -59,7 +59,7 @@ export class ElementHighlighter {
 		const parentSelector = this.selectorGenerator.generateSelector(element, true, true);
 		const tagName = element.tagName.toLowerCase();
 		const classes = Array.from(element.classList).filter(cls =>
-			!cls.includes('cts-element-picker-highlight')
+			!cls.includes('cts-element-selector-highlight')
 		).join('.');
 
 		// Get aria-label if present
@@ -144,7 +144,7 @@ export class ElementHighlighter {
 				)
 				.createSpan(
 					{
-						text: `${classes.replace('.cts-element-picker-hover', '')}`
+						text: `${classes.replace('.cts-element-selector-hover', '')}`
 					}
 				);
 		}

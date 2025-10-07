@@ -51,7 +51,7 @@ const variableCategories: Record<string, { text?: string; parent?: string; categ
 	code: { parent: 'Editor', category: 'Code' },
 	colorinput: { parent: 'Components', category: 'Color+input' },
 	colors: { parent: 'Foundations', category: 'Colors' },
-	cts: { parent: 'CTS', category: 'Custom Theme Studio plugin', text: 'Variables for the element picker and highlighted element' },
+	cts: { parent: 'CTS', category: 'Custom Theme Studio plugin', text: 'Variables for the element selector and highlighted element' },
 	cursor: { parent: 'Foundations', category: 'Cursor' },
 	custom: { parent: 'CTS', category: 'Custom variables', text: 'Custom variables' },
 	dialog: { parent: 'Components', category: 'Dialog' },

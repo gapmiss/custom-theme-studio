@@ -55,6 +55,9 @@ export interface CustomThemeStudioSettings {
 	editorKeyboard: string;
 	viewScrollToTop: boolean;
 	debugLevel: 'none' | 'error' | 'warn' | 'info' | 'debug';
+	selectorStyle: 'minimal' | 'balanced' | 'specific';
+	selectorPreferClasses: boolean;
+	selectorAlwaysIncludeTag: boolean;
 }
 
 export const DEFAULT_SETTINGS: CustomThemeStudioSettings = {
@@ -92,7 +95,10 @@ export const DEFAULT_SETTINGS: CustomThemeStudioSettings = {
 	editorDarkTheme: 'github_dark',
 	editorKeyboard: 'default',
 	viewScrollToTop: true,
-	debugLevel: 'none'
+	debugLevel: 'none',
+	selectorStyle: 'minimal',
+	selectorPreferClasses: false,
+	selectorAlwaysIncludeTag: false
 };
 
 const THEME_COLOR: Record<string, string> = {
@@ -211,9 +217,47 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				})
 			);
 
+		new Setting(containerEl).setName('Element selector').setHeading();
+
+		new Setting(containerEl)
+			.setName('Selector style preset')
+			.setDesc('Control how CSS selectors are generated when using the element selector.')
+			.addDropdown(dropdown => dropdown
+				.addOption('minimal', 'Minimal (Clean & Short)')
+				.addOption('balanced', 'Balanced (Moderate Specificity)')
+				.addOption('specific', 'Specific (Maximum Detail)')
+				.setValue(this.plugin.settings.selectorStyle)
+				.onChange(async (value: 'minimal' | 'balanced' | 'specific') => {
+					this.plugin.settings.selectorStyle = value;
+					await this.plugin.saveSettings();
+				})
+			);
+
+		new Setting(containerEl)
+			.setName('Prefer classes over attributes')
+			.setDesc('When enabled, prioritize class selectors (e.g., .my-class) over data attributes.')
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.selectorPreferClasses)
+				.onChange(async (value) => {
+					this.plugin.settings.selectorPreferClasses = value;
+					await this.plugin.saveSettings();
+				})
+			);
+
+		new Setting(containerEl)
+			.setName('Always include tag names')
+			.setDesc('When enabled, always include the HTML tag (e.g., div[data-foo] instead of [data-foo]).')
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.selectorAlwaysIncludeTag)
+				.onChange(async (value) => {
+					this.plugin.settings.selectorAlwaysIncludeTag = value;
+					await this.plugin.saveSettings();
+				})
+			);
+
 		new Setting(containerEl)
 			.setName('Generate CSS')
-			.setDesc('When using the element picker, automatically generate CSS rules with the most common properties.')
+			.setDesc('When using the element selector, automatically generate CSS rules with the most common properties.')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.generateComputedCSS)
 				.onChange(async (value) => {

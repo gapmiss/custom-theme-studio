@@ -1,10 +1,16 @@
 import { copyStringToClipboard } from '../../utils';
+import { CustomThemeStudioSettings } from '../../settings';
 
 /**
  * Generates CSS selectors from HTML elements.
  * Handles both simple and specific selector generation modes.
  */
 export class SelectorGenerator {
+	private settings: CustomThemeStudioSettings;
+
+	constructor(settings: CustomThemeStudioSettings) {
+		this.settings = settings;
+	}
 	/**
 	 * Generate a CSS selector for an element.
 	 * @param element The element to generate a selector for
@@ -18,7 +24,14 @@ export class SelectorGenerator {
 		const hasAriaLabel = element.hasAttribute('aria-label');
 		const dataAttrs = this.getDataAttributes(element);
 		const classes = Array.from(element.classList)
-			.filter(cls => !cls.includes('cts-element-picker-highlight') && !cls.includes('cts-element-picker-hover'));
+			.filter(cls => !cls.includes('cts-element-selector-highlight') && !cls.includes('cts-element-selector-hover'));
+
+		// Determine the effective style based on useSpecific parameter and settings
+		let effectiveStyle = this.settings.selectorStyle;
+		if (useSpecific && effectiveStyle !== 'specific') {
+			// When useSpecific is true (Alt/Cmd keys), force specific mode
+			effectiveStyle = 'specific';
+		}
 
 		let selector = '';
 
@@ -26,95 +39,183 @@ export class SelectorGenerator {
 		if (includeParent && element.parentElement) {
 			const parent = element.parentElement;
 			const parentClasses = Array.from(parent.classList)
-				.filter(cls => !cls.includes('cts-element-picker-highlight'))
+				.filter(cls => !cls.includes('cts-element-selector-highlight'))
 				.map(cls => `.${cls}`)
 				.join('');
 			selector = `${parent.tagName.toLowerCase()}${parentClasses} > `;
 		}
 
-		// Handle ID (highest priority) - always omit tag for IDs
+		// Handle ID (highest priority) - always omit tag for IDs unless setting says otherwise
 		if (hasId) {
-			return selector + `#${element.id}`;
+			const idSelector = this.settings.selectorAlwaysIncludeTag ? `${tagName}#${element.id}` : `#${element.id}`;
+			return selector + idSelector;
 		}
 
-		if (useSpecific) {
-			// Specific mode: include all attributes
-			const omitTag = this.canOmitTagName(element, hasId, hasAriaLabel, dataAttrs);
-			let selectorParts: string[] = [];
-
-			// Add tag name (unless we can omit it)
-			if (!omitTag) {
-				selectorParts.push(tagName);
-			}
-
-			// Add all classes
-			if (classes.length > 0) {
-				selectorParts.push(classes.map(cls => `.${cls}`).join(''));
-			}
-
-			// Add aria-label
-			if (hasAriaLabel) {
-				const ariaLabel = element.getAttribute('aria-label');
-				const escapedAriaLabel = this.escapeAttributeValue(ariaLabel!);
-				if (escapedAriaLabel) {
-					selectorParts.push(`[aria-label="${escapedAriaLabel}"]`);
-				}
-			}
-
-			// Add all data attributes with intelligent value handling
-			dataAttrs
-				.sort((a, b) => a.name.localeCompare(b.name))
-				.forEach(attr => {
-					if (this.shouldOmitAttributeValue(attr.name, attr.value)) {
-						selectorParts.push(`[${attr.name}]`);
-					} else {
-						const value = this.escapeAttributeValue(attr.value);
-						selectorParts.push(`[${attr.name}="${value}"]`);
-					}
-				});
-
-			// Add other significant attributes
-			for (const attrName of ['role', 'type', 'name']) {
-				const value = element.getAttribute(attrName);
-				if (value !== null) {
-					const escaped = this.escapeAttributeValue(value);
-					selectorParts.push(`[${attrName}="${escaped}"]`);
-				}
-			}
-
-			return selector + selectorParts.join('');
+		// Generate selector based on style
+		if (effectiveStyle === 'specific') {
+			return selector + this.generateSpecificSelector(element, tagName, hasAriaLabel, dataAttrs, classes);
+		} else if (effectiveStyle === 'balanced') {
+			return selector + this.generateBalancedSelector(element, tagName, hasAriaLabel, dataAttrs, classes);
 		} else {
-			// Default mode: prioritize most specific selector
-			// For default mode, we omit the tag when using strong selectors
-
-			// Check for aria-label (omit tag - aria-label is very specific)
-			if (hasAriaLabel) {
-				const ariaLabel = element.getAttribute('aria-label');
-				const escapedAriaLabel = this.escapeAttributeValue(ariaLabel!);
-				if (escapedAriaLabel) {
-					return selector + `[aria-label="${escapedAriaLabel}"]`;
-				}
-			}
-
-			// Check for data attributes (omit tag - data attributes are specific)
-			if (dataAttrs.length > 0) {
-				const bestAttr = dataAttrs.sort((a, b) => a.name.length - b.name.length)[0];
-				if (this.shouldOmitAttributeValue(bestAttr.name, bestAttr.value)) {
-					return selector + `[${bestAttr.name}]`;
-				} else {
-					const value = this.escapeAttributeValue(bestAttr.value);
-					return selector + `[${bestAttr.name}="${value}"]`;
-				}
-			}
-
-			// Fallback to tag + classes (keep tag - classes are generic)
-			let selectorParts: string[] = [tagName];
-			if (classes.length > 0) {
-				selectorParts.push(classes.map(cls => `.${cls}`).join(''));
-			}
-
-			return selector + selectorParts.join('');
+			// minimal
+			return selector + this.generateMinimalSelector(element, tagName, hasAriaLabel, dataAttrs, classes);
 		}
+	}
+
+	/**
+	 * Generate a minimal selector (shortest possible)
+	 */
+	private generateMinimalSelector(
+		element: HTMLElement,
+		tagName: string,
+		hasAriaLabel: boolean,
+		dataAttrs: Array<{ name: string, value: string }>,
+		classes: string[]
+	): string {
+		const alwaysIncludeTag = this.settings.selectorAlwaysIncludeTag;
+		const preferClasses = this.settings.selectorPreferClasses;
+
+		// Check for aria-label (very specific)
+		if (hasAriaLabel) {
+			const ariaLabel = element.getAttribute('aria-label');
+			const escapedAriaLabel = this.escapeAttributeValue(ariaLabel!);
+			if (escapedAriaLabel) {
+				const ariaSelector = `[aria-label="${escapedAriaLabel}"]`;
+				return alwaysIncludeTag ? `${tagName}${ariaSelector}` : ariaSelector;
+			}
+		}
+
+		// Prefer classes or data attributes based on setting
+		if (preferClasses && classes.length > 0) {
+			const classSelector = classes.map(cls => `.${cls}`).join('');
+			return `${tagName}${classSelector}`;
+		}
+
+		// Check for data attributes
+		if (dataAttrs.length > 0) {
+			const bestAttr = dataAttrs.sort((a, b) => a.name.length - b.name.length)[0];
+			let attrSelector = '';
+			if (this.shouldOmitAttributeValue(bestAttr.name, bestAttr.value)) {
+				attrSelector = `[${bestAttr.name}]`;
+			} else {
+				const value = this.escapeAttributeValue(bestAttr.value);
+				attrSelector = `[${bestAttr.name}="${value}"]`;
+			}
+			return alwaysIncludeTag ? `${tagName}${attrSelector}` : attrSelector;
+		}
+
+		// Fallback to tag + classes
+		let selectorParts: string[] = [tagName];
+		if (classes.length > 0) {
+			selectorParts.push(classes.map(cls => `.${cls}`).join(''));
+		}
+		return selectorParts.join('');
+	}
+
+	/**
+	 * Generate a balanced selector (tag + one primary attribute)
+	 */
+	private generateBalancedSelector(
+		element: HTMLElement,
+		tagName: string,
+		hasAriaLabel: boolean,
+		dataAttrs: Array<{ name: string, value: string }>,
+		classes: string[]
+	): string {
+		const preferClasses = this.settings.selectorPreferClasses;
+		let selectorParts: string[] = [tagName];
+
+		// Add aria-label if present (high priority)
+		if (hasAriaLabel) {
+			const ariaLabel = element.getAttribute('aria-label');
+			const escapedAriaLabel = this.escapeAttributeValue(ariaLabel!);
+			if (escapedAriaLabel) {
+				selectorParts.push(`[aria-label="${escapedAriaLabel}"]`);
+				return selectorParts.join('');
+			}
+		}
+
+		// Prefer classes or data attributes
+		if (preferClasses && classes.length > 0) {
+			selectorParts.push(classes.map(cls => `.${cls}`).join(''));
+			return selectorParts.join('');
+		}
+
+		// Add best data attribute
+		if (dataAttrs.length > 0) {
+			const bestAttr = dataAttrs.sort((a, b) => a.name.length - b.name.length)[0];
+			if (this.shouldOmitAttributeValue(bestAttr.name, bestAttr.value)) {
+				selectorParts.push(`[${bestAttr.name}]`);
+			} else {
+				const value = this.escapeAttributeValue(bestAttr.value);
+				selectorParts.push(`[${bestAttr.name}="${value}"]`);
+			}
+			return selectorParts.join('');
+		}
+
+		// Fallback to classes
+		if (classes.length > 0) {
+			selectorParts.push(classes.map(cls => `.${cls}`).join(''));
+		}
+
+		return selectorParts.join('');
+	}
+
+	/**
+	 * Generate a specific selector (all attributes)
+	 */
+	private generateSpecificSelector(
+		element: HTMLElement,
+		tagName: string,
+		hasAriaLabel: boolean,
+		dataAttrs: Array<{ name: string, value: string }>,
+		classes: string[]
+	): string {
+		const omitTag = !this.settings.selectorAlwaysIncludeTag &&
+			this.canOmitTagName(element, false, hasAriaLabel, dataAttrs);
+		let selectorParts: string[] = [];
+
+		// Add tag name (unless we can omit it)
+		if (!omitTag) {
+			selectorParts.push(tagName);
+		}
+
+		// Add all classes
+		if (classes.length > 0) {
+			selectorParts.push(classes.map(cls => `.${cls}`).join(''));
+		}
+
+		// Add aria-label
+		if (hasAriaLabel) {
+			const ariaLabel = element.getAttribute('aria-label');
+			const escapedAriaLabel = this.escapeAttributeValue(ariaLabel!);
+			if (escapedAriaLabel) {
+				selectorParts.push(`[aria-label="${escapedAriaLabel}"]`);
+			}
+		}
+
+		// Add all data attributes with intelligent value handling
+		dataAttrs
+			.sort((a, b) => a.name.localeCompare(b.name))
+			.forEach(attr => {
+				if (this.shouldOmitAttributeValue(attr.name, attr.value)) {
+					selectorParts.push(`[${attr.name}]`);
+				} else {
+					const value = this.escapeAttributeValue(attr.value);
+					selectorParts.push(`[${attr.name}="${value}"]`);
+				}
+			});
+
+		// Add other significant attributes
+		for (const attrName of ['role', 'type', 'name']) {
+			const value = element.getAttribute(attrName);
+			if (value !== null) {
+				const escaped = this.escapeAttributeValue(value);
+				selectorParts.push(`[${attrName}="${escaped}"]`);
+			}
+		}
+
+		return selectorParts.join('');
 	}
 
 	/**

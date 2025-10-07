@@ -195,14 +195,14 @@
         "--caret-color": "var(--text-normal)"
     },
     "cts": {
-        "--picker-highlight-outline": "1px dashed var(--interactive-accent)",
-        "--picker-highlight-background-color": "hsla(var(--interactive-accent-hsl), .1)",
-        "--picker-tooltip-background-color": "var(--background-primary)",
-        "--picker-tooltip-border": "1px solid var(--background-modifier-border)",
-        "--picker-tooltip-border-radius": "var(--size-4-2)",
-        "--picker-tooltip-font-size": "var(--font-smaller)",
-        "--picker-tooltip-padding": "1em",
-        "--picker-tooltip-max-width": "400px"
+        "--element-selector-highlight-outline": "1px dashed var(--interactive-accent)",
+        "--element-selector-highlight-background-color": "hsla(var(--interactive-accent-hsl), .1)",
+        "--element-selector-tooltip-background-color": "var(--background-primary)",
+        "--element-selector-tooltip-border": "1px solid var(--background-modifier-border)",
+        "--element-selector-tooltip-border-radius": "var(--size-4-2)",
+        "--element-selector-tooltip-font-size": "var(--font-smaller)",
+        "--element-selector-tooltip-padding": "1em",
+        "--element-selector-tooltip-max-width": "400px"
     },
     "cursor": {
         "--cursor": "default",

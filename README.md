@@ -111,7 +111,7 @@ Edit Obsidian's built-in CSS variables to customize colors, fonts, and UI elemen
 
 Create custom CSS rules to style specific elements:
 
-- **Element picker**: Use `Ctrl/Cmd + P` → "Custom Theme Studio: Select an element for new CSS rule" to visually pick elements
+- **Element selector**: Use `Ctrl/Cmd + P` → "Custom Theme Studio: Select an element for new CSS rule" to visually pick elements
 - **CSS editor**: Write custom CSS with syntax highlighting and auto-completion
 - **Live preview**: See changes in real-time as you type
 - **Font import**: Import custom fonts and generate @font-face rules

@@ -27,7 +27,7 @@ export class ElementSelectorManager {
 		this.cancelButton = this.cancelButton;
 
 		// Initialize specialized managers
-		this.selectorGenerator = new SelectorGenerator();
+		this.selectorGenerator = new SelectorGenerator(this.plugin.settings);
 		this.highlighter = new ElementHighlighter(this.selectorGenerator);
 	}
 
@@ -39,7 +39,7 @@ export class ElementSelectorManager {
 		this.isSelecting = true;
 
 		// Add class to body for cursor styling
-		document.body.classList.add('cts-element-picker-active');
+		document.body.classList.add('cts-element-selector-active');
 
 		// Create tooltip
 		this.highlighter.createTooltip();
@@ -84,7 +84,7 @@ export class ElementSelectorManager {
 					(div) => {
 						this.cancelButton = new ButtonComponent(div)
 							.setButtonText(cancelText)
-							.setClass('cts-element-picker-cancel')
+							.setClass('cts-element-selector-cancel')
 							.setTooltip('Stop element selection');
 						this.cancelButton.onClick((e) => {
 							new Notice('Element selection cancelled');
@@ -94,7 +94,7 @@ export class ElementSelectorManager {
 			}),
 			timeout
 		);
-		notice.containerEl.setAttr('data-notice-element', 'cts-element-picker-notice');
+		notice.containerEl.setAttr('data-notice-element', 'cts-element-selector-notice');
 		return notice;
 	}
 
@@ -106,7 +106,7 @@ export class ElementSelectorManager {
 		this.isSelecting = false;
 
 		// Remove class from body
-		document.body.classList.remove('cts-element-picker-active');
+		document.body.classList.remove('cts-element-selector-active');
 
 		// Remove tooltip
 		this.highlighter.destroyTooltip();
@@ -115,8 +115,8 @@ export class ElementSelectorManager {
 		this.highlighter.unhighlightElement();
 
 		// Remove any hover classes that might be left
-		document.querySelectorAll('.cts-element-picker-hover').forEach(el => {
-			el.classList.remove('cts-element-picker-hover');
+		document.querySelectorAll('.cts-element-selector-hover').forEach(el => {
+			el.classList.remove('cts-element-selector-hover');
 		});
 
 		// Remove event listeners
@@ -137,8 +137,8 @@ export class ElementSelectorManager {
 		// Skip the tooltip and notice cancel button
 		const tooltip = this.highlighter.getHighlightedElement();
 		if (
-			target.closest('.cts-element-picker-tooltip') ||
-			target.closest('.cts-element-picker-cancel')
+			target.closest('.cts-element-selector-tooltip') ||
+			target.closest('.cts-element-selector-cancel')
 		) {
 			return;
 		}
@@ -152,7 +152,7 @@ export class ElementSelectorManager {
 		this.highlighter.highlightElement(target);
 
 		// Add hover class to show a border
-		target.classList.add('cts-element-picker-hover');
+		target.classList.add('cts-element-selector-hover');
 
 		// Update tooltip
 		this.highlighter.updateTooltip(target, e);
@@ -165,7 +165,7 @@ export class ElementSelectorManager {
 		const target = e.target as HTMLElement;
 
 		// Remove hover class
-		target.classList.remove('cts-element-picker-hover');
+		target.classList.remove('cts-element-selector-hover');
 
 		// Unhighlight the element
 		this.highlighter.unhighlightElement();
@@ -179,7 +179,7 @@ export class ElementSelectorManager {
 		if (this.isSelecting) {
 			// Prevent buttons from activating, links from navigating, etc.
 			// Skip the Notice "Cancel" button
-			if (!(e.target as HTMLElement).hasClass('cts-element-picker-cancel')) {
+			if (!(e.target as HTMLElement).hasClass('cts-element-selector-cancel')) {
 				e.preventDefault();
 				e.stopPropagation();
 			}
@@ -191,7 +191,7 @@ export class ElementSelectorManager {
 		const target = e.target as HTMLElement;
 
 		// Skip the tooltip itself
-		if (target.closest('.cts-element-picker-tooltip')) {
+		if (target.closest('.cts-element-selector-tooltip')) {
 			return;
 		}
 
@@ -201,9 +201,9 @@ export class ElementSelectorManager {
 		}
 
 		// Skip the Notice "Cancel" button
-		if (!target.classList.contains('cts-element-picker-cancel')) {
+		if (!target.classList.contains('cts-element-selector-cancel')) {
 			// Remove hover class from target before selecting
-			target.classList.remove('cts-element-picker-hover');
+			target.classList.remove('cts-element-selector-hover');
 
 			// Select the element
 			this.selectElement(target, e);
