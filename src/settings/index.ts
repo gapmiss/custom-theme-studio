@@ -1,4 +1,4 @@
-import { App, PluginSettingTab, Setting, Notice, setIcon } from 'obsidian';
+import { App, PluginSettingTab, Setting, Notice, setIcon, SliderComponent } from 'obsidian';
 import { AceLightThemesList, AceDarkThemesList, AceKeyboardList } from '../ace/AceThemes';
 import { confirm } from '../modals/confirmModal';
 import CustomThemeStudioPlugin from '../main';
@@ -58,6 +58,7 @@ export interface CustomThemeStudioSettings {
 	selectorStyle: 'minimal' | 'balanced' | 'specific';
 	selectorPreferClasses: boolean;
 	selectorAlwaysIncludeTag: boolean;
+	cssEditorDebounceDelay: number;
 }
 
 export const DEFAULT_SETTINGS: CustomThemeStudioSettings = {
@@ -98,7 +99,8 @@ export const DEFAULT_SETTINGS: CustomThemeStudioSettings = {
 	debugLevel: 'none',
 	selectorStyle: 'minimal',
 	selectorPreferClasses: false,
-	selectorAlwaysIncludeTag: false
+	selectorAlwaysIncludeTag: false,
+	cssEditorDebounceDelay: 500
 };
 
 const THEME_COLOR: Record<string, string> = {
@@ -289,6 +291,34 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		this.containerEl.appendChild(noticeDiv);
 
+		let debounceDelaySlider: SliderComponent;
+		new Setting(containerEl)
+			.setName('Auto-apply change delay')
+			.setDesc('Time to wait before applying CSS rule changes while typing in the CSS editor (only when auto-apply is enabled). Lower = faster updates but may cause lag.')
+			.addSlider(slider => {
+				debounceDelaySlider = slider;
+				slider
+					.setLimits(0, 2000, 100)
+					.setValue(this.plugin.settings.cssEditorDebounceDelay)
+					.onChange(async (value) => {
+						slider.sliderEl.setAttribute('aria-label', value.toString() + 'ms');
+						this.plugin.settings.cssEditorDebounceDelay = value;
+						await this.plugin.saveSettings();
+					});
+				slider.sliderEl.setAttribute('aria-label', this.plugin.settings.cssEditorDebounceDelay.toString() + 'ms');
+				slider.sliderEl.setAttribute('data-tooltip-position', 'top');
+				slider.sliderEl.setAttribute('data-tooltip-delay', '100');
+			})
+			.addExtraButton(button => button
+				.setIcon('rotate-ccw')
+				.setTooltip('Restore default (500ms)')
+				.onClick(async () => {
+					debounceDelaySlider.setValue(500);
+					debounceDelaySlider.sliderEl.setAttribute('aria-label', '500ms');
+					this.plugin.settings.cssEditorDebounceDelay = 500;
+					await this.plugin.saveSettings();
+				})
+			);
 
 		new Setting(containerEl)
 			.setName('Color picker')
@@ -400,24 +430,33 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 					});
 			});
 
-		let fontSizeText: HTMLDivElement;
+		let fontSizeSlider: SliderComponent;
 		new Setting(containerEl)
 			.setName('Font size')
 			.setDesc('Set the font size of the CSS editor.')
-			.addSlider(slider => slider
-				.setLimits(5, 30, 1)
-				.setValue(this.plugin.settings.editorFontSize)
-				.onChange(async (value) => {
-					fontSizeText.innerText = ' ' + value.toString();
-					this.plugin.settings.editorFontSize = value;
-					this.plugin.saveSettings();
-				}))
-			.settingEl.createDiv(
-				'cts-font-size-setting',
-				(el) => {
-					fontSizeText = el;
-					el.innerText = ' ' + this.plugin.settings.editorFontSize.toString();
-				}
+			.addSlider(slider => {
+				fontSizeSlider = slider;
+				slider
+					.setLimits(5, 30, 1)
+					.setValue(this.plugin.settings.editorFontSize)
+					.onChange(async (value) => {
+						slider.sliderEl.setAttribute('aria-label', value.toString());
+						this.plugin.settings.editorFontSize = value;
+						this.plugin.saveSettings();
+					});
+				slider.sliderEl.setAttribute('aria-label', this.plugin.settings.editorFontSize.toString());
+				slider.sliderEl.setAttribute('data-tooltip-position', 'top');
+				slider.sliderEl.setAttribute('data-tooltip-delay', '100');
+			})
+			.addExtraButton(button => button
+				.setIcon('rotate-ccw')
+				.setTooltip('Restore default (15)')
+				.onClick(async () => {
+					fontSizeSlider.setValue(15);
+					fontSizeSlider.sliderEl.setAttribute('aria-label', '15');
+					this.plugin.settings.editorFontSize = 15;
+					await this.plugin.saveSettings();
+				})
 			);
 
 		new Setting(containerEl)

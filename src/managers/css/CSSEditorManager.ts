@@ -332,7 +332,7 @@ export class CSSEditorManager {
 					if (css !== '') {
 						this.applyChanges(css);
 					}
-				}, DEBOUNCE_DELAYS.CSS_EDITOR_CHANGE);
+				}, this.plugin.settings.cssEditorDebounceDelay);
 			}
 		}, 10);
 	}
