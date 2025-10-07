@@ -121,11 +121,12 @@ export class ElementHighlighter {
 				}
 			);
 			dataAttributes.forEach(attr => {
+				const formattedAttr = this.selectorGenerator.formatAttributeForDisplay(attr.name, attr.value);
 				attrList.appendChild(
 					attrList.createEl(
 						'li',
 						{
-							text: `${attr.name}="${attr.value}"`
+							text: formattedAttr
 						}
 					)
 				);
