@@ -1,4 +1,4 @@
-import { App, PluginSettingTab, Setting, Notice, setIcon, SliderComponent } from 'obsidian';
+import { App, PluginSettingTab, Setting, Notice, setIcon, SliderComponent, DropdownComponent } from 'obsidian';
 import { AceLightThemesList, AceDarkThemesList, AceKeyboardList } from '../ace/AceThemes';
 import { confirm } from '../modals/confirmModal';
 import CustomThemeStudioPlugin from '../main';
@@ -33,6 +33,7 @@ export interface CustomThemeStudioSettings {
 	expandCSSVariables: boolean;
 	expandCSSRules: boolean;
 	expandExportTheme: boolean;
+	expandEditorSettings: boolean;
 	expandedVariableCategories: string[];
 	activeVariableTagFilter: string;
 	autoApplyChanges: boolean;
@@ -75,6 +76,7 @@ export const DEFAULT_SETTINGS: CustomThemeStudioSettings = {
 	expandCSSVariables: false,
 	expandCSSRules: false,
 	expandExportTheme: false,
+	expandEditorSettings: false,
 	expandedVariableCategories: [],
 	activeVariableTagFilter: 'all',
 	autoApplyChanges: false,
@@ -147,30 +149,11 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				})
 			);
 
-		new Setting(containerEl)
-			.setName('Reload view')
-			.setDesc('Most settings under CSS variables & CSS rules require the plugin\'s view to be reloaded to take effect.')
-			.addButton(button => button
-				.setButtonText('Reload')
-				.setClass('mod-destructive')
-				.onClick(async () => {
-					if (await confirm('You may have unsaved changes. Reloading the view will reload all forms. Continue?', this.plugin.app)) {
-						try {
-							await this.plugin.reloadView();
-							new Notice('The Custom Theme Studio view has been reloaded');
-						} catch (error) {
-							Logger.error(error);
-							new Notice('Failed to reload view. Check developer console for details.', 10000);
-						}
-					}
-				})
-			);
-
 		new Setting(containerEl).setName('CSS variables').setHeading();
 
 		new Setting(containerEl)
-			.setName('Variable input listener')
-			.setDesc('When to listen for value changes to trigger a CSS update. "Input" will update the CSS on every keystroke. "Change" will update the CSS when the cursor leaves the text input form.')
+			.setName('Variable update trigger')
+			.setDesc('When to update CSS after changing variable values. Choose "Input" for live updates (every keystroke) or "Change" to update only when you finish editing (clicking away from the field).')
 			.addDropdown((dropdown) => {
 				dropdown
 					.addOptions({
@@ -185,7 +168,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 			});
 
 		new Setting(containerEl)
-			.setName('Color picker')
+			.setName('Variable color picker')
 			.setDesc('Enable a color picker for CSS variables that have a default HEX color value.')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.enableColorPicker)
@@ -209,8 +192,8 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 			);
 
 		new Setting(containerEl)
-			.setName('Show confirmations')
-			.setDesc('Show a confirmation dialog warning about unsaved changes when leaving a CSS editor.')
+			.setName('Warn before discarding changes')
+			.setDesc('Warn before discarding unsaved changes when closing or switching between CSS editors.')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.showConfirmation)
 				.onChange(async (value) => {
@@ -223,7 +206,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Selector style preset')
-			.setDesc('Control how CSS selectors are generated when using the element selector.')
+			.setDesc('Choose the style of CSS selectors generated when picking elements. "Minimal" creates short selectors, "Balanced" includes the tag name, and "Specific" includes all attributes.')
 			.addDropdown(dropdown => dropdown
 				.addOption('minimal', 'Minimal (Clean & Short)')
 				.addOption('balanced', 'Balanced (Moderate Specificity)')
@@ -259,7 +242,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Generate CSS')
-			.setDesc('When using the element selector, automatically generate CSS rules with the most common properties.')
+			.setDesc('Automatically populate the CSS editor with common properties (color, background, font, etc.) when selecting an element.')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.generateComputedCSS)
 				.onChange(async (value) => {
@@ -294,7 +277,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 		let debounceDelaySlider: SliderComponent;
 		new Setting(containerEl)
 			.setName('Auto-apply change delay')
-			.setDesc('Time to wait before applying CSS rule changes while typing in the CSS editor (only when auto-apply is enabled). Lower = faster updates but may cause lag.')
+			.setDesc('Delay before live-previewing CSS changes while typing (requires auto-apply). Lower values = faster feedback but may cause performance issues.')
 			.addSlider(slider => {
 				debounceDelaySlider = slider;
 				slider
@@ -311,18 +294,43 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 			})
 			.addExtraButton(button => button
 				.setIcon('rotate-ccw')
-				.setTooltip('Restore default (500ms)')
+				.setTooltip(`Restore default (${DEFAULT_SETTINGS.cssEditorDebounceDelay.toString()})`)
 				.onClick(async () => {
-					debounceDelaySlider.setValue(500);
-					debounceDelaySlider.sliderEl.setAttribute('aria-label', '500ms');
+					debounceDelaySlider.setValue(DEFAULT_SETTINGS.cssEditorDebounceDelay);
+					debounceDelaySlider.sliderEl.setAttribute('aria-label', DEFAULT_SETTINGS.cssEditorDebounceDelay.toString());
 					this.plugin.settings.cssEditorDebounceDelay = 500;
 					await this.plugin.saveSettings();
 				})
 			);
 
-		new Setting(containerEl)
-			.setName('Color picker')
-			.setDesc('Enable an inline color picker in the CSS editor.')
+		// CSS editor settings collapsible section
+		const editorSettingsHeading = new Setting(containerEl)
+			.setName('CSS editor preferences')
+			.setHeading()
+			.setTooltip('Click to expand/collapse CSS editor preferences');
+
+		editorSettingsHeading.settingEl.addClass('cts-collapsible-heading');
+
+		// Add chevron icon
+		const chevronIcon = editorSettingsHeading.nameEl.createDiv('cts-chevron-icon');
+		setIcon(chevronIcon, this.plugin.settings.expandEditorSettings ? 'chevron-down' : 'chevron-right');
+
+		const editorSettingsContainer = containerEl.createDiv('cts-editor-settings-container');
+		if (!this.plugin.settings.expandEditorSettings) {
+			editorSettingsContainer.style.display = 'none';
+		}
+
+		editorSettingsHeading.settingEl.addEventListener('click', async () => {
+			this.plugin.settings.expandEditorSettings = !this.plugin.settings.expandEditorSettings;
+			editorSettingsContainer.style.display = this.plugin.settings.expandEditorSettings ? 'block' : 'none';
+			chevronIcon.empty();
+			setIcon(chevronIcon, this.plugin.settings.expandEditorSettings ? 'chevron-down' : 'chevron-right');
+			await this.plugin.saveSettings();
+		});
+
+		new Setting(editorSettingsContainer)
+			.setName('Editor color picker')
+			.setDesc('Show inline color picker for hex/rgb values.')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.enableAceColorPicker)
 				.onChange(async (value) => {
@@ -331,9 +339,9 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				})
 			);
 
-		let liveAutoCompletiongsToggle = new Setting(containerEl)
+		let liveAutoCompletiongsToggle = new Setting(editorSettingsContainer)
 			.setName('Live auto completion')
-			.setDesc('Enable auto completion of keywords and text including snippets.')
+			.setDesc('Show auto-completion suggestions while typing CSS properties and values.')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.enableAceAutoCompletion)
 				.onChange(async (value) => {
@@ -349,9 +357,9 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				})
 			);
 
-		let snippetsToggle = new Setting(containerEl)
+		let snippetsToggle = new Setting(editorSettingsContainer)
 			.setName('Snippets')
-			.setDesc('Enable inline snippets in the CSS editor. These auto-complete snippets include every CSS variable within Obsidian. Requires the above "Live auto completion" toggle to be enabled.')
+			.setDesc('Show Obsidian CSS variables in auto-completion (requires live auto-completion).')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.enableAceSnippets)
 				.onChange(async (value) => {
@@ -363,15 +371,15 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 							this.plugin.settings.enableAceSnippets = false;
 						}
 					} else {
-						new Notice('Disabling this setting requires a reload of the Obsidian window. From the command pallete, run the command "Reload app without saving." … Click this message to dismiss.', 0);
+						new Notice('Disabling this setting requires a reload of the Obsidian window. From the command palette, run the command "Reload app without saving." … Click this message to dismiss.', 0);
 					}
 					await this.plugin.saveSettings();
 				})
 			);
 
-		new Setting(containerEl)
-			.setName('Theme')
-			.setDesc('Choose a theme for the CSS editor, "Auto" defaults to theme of Obsidian.')
+		new Setting(editorSettingsContainer)
+			.setName('Editor theme')
+			.setDesc('CSS editor color theme. "Auto" matches your Obsidian theme.')
 			.addDropdown(async (dropdown) => {
 				for (const key in THEME_COLOR) {
 					dropdown.addOption(key, key);
@@ -383,9 +391,9 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				});
 			});
 
-		new Setting(containerEl)
-			.setName('Light theme')
-			.setDesc('')
+		new Setting(editorSettingsContainer)
+			.setName('Light mode theme')
+			.setDesc('Syntax highlighting theme when Obsidian is in light mode.')
 			.addDropdown((dropdown) => {
 				AceLightThemesList.forEach((theme) => {
 					dropdown
@@ -399,9 +407,9 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 					});
 			});
 
-		new Setting(containerEl)
-			.setName('Dark theme')
-			.setDesc('')
+		new Setting(editorSettingsContainer)
+			.setName('Dark mode theme')
+			.setDesc('Syntax highlighting theme when Obsidian is in dark mode.')
 			.addDropdown((dropdown) => {
 				AceDarkThemesList.forEach((theme) => {
 					dropdown
@@ -415,9 +423,9 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 					});
 			});
 
-		new Setting(containerEl)
-			.setName('Keyboard')
-			.setDesc('')
+		new Setting(editorSettingsContainer)
+			.setName('Keyboard shortcuts')
+			.setDesc('Keyboard shortcut scheme for the CSS editor.')
 			.addDropdown((dropdown) => {
 				AceKeyboardList.forEach((binding) => {
 					dropdown.addOption(binding, binding)
@@ -431,7 +439,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 			});
 
 		let fontSizeSlider: SliderComponent;
-		new Setting(containerEl)
+		new Setting(editorSettingsContainer)
 			.setName('Font size')
 			.setDesc('Set the font size of the CSS editor.')
 			.addSlider(slider => {
@@ -459,9 +467,9 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				})
 			);
 
-		new Setting(containerEl)
+		new Setting(editorSettingsContainer)
 			.setName('Font family')
-			.setDesc('Custom font for the CSS editor.')
+			.setDesc('Font family for the CSS editor (e.g., "Fira Code", "Monaco"). Leave empty for default.')
 			.addText(text => text
 				.setValue(this.plugin.settings.editorFontFamily)
 				.onChange(async (value) => {
@@ -470,10 +478,12 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				})
 			);
 
-		new Setting(containerEl)
+		let tabWidthDropdown: DropdownComponent;
+		new Setting(editorSettingsContainer)
 			.setName('Tab width')
-			.setDesc('Number of spaces a tab character will render as.')
+			.setDesc('Indentation width (spaces per tab level). Standard is 2 or 4.')
 			.addDropdown((dropdown) => {
+				tabWidthDropdown = dropdown;
 				dropdown
 					.addOptions({
 						'2': '2',
@@ -484,11 +494,20 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 						this.plugin.settings.editorTabWidth = newValue;
 						await this.plugin.saveSettings();
 					});
-			});
+			})
+			.addExtraButton(button => button
+				.setIcon('rotate-ccw')
+				.setTooltip(`Restore default (${DEFAULT_SETTINGS.editorTabWidth.toString()})`)
+				.onClick(async () => {
+					tabWidthDropdown.setValue(DEFAULT_SETTINGS.editorTabWidth.toString());
+					this.plugin.settings.editorTabWidth = DEFAULT_SETTINGS.editorTabWidth.toString();
+					await this.plugin.saveSettings();
+				})
+			);
 
-		new Setting(containerEl)
-			.setName('Wordwrap')
-			.setDesc('Enable word wrapping.')
+		new Setting(editorSettingsContainer)
+			.setName('Word wrap')
+			.setDesc('Wrap long lines instead of scrolling horizontally.')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.editorWordWrap)
 				.onChange(async (value) => {
@@ -497,9 +516,9 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 				}));
 
-		new Setting(containerEl)
+		new Setting(editorSettingsContainer)
 			.setName('Line numbers')
-			.setDesc('Enable line numbers.')
+			.setDesc('Show line numbers in the CSS editor.')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.editorLineNumbers)
 				.onChange(async (value) => {
@@ -547,7 +566,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Author URL')
-			.setDesc('URL to your github profile page (e.g. https://github.com/username). ')
+			.setDesc('URL to your Github profile page (e.g. https://github.com/username). ')
 			.addText(text => text
 				.setValue(this.plugin.settings.exportThemeURL)
 				.onChange(async (value) => {
@@ -561,6 +580,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Include disabled CSS rules when exporting')
+			.setDesc('Include disabled rules in exported themes (useful for sharing themes with optional features)."')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.exportThemeIncludeDisabled)
 				.onChange(async (value) => {
@@ -602,7 +622,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Scroll to top')
-			.setDesc('Automatically scroll sections to the top of the Custom Theme Studio view when expanding or editing.')
+			.setDesc('Auto-scroll to expanded sections or active editors for easier navigation.')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.viewScrollToTop)
 				.onChange(async (value) => {
@@ -615,7 +635,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Export & import settings')
-			.setDesc('Import will replace the current settings. If you are not prompted to choose a location, then the file will be exported to/imported from the vault root as CTS_settings.json (json files aren\'t visible in the vault by default).')
+			.setDesc('Export or import all plugin settings. Import will overwrite current settings. File saved to vault root as CTS_settings.json.')
 			.addButton((button) => {
 				button.setButtonText('Export');
 				button.onClick(async () => {
@@ -639,6 +659,25 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		// Troubleshooting Section
 		new Setting(containerEl).setName('Troubleshooting').setHeading();
+
+		new Setting(containerEl)
+			.setName('Reload view')
+			.setDesc('Most settings under CSS variables & CSS rules require the plugin\'s view to be reloaded to take effect.')
+			.addButton(button => button
+				.setButtonText('Reload')
+				.setClass('mod-destructive')
+				.onClick(async () => {
+					if (await confirm('You may have unsaved changes. Reloading the view will reload all forms. Continue?', this.plugin.app)) {
+						try {
+							await this.plugin.reloadView();
+							new Notice('The Custom Theme Studio view has been reloaded');
+						} catch (error) {
+							Logger.error(error);
+							new Notice('Failed to reload view. Check developer console for details.', 10000);
+						}
+					}
+				})
+			);
 
 		// Debug Level Setting
 		new Setting(containerEl)
