@@ -1,6 +1,6 @@
 {
 	"name": "custom-theme-studio",
-	"version": "1.6.2",
+	"version": "1.6.3",
 	"description": "An Obsidian.md plugin to create and customize themes with a built-in CSS editor. Modify colors, styles, and export your custom theme.",
 	"main": "main.js",
 	"scripts": {
