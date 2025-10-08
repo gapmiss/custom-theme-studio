@@ -40,6 +40,29 @@ export class CSSValidationService {
 	}
 
 	/**
+	 * Format CSS code using Prettier.
+	 * Returns formatted CSS or null if formatting fails.
+	 *
+	 * @param cssCode The CSS code to format
+	 * @returns Formatted CSS string or null if invalid
+	 */
+	async formatCSS(cssCode: string): Promise<string | null> {
+		try {
+			const formatted = await prettier.format(cssCode, {
+				parser: 'css',
+				plugins: [cssPlugin],
+				tabWidth: Number(this.plugin.settings.editorTabWidth) || 4,
+				useTabs: false,
+			});
+			return formatted;
+		} catch (error) {
+			Logger.error('CSS formatting failed:', error);
+			showNotice('Unable to format CSS. Please check syntax.', 5000, 'error');
+			return null;
+		}
+	}
+
+	/**
 	 * Update the full customCSS from all enabled rules.
 	 * Used when rules are added, updated, or toggled.
 	 */

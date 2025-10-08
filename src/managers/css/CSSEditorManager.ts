@@ -244,6 +244,54 @@ export class CSSEditorManager {
 			}
 		);
 
+		const formatButton = buttonContainer.createEl(
+			'button',
+			{
+				cls: 'clickable-icon',
+				attr: {
+					'aria-label': 'Format CSS with Prettier',
+					'data-tooltip-position': 'top'
+				}
+			}
+		);
+		setIcon(formatButton, 'wand-sparkles');
+
+		formatButton.addEventListener('click', async () => {
+			const currentCSS = this.aceService.getValue();
+			if (!currentCSS || currentCSS.trim() === '') {
+				showNotice('No CSS to format', 2000, 'info');
+				return;
+			}
+
+			// Store cursor position
+			const cursorPosition = this.editor.getCursorPosition();
+
+			// Format the CSS
+			const formatted = await this.validationService.formatCSS(currentCSS);
+			if (formatted) {
+				// Use replace instead of setValue to preserve undo stack
+				const Range = ace.require('ace/range').Range;
+				const fullRange = new Range(
+					0, 0,
+					this.editor.session.getLength(),
+					this.editor.session.getLine(this.editor.session.getLength() - 1).length
+				);
+
+				// Replace content - this is undoable with Ctrl/Cmd+Z
+				this.editor.session.replace(fullRange, formatted);
+
+				// Try to restore cursor position (or close to it)
+				try {
+					this.editor.moveCursorToPosition(cursorPosition);
+				} catch {
+					// If position is invalid after formatting, just go to start
+					this.editor.navigateFileStart();
+				}
+
+				showNotice('CSS formatted successfully', 2000, 'success');
+			}
+		});
+
 		const settingsButton = buttonContainer.createEl(
 			'button',
 			{
