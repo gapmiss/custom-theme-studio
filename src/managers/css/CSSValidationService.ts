@@ -135,8 +135,6 @@ export class CSSValidationService {
 	 * Apply theme changes to the DOM
 	 */
 	applyTheme(): void {
-		if (this.plugin.settings.themeEnabled) {
-			this.plugin.themeManager.applyCustomTheme();
-		}
+		this.plugin.themeManager.applyIfEnabled();
 	}
 }

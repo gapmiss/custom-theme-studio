@@ -97,8 +97,8 @@ export default class CustomThemeStudioPlugin extends Plugin {
 		await this.saveSettings();
 
 		// Apply saved theme if enabled
-		if (this.settings.themeEnabled && this.settings.customCSS) {
-			this.themeManager.applyCustomTheme();
+		if (this.settings.customCSS) {
+			this.themeManager.applyIfEnabled();
 		}
 	}
 

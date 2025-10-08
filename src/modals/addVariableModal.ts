@@ -89,9 +89,7 @@ export class AddVariableModal extends Modal {
                         value
                     });
                     this.plugin.saveSettings();
-                    if (this.plugin.settings.themeEnabled) {
-                        this.plugin.themeManager.applyCustomTheme();
-                    }
+                    this.plugin.themeManager.applyIfEnabled();
                     this.close();
 
                     let leaf = this.app.workspace.getLeavesOfType(VIEW_TYPE_CTS).first();

@@ -30,9 +30,7 @@ export class CSSVariablesSection extends UIComponent {
 	private setupDebounceUpdate(): void {
 		this.debounceUpdate = new SimpleDebouncer(
 			() => {
-				if (this.plugin.settings.themeEnabled) {
-					this.plugin.themeManager.applyCustomTheme();
-				}
+				this.plugin.themeManager.applyIfEnabled();
 				this.eventManager.emit('variable:updated', {
 					name: 'bulk',
 					value: 'updated',
@@ -397,9 +395,7 @@ export class CSSVariablesSection extends UIComponent {
 		this.saveSettings();
 
 		// Apply changes
-		if (this.plugin.settings.themeEnabled) {
-			this.plugin.themeManager.applyCustomTheme();
-		}
+		this.plugin.themeManager.applyIfEnabled();
 
 		// Remove from local storage
 		this.variableItems.delete(uuid);

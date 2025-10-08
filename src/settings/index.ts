@@ -734,9 +734,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 						// Apply changes
 						this.plugin.themeManager.removeCustomTheme();
-						if (this.plugin.settings.themeEnabled) {
-							this.plugin.themeManager.applyCustomTheme();
-						}
+						this.plugin.themeManager.applyIfEnabled();
 
 						await this.plugin.saveSettings();
 

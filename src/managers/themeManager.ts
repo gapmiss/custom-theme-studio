@@ -39,6 +39,15 @@ export class ThemeManager {
 		document.head.appendChild(this.styleEl);
 	}
 
+	/**
+	 * Apply custom theme only if enabled in settings
+	 */
+	applyIfEnabled(): void {
+		if (this.plugin.settings.themeEnabled) {
+			this.applyCustomTheme();
+		}
+	}
+
 	removeCustomTheme(): void {
 		if (this.styleEl) {
 			this.styleEl.remove();
