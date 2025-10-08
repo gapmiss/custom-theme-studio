@@ -102,6 +102,10 @@ export default class CustomThemeStudioPlugin extends Plugin {
 		}
 	}
 
+	/**
+	 * Activates the Custom Theme Studio view.
+	 * If a view already exists, reveals it. Otherwise, creates a new view in the right sidebar.
+	 */
 	async activateView() {
 		const { workspace } = this.app;
 
@@ -129,6 +133,10 @@ export default class CustomThemeStudioPlugin extends Plugin {
 		this.themeManager.removeCustomTheme();
 	}
 
+	/**
+	 * Loads plugin settings from disk and applies migrations if needed.
+	 * Merges loaded settings with default values and ensures version is set.
+	 */
 	async loadSettings() {
 		const loadedData = await this.loadData();
 		const migratedData = this.migrateSettings(loadedData || {});
@@ -172,11 +180,17 @@ export default class CustomThemeStudioPlugin extends Plugin {
 		return oldSettings;
 	}
 
+	/**
+	 * Persists current plugin settings to disk.
+	 */
 	async saveSettings() {
 		await this.saveData(this.settings);
 	}
 
-	/* Refresh view */
+	/**
+	 * Refreshes the Custom Theme Studio view by calling onOpen() on all open instances.
+	 * Used to update the UI after settings changes.
+	 */
 	async reloadView(): Promise<void> {
 		const leaves = this.app.workspace.getLeavesOfType(VIEW_TYPE_CTS);
 		leaves.forEach((leaf) => {

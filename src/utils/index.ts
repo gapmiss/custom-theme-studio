@@ -11,7 +11,11 @@ declare const electronWindow: {
 	toggleDevTools: () => void;
 };
 
-// Copy given string to clipboard
+/**
+ * Copies text to the clipboard and shows a success notification.
+ * @param text The text to copy to clipboard
+ * @param topic Optional topic name to display in the notification (e.g., "CSS Variable")
+ */
 export function copyStringToClipboard(text: string, topic: string | undefined = undefined): void {
 	navigator.clipboard
 		.writeText(text)
@@ -23,7 +27,12 @@ export function copyStringToClipboard(text: string, topic: string | undefined = 
 		});
 }
 
-// Show Notice with type & icon
+/**
+ * Displays a styled notice to the user with an icon based on type.
+ * @param message The message to display
+ * @param duration Duration in milliseconds to show the notice (default: 4000ms)
+ * @param type Type of notice: 'error', 'warning', 'success', or undefined for info
+ */
 export function showNotice(message: string, duration: number = 4000, type: string | undefined): void {
 
 	const fragment: DocumentFragment = document.createDocumentFragment();
@@ -80,11 +89,21 @@ export function showNotice(message: string, duration: number = 4000, type: strin
 	new Notice(fragment, duration);
 }
 
+/**
+ * Gets the current Obsidian theme name.
+ * @param app The Obsidian app instance
+ * @returns 'obsidian' for dark theme, 'moonstone' for light theme
+ */
 export function getCurrentTheme(app: App): string {
 	return app.getTheme() === 'obsidian' ? 'obsidian' : 'moonstone';
 }
 
-// https://github.com/Yuichi-Aragi/Version-Control/blob/main/src/utils/id.ts
+/**
+ * Generates a unique RFC4122 version 4 UUID.
+ * Uses crypto.randomUUID() if available, otherwise falls back to a custom implementation.
+ * @returns A unique identifier string in UUID format
+ * @see https://github.com/Yuichi-Aragi/Version-Control/blob/main/src/utils/id.ts
+ */
 export function generateUniqueId(): string {
 	if (typeof crypto !== 'undefined' && crypto.randomUUID) {
 		return String(crypto.randomUUID());
@@ -106,7 +125,13 @@ export function generateUniqueId(): string {
 	});
 }
 
-// https://github.com/chrisgrieser/obsidian-theme-design-utilities/blob/main/src/main.ts#L128
+/**
+ * Freezes Obsidian after a delay to allow DOM inspection in DevTools.
+ * Opens DevTools and triggers a debugger breakpoint after the specified delay.
+ * @param delay Delay in seconds before freezing
+ * @returns Cleanup function to cancel the freeze timer
+ * @see https://github.com/chrisgrieser/obsidian-theme-design-utilities/blob/main/src/main.ts#L128
+ */
 export function freezeTimer(delay: number): () => void {
 	const freezeNotice = new Notice(`⚠ Will freeze Obsidian in ${delay}s`, (delay - 0.2) * 1000);
 	electronWindow.openDevTools(); // devtools open needed for the debugger to work

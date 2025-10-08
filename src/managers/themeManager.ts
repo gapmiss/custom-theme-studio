@@ -21,6 +21,10 @@ export class ThemeManager {
 		this.cssVariableManager = new CSSVariableManager(plugin);
 	}
 
+	/**
+	 * Applies the custom theme by injecting CSS into the document.
+	 * Generates CSS from variables and custom rules, then adds it to the document head.
+	 */
 	applyCustomTheme(): void {
 		// Remove existing style element if it exists
 		this.removeCustomTheme();
@@ -48,6 +52,10 @@ export class ThemeManager {
 		}
 	}
 
+	/**
+	 * Removes the custom theme CSS from the document.
+	 * Cleans up the injected style element.
+	 */
 	removeCustomTheme(): void {
 		if (this.styleEl) {
 			this.styleEl.remove();
@@ -60,6 +68,10 @@ export class ThemeManager {
 		}
 	}
 
+	/**
+	 * Toggles the custom theme on/off.
+	 * Updates settings, applies or removes theme, shows notification, and syncs UI toggle.
+	 */
 	async toggleCustomTheme(): Promise<void> {
 		this.plugin.settings.themeEnabled = !this.plugin.settings.themeEnabled;
 
@@ -83,6 +95,10 @@ export class ThemeManager {
 		}
 	}
 
+	/**
+	 * Generates CSS custom properties (variables) from plugin settings.
+	 * @returns CSS string with :root selector containing all custom variables
+	 */
 	generateVariablesCSS(): string {
 		const variables: CSSVariable[] = this.plugin.settings.cssVariables;
 		if (!variables.length) {

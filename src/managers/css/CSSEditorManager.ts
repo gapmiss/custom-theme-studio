@@ -76,11 +76,20 @@ export class CSSEditorManager {
 		);
 	}
 
+	/**
+	 * Shows or hides the CSS editor section.
+	 * @param show Whether to show (true) or hide (false) the editor
+	 */
 	showEditorSection(show: boolean): void {
 		this.editorSection?.toggleClass('show', show);
 		this.editorSection?.toggleClass('hide', !show);
 	}
 
+	/**
+	 * Creates the CSS editor section in the DOM.
+	 * Initializes the Ace editor, input fields, buttons, and event handlers.
+	 * @param containerEl Parent element to create the editor section in
+	 */
 	createEditorSection(containerEl: HTMLElement): void {
 		this.editorSection = containerEl.createDiv('css-editor-section');
 
