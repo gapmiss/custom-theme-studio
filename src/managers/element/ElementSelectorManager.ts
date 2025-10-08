@@ -110,11 +110,8 @@ export class ElementSelectorManager {
 		// Remove class from body
 		document.body.classList.remove('cts-element-selector-active');
 
-		// Remove tooltip
-		this.highlighter.destroyTooltip();
-
-		// Unhighlight the current element
-		this.highlighter.unhighlightElement();
+		// Clean up highlighter (tooltip and highlight)
+		this.highlighter.destroy();
 
 		// Remove any hover classes that might be left
 		document.querySelectorAll('.cts-element-selector-hover').forEach(el => {

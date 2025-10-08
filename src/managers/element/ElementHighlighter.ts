@@ -303,4 +303,12 @@ export class ElementHighlighter {
 		}
 		return dataAttributes;
 	}
+
+	/**
+	 * Clean up all DOM elements and references
+	 */
+	destroy(): void {
+		this.unhighlightElement();
+		this.destroyTooltip();
+	}
 }
