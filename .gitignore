@@ -24,9 +24,4 @@ data.json
 .hotreload
 ace-colorpicker.css
 obsidian-*.css
-
-audit.txt
-GUIDE.md
-ELEMENT_SELECTOR_WORK_SESSION.md
-ELEMENT_SELECTOR_GUIDE.md
-*AUDIT*.md
+obsidian.css
