@@ -8,6 +8,7 @@ import * as css from 'prettier/plugins/postcss';
 import { showNotice, Logger } from "../utils";
 import type { ThemeManifest } from '../interfaces/theme';
 import { TIMEOUT_DELAYS } from '../constants';
+import { CustomThemeStudioView } from '../views/customThemeStudioView';
 
 export class ThemeManager {
 	plugin: CustomThemeStudioPlugin;
@@ -109,7 +110,7 @@ export class ThemeManager {
 		// Find the view if it's open
 		const leaves = this.plugin.app.workspace.getLeavesOfType('cts-view');
 		if (leaves.length > 0) {
-			const view: any = leaves[0].view;
+			const view = leaves[0].view as CustomThemeStudioView;
 			if (view?.elementSelectorManager) {
 				view.elementSelectorManager.startElementSelection();
 
@@ -132,7 +133,7 @@ export class ThemeManager {
 				setTimeout(() => {
 					const newLeaves = this.plugin.app.workspace.getLeavesOfType('cts-view');
 					if (newLeaves.length > 0) {
-						const view: any = newLeaves[0].view;
+						const view = newLeaves[0].view as CustomThemeStudioView;
 						if (view?.elementSelectorManager) {
 							view.elementSelectorManager.startElementSelection();
 

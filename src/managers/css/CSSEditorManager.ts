@@ -39,6 +39,9 @@ export class CSSEditorManager {
 	private ruleListManager: CSSRuleListManager | null = null;
 	private validationService: CSSValidationService;
 
+	// Timer tracking for cleanup
+	private timers: number[] = [];
+
 	constructor(workspace: Workspace, plugin: CustomThemeStudioPlugin, view: CustomThemeStudioView, private config: ICodeEditorConfig) {
 		this.plugin = plugin;
 		this.view = view;
@@ -369,20 +372,20 @@ export class CSSEditorManager {
 
 	// Auto-apply changes when typing (with debounce)
 	changeListener = (delta: ace.Ace.Delta) => {
-		let timeout;
-		timeout ??= setTimeout(() => {
-
+		const timeout = window.setTimeout(() => {
 			let css = this.aceService.getValue();
 			// if (css && this.plugin.settings.autoApplyChanges) {
 			if (this.plugin.settings.autoApplyChanges) {
-				setTimeout(() => {
+				const timer = window.setTimeout(() => {
 					const css = this.aceService.getValue();
 					if (css !== '') {
 						this.applyChanges(css);
 					}
 				}, this.plugin.settings.cssEditorDebounceDelay);
+				this.timers.push(timer);
 			}
 		}, 10);
+		this.timers.push(timeout);
 	}
 
 	setRule(uuid: string, rule: string, isEditingExisting: boolean): void {
@@ -828,5 +831,13 @@ export class CSSEditorManager {
 	 */
 	createRuleItem(containerEl: HTMLElement, rule: CSSrule): HTMLElement {
 		return this.ruleItemRenderer.createRuleItem(containerEl, rule);
+	}
+
+	/**
+	 * Clean up timers and resources
+	 */
+	destroy(): void {
+		this.timers.forEach(timer => clearTimeout(timer));
+		this.timers = [];
 	}
 }

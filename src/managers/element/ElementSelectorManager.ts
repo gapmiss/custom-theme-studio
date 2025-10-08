@@ -254,7 +254,7 @@ export class ElementSelectorManager {
 		// Set the rule in the CSS editor manager
 		const leaves = this.plugin.app.workspace.getLeavesOfType('cts-view');
 		if (leaves.length > 0) {
-			const view: any = leaves[0].view;
+			const view = leaves[0].view as CustomThemeStudioView;
 			if (view?.cssEditorManager) {
 				// Store current UUID
 				const currentUUID = uuid;

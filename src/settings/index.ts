@@ -49,7 +49,7 @@ export interface CustomThemeStudioSettings {
 	editorWordWrap: boolean;
 	editorFontSize: number;
 	editorFontFamily: string;
-	editorTabWidth: any;
+	editorTabWidth: number | string;
 	editorTheme: string;
 	editorLightTheme: string;
 	editorDarkTheme: string;
@@ -511,7 +511,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 						'2': '2',
 						'4': '4',
 					})
-					.setValue(this.plugin.settings.editorTabWidth)
+					.setValue(this.plugin.settings.editorTabWidth.toString())
 					.onChange(async (newValue) => {
 						this.plugin.settings.editorTabWidth = newValue;
 						await this.plugin.saveSettings();

@@ -94,7 +94,7 @@ export default class CustomThemeStudioPlugin extends Plugin {
 			}
 		});
 		this.settings.customCSS = fullCSS;
-		this.saveSettings();
+		await this.saveSettings();
 
 		// Apply saved theme if enabled
 		if (this.settings.themeEnabled && this.settings.customCSS) {
@@ -144,7 +144,6 @@ export default class CustomThemeStudioPlugin extends Plugin {
 			if (leaf.view instanceof CustomThemeStudioView) {
 				// Refresh the view if it's open
 				(leaf.view as CustomThemeStudioView).onOpen();
-				return Promise.resolve;
 			}
 		});
 	}

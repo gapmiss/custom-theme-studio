@@ -26,6 +26,24 @@ export class CSSValidationService {
 	 * @returns true if valid, false if invalid
 	 */
 	async validateCSS(cssCode: string): Promise<boolean> {
+		// Check for potentially dangerous CSS patterns
+		const dangerousPatterns = [
+			{ pattern: /@import\s+url\(/i, name: '@import url()' },
+			{ pattern: /javascript:/i, name: 'javascript:' },
+			{ pattern: /expression\(/i, name: 'expression()' },
+			{ pattern: /behavior:/i, name: 'behavior:' },
+			{ pattern: /-moz-binding:/i, name: '-moz-binding:' }
+		];
+
+		for (const { pattern, name } of dangerousPatterns) {
+			if (pattern.test(cssCode)) {
+				Logger.error('CSS contains potentially dangerous content:', name);
+				showNotice(`CSS contains unsafe content (${name}) and cannot be saved`, 5000, 'error');
+				return false;
+			}
+		}
+
+		// Validate syntax using Prettier
 		try {
 			await prettier.format(cssCode, {
 				parser: 'css',
