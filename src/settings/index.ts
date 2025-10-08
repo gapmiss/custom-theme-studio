@@ -20,6 +20,7 @@ export interface CSSVariable {
 }
 
 export interface CustomThemeStudioSettings {
+	version?: number; // Settings schema version for migrations
 	themeEnabled: boolean;
 	customCSS: string;
 	cssVariables: CSSVariable[];
@@ -63,7 +64,11 @@ export interface CustomThemeStudioSettings {
 	cssEditorDebounceDelay: number;
 }
 
+// Current settings schema version
+export const SETTINGS_VERSION = 1;
+
 export const DEFAULT_SETTINGS: CustomThemeStudioSettings = {
+	version: SETTINGS_VERSION,
 	themeEnabled: false,
 	customCSS: '',
 	cssVariables: [],

@@ -1,7 +1,7 @@
 import { Plugin, WorkspaceLeaf } from 'obsidian';
 import { CustomThemeStudioView, VIEW_TYPE_CTS } from './views/customThemeStudioView';
 import { ThemeManager } from './managers/themeManager';
-import { DEFAULT_SETTINGS, CustomThemeStudioSettings, CustomThemeStudioSettingTab } from './settings';
+import { DEFAULT_SETTINGS, SETTINGS_VERSION, CustomThemeStudioSettings, CustomThemeStudioSettingTab } from './settings';
 import { SettingsManager } from './managers/SettingsManager';
 import { ICodeEditorConfig } from './interfaces/types';
 import { freezeTimer, Logger } from "./utils";
@@ -130,7 +130,45 @@ export default class CustomThemeStudioPlugin extends Plugin {
 	}
 
 	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+		const loadedData = await this.loadData();
+		const migratedData = this.migrateSettings(loadedData || {});
+		this.settings = Object.assign({}, DEFAULT_SETTINGS, migratedData);
+
+		// Ensure version is set
+		if (!this.settings.version) {
+			this.settings.version = SETTINGS_VERSION;
+			await this.saveSettings();
+		}
+	}
+
+	/**
+	 * Migrate settings from older versions to current schema
+	 * Add migration logic here as schema evolves
+	 */
+	private migrateSettings(oldSettings: any): Partial<CustomThemeStudioSettings> {
+		const version = oldSettings.version || 0;
+
+		// Version 0 -> 1: Initial versioning (no actual changes needed)
+		if (version < 1) {
+			Logger.info(`Migrating settings from version ${version} to version 1`);
+			// Future migrations would go here
+			// Example:
+			// if (oldSettings.oldPropertyName) {
+			//     oldSettings.newPropertyName = oldSettings.oldPropertyName;
+			//     delete oldSettings.oldPropertyName;
+			// }
+		}
+
+		// Future migrations:
+		// if (version < 2) {
+		//     Logger.info('Migrating settings from version', version, 'to version 2');
+		//     // Migration logic for v2
+		// }
+
+		// Set current version
+		oldSettings.version = SETTINGS_VERSION;
+
+		return oldSettings;
 	}
 
 	async saveSettings() {
