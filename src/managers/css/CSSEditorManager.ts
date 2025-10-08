@@ -8,7 +8,7 @@ import * as ace from 'ace-builds';
 import { CSSVariableManager } from '../cssVariabManager';
 import { generateUniqueId, showNotice, Logger } from "../../utils";
 import { smoothScrollToElement } from "../../utils/uiHelpers";
-import { DEBOUNCE_DELAYS, TIMEOUT_DELAYS } from '../../constants';
+import { DEBOUNCE_DELAYS, TIMEOUT_DELAYS, NOTICE_DURATIONS } from '../../constants';
 import { CSSRuleItemRenderer } from './CSSRuleItemRenderer';
 import { CSSRuleListManager } from './CSSRuleListManager';
 import { CSSValidationService } from './CSSValidationService';
@@ -408,7 +408,7 @@ export class CSSEditorManager {
 			this.ruleInputEl.value = rule;
 			this.editorUUID.value = uuid;
 			this.generateDefaultCSS(rule);
-			showNotice(`Element selected: ${rule}`, 5000, 'success');
+			showNotice(`Element selected: ${rule}`, NOTICE_DURATIONS.STANDARD, 'success');
 		}
 		this.editor!.session.on('change', this.changeListener);
 	}
@@ -474,7 +474,7 @@ export class CSSEditorManager {
 		// Validate selector is not empty
 		if (!selector || selector.trim().length === 0) {
 			Logger.error('Empty selector provided');
-			showNotice('Selector cannot be empty', 3000, 'error');
+			showNotice('Selector cannot be empty', NOTICE_DURATIONS.SHORT, 'error');
 			return null;
 		}
 
@@ -488,7 +488,7 @@ export class CSSEditorManager {
 		for (const pattern of dangerousPatterns) {
 			if (pattern.test(selector)) {
 				Logger.error('Potentially dangerous selector:', selector);
-				showNotice('Selector contains unsafe content', 3000, 'error');
+				showNotice('Selector contains unsafe content', NOTICE_DURATIONS.SHORT, 'error');
 				return null;
 			}
 		}
@@ -498,7 +498,7 @@ export class CSSEditorManager {
 			return document.querySelector(selector) as HTMLElement;
 		} catch (error) {
 			Logger.error(`Invalid CSS selector: ${selector}`, error);
-			showNotice('Invalid CSS selector syntax', 3000, 'error');
+			showNotice('Invalid CSS selector syntax', NOTICE_DURATIONS.SHORT, 'error');
 			return null;
 		}
 	}
@@ -545,7 +545,7 @@ export class CSSEditorManager {
 		const css = this.aceService.getValue();
 
 		if (!rule || !css) {
-			showNotice('Please enter both a rule (name) and CSS', 5000, 'error');
+			showNotice('Please enter both a rule (name) and CSS', NOTICE_DURATIONS.STANDARD, 'error');
 			return false;
 		}
 
@@ -615,7 +615,7 @@ export class CSSEditorManager {
 			}
 		}
 
-		showNotice('Rule saved successfully', 5000, 'success');
+		showNotice('Rule saved successfully', NOTICE_DURATIONS.STANDARD, 'success');
 		return true;
 	}
 

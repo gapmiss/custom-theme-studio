@@ -2,6 +2,7 @@ import CustomThemeStudioPlugin from '../../main';
 import * as prettier from 'prettier';
 import * as cssPlugin from 'prettier/plugins/postcss';
 import { Logger, showNotice } from '../../utils';
+import { NOTICE_DURATIONS } from '../../constants';
 
 /**
  * Handles CSS validation and theme application.
@@ -38,7 +39,7 @@ export class CSSValidationService {
 		for (const { pattern, name } of dangerousPatterns) {
 			if (pattern.test(cssCode)) {
 				Logger.error('CSS contains potentially dangerous content:', name);
-				showNotice(`CSS contains unsafe content (${name}) and cannot be saved`, 5000, 'error');
+				showNotice(`CSS contains unsafe content (${name}) and cannot be saved`, NOTICE_DURATIONS.STANDARD, 'error');
 				return false;
 			}
 		}
@@ -52,7 +53,7 @@ export class CSSValidationService {
 			return true;
 		} catch (error) {
 			Logger.error('CSS validation failed:', error);
-			showNotice('Invalid CSS syntax. Please check your code.', 5000, 'error');
+			showNotice('Invalid CSS syntax. Please check your code.', NOTICE_DURATIONS.STANDARD, 'error');
 			return false;
 		}
 	}
@@ -75,7 +76,7 @@ export class CSSValidationService {
 			return formatted;
 		} catch (error) {
 			Logger.error('CSS formatting failed:', error);
-			showNotice('Unable to format CSS. Please check syntax.', 5000, 'error');
+			showNotice('Unable to format CSS. Please check syntax.', NOTICE_DURATIONS.STANDARD, 'error');
 			return null;
 		}
 	}

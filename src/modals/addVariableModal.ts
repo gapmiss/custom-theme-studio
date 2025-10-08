@@ -2,6 +2,7 @@ import { type App, Setting, Modal } from "obsidian";
 import type CustomThemeStudioPlugin from "../main";
 import { CustomThemeStudioView, VIEW_TYPE_CTS } from "../views/customThemeStudioView";
 import { generateUniqueId, showNotice } from "../utils";
+import { NOTICE_DURATIONS } from "../constants";
 
 export class AddVariableModal extends Modal {
     plugin: CustomThemeStudioPlugin;
@@ -60,7 +61,7 @@ export class AddVariableModal extends Modal {
                     let parent = 'custom';
 
                     if (!variable) {
-                        showNotice('Please enter a name', 5000, 'error');
+                        showNotice('Please enter a name', NOTICE_DURATIONS.STANDARD, 'error');
                         variableNameInput.settingEl.querySelector('input')?.focus();
                         return;
                     }
@@ -70,12 +71,12 @@ export class AddVariableModal extends Modal {
                     // https://stackoverflow.com/questions/18862256/how-to-detect-emoji-using-javascript
                     // Validate custom property variable
                     if (!variable.match(/^--[a-zA-Z0-9-_\p{Emoji}]+/gui)) {
-                        showNotice('Please enter a valid variable name', 5000, 'error');
+                        showNotice('Please enter a valid variable name', NOTICE_DURATIONS.STANDARD, 'error');
                         variableNameInput.settingEl.querySelector('input')?.focus();
                         return;
                     }
                     if (!value) {
-                        showNotice('Please enter a value', 5000, 'error');
+                        showNotice('Please enter a value', NOTICE_DURATIONS.STANDARD, 'error');
                         variableValueInput.settingEl.querySelector('input')?.focus();
                         return;
                     }
@@ -94,7 +95,7 @@ export class AddVariableModal extends Modal {
 
                     let leaf = this.app.workspace.getLeavesOfType(VIEW_TYPE_CTS).first();
                     if (leaf && leaf.view instanceof CustomThemeStudioView) {
-                        showNotice('The variable has been added', 5000, 'success');
+                        showNotice('The variable has been added', NOTICE_DURATIONS.STANDARD, 'success');
                         // Use the clean refresh method to re-render custom variables
                         leaf.view.refreshCustomVariables();
                     }

@@ -1,4 +1,5 @@
 import { Notice, setIcon, App } from 'obsidian';
+import { NOTICE_DURATIONS } from '../constants';
 
 export { Logger } from './Logger';
 import { Logger } from './Logger';
@@ -15,7 +16,7 @@ export function copyStringToClipboard(text: string, topic: string | undefined = 
 	navigator.clipboard
 		.writeText(text)
 		.then(function () {
-			showNotice('"' + (topic !== undefined ? topic + '"' : 'Text') + ' copied to clipboard', 5000, 'success');
+			showNotice('"' + (topic !== undefined ? topic + '"' : 'Text') + ' copied to clipboard', NOTICE_DURATIONS.STANDARD, 'success');
 		})
 		.catch(function (error) {
 			Logger.error('Failed to copy to clipboard: ', error)

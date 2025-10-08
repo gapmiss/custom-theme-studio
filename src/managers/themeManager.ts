@@ -7,7 +7,7 @@ import * as prettier from 'prettier';
 import * as css from 'prettier/plugins/postcss';
 import { showNotice, Logger } from "../utils";
 import type { ThemeManifest } from '../interfaces/theme';
-import { TIMEOUT_DELAYS } from '../constants';
+import { TIMEOUT_DELAYS, NOTICE_DURATIONS } from '../constants';
 import { CustomThemeStudioView } from '../views/customThemeStudioView';
 
 export class ThemeManager {
@@ -65,10 +65,10 @@ export class ThemeManager {
 
 		if (this.plugin.settings.themeEnabled) {
 			this.applyCustomTheme();
-			showNotice('Custom theme enabled', 5000, 'success');
+			showNotice('Custom theme enabled', NOTICE_DURATIONS.STANDARD, 'success');
 		} else {
 			this.removeCustomTheme();
-			showNotice('Custom theme disabled', 5000, 'error');
+			showNotice('Custom theme disabled', NOTICE_DURATIONS.STANDARD, 'error');
 		}
 
 		this.plugin.saveSettings();
@@ -244,7 +244,7 @@ ${rulesCSS}`;
 
 			let prettierCSS: string = (this.plugin.settings.exportPrettierFormat) ? await this.formatCSS(themeCSS) : themeCSS;
 			navigator.clipboard.writeText(prettierCSS).then(() => {
-				showNotice('Theme CSS copied to clipboard', 5000, 'success');
+				showNotice('Theme CSS copied to clipboard', NOTICE_DURATIONS.STANDARD, 'success');
 			});
 		} catch (error) {
 			Logger.error('Failed to copy theme to clipboard:\n', error);
@@ -268,7 +268,7 @@ ${rulesCSS}`;
 			};
 
 			navigator.clipboard.writeText(JSON.stringify(manifest, null, 2)).then(() => {
-				showNotice('Manifest JSON copied to clipboard', 5000, 'success');
+				showNotice('Manifest JSON copied to clipboard', NOTICE_DURATIONS.STANDARD, 'success');
 			});
 
 		} catch (error) {

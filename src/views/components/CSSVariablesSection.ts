@@ -9,6 +9,7 @@ import { AddVariableModal } from '../../modals/addVariableModal';
 import { VariableItem, VariableData } from './ui/VariableItem';
 import { EventManager, DOMEventManager } from '../../utils/EventManager';
 import { Selectors } from '../../utils/DOMReferences';
+import { UI_CONSTANTS, TIMEOUT_DELAYS } from '../../constants';
 
 export class CSSVariablesSection extends UIComponent {
 	public variableSearch: string = '';
@@ -646,12 +647,12 @@ export class CSSVariablesSection extends UIComponent {
 			if (this.plugin.settings.viewScrollToTop) {
 				// Use debounce to delay scroll until DOM layout is complete
 				const scrollDelayed = debounce(() => {
-					const top = customVarCategory.offsetTop - 10;
+					const top = customVarCategory.offsetTop - UI_CONSTANTS.SCROLL_OFFSET;
 					this.container.scrollTo({
 						top: top,
 						behavior: 'smooth'
 					});
-				}, 100, false);
+				}, TIMEOUT_DELAYS.SCROLL_DELAY, false);
 				scrollDelayed();
 			}
 		}
@@ -748,7 +749,7 @@ export class CSSVariablesSection extends UIComponent {
 
 	private scrollToElement(target: HTMLElement): void {
 		if (target && this.container) {
-			const top = target.offsetTop - 10;
+			const top = target.offsetTop - UI_CONSTANTS.SCROLL_OFFSET;
 			this.container.scrollTo({
 				top: top,
 				behavior: "smooth"

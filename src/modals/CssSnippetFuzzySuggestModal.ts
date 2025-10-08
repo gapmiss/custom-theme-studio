@@ -4,6 +4,7 @@ import { generateUniqueId, showNotice } from "../utils";
 import { CustomThemeStudioView, VIEW_TYPE_CTS } from "../views/customThemeStudioView";
 import { ICodeEditorConfig } from '../interfaces/types';
 import { confirm } from '../modals/confirmModal';
+import { NOTICE_DURATIONS } from "../constants";
 
 interface Snippets {
     basename: string,
@@ -100,7 +101,7 @@ export class CssSnippetFuzzySuggestModal extends FuzzySuggestModal<Snippets> {
                 }
             }
         } else {
-            showNotice('The snippet has been saved as a new CSS rule', 5000, 'success');
+            showNotice('The snippet has been saved as a new CSS rule', NOTICE_DURATIONS.STANDARD, 'success');
         }
     }
 

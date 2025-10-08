@@ -5,7 +5,7 @@ import { CSSrule } from '../../settings';
 import { AceService } from '../../ace/AceService';
 import { confirm } from '../../modals/confirmModal';
 import { showNotice } from '../../utils';
-import { TIMEOUT_DELAYS } from '../../constants';
+import { TIMEOUT_DELAYS, NOTICE_DURATIONS } from '../../constants';
 
 export interface CSSRuleItemConfig {
 	plugin: CustomThemeStudioPlugin;
@@ -153,7 +153,7 @@ export class CSSRuleItemRenderer {
 
 			if (freshRule && await confirm(`Are you sure you want to delete the rule "${freshRule.rule}"?`, this.config.plugin.app)) {
 				await this.config.onDelete(freshRule, item);
-				showNotice('CSS rule deleted', 5000, 'success');
+				showNotice('CSS rule deleted', NOTICE_DURATIONS.STANDARD, 'success');
 			}
 
 			deleteButton.removeClass('mod-loading');

@@ -5,6 +5,7 @@ import { generateUniqueId, showNotice, Logger } from "../utils";
 import { confirm } from "./confirmModal";
 import fs from 'fs';
 import path from 'path';
+import { NOTICE_DURATIONS } from "../constants";
 
 export class FontImportModal extends Modal {
 	plugin: CustomThemeStudioPlugin;
@@ -92,14 +93,14 @@ export class FontImportModal extends Modal {
 					const nameInput = fontNameInput.settingEl.querySelector('input');
 					if (!nameInput) {
 						Logger.error('Font name input element not found');
-						showNotice('Font import interface error - please try again', 5000, 'error');
+						showNotice('Font import interface error - please try again', NOTICE_DURATIONS.STANDARD, 'error');
 						return;
 					}
 
 					this.fontName = nameInput.value;
 
 					if (!this.fontName) {
-						showNotice('Please enter a name for the font you want to import', 5000, 'error');
+						showNotice('Please enter a name for the font you want to import', NOTICE_DURATIONS.STANDARD, 'error');
 						nameInput.focus();
 						return;
 					}
@@ -147,7 +148,7 @@ export class FontImportModal extends Modal {
 								}
 							}
 						} else {
-							showNotice('The @font-face has been saved as a new CSS rule', 5000, 'success');
+							showNotice('The @font-face has been saved as a new CSS rule', NOTICE_DURATIONS.STANDARD, 'success');
 						}
 					}
 				});

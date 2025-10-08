@@ -1,4 +1,5 @@
 import { setIcon } from 'obsidian';
+import { UI_CONSTANTS } from '../constants';
 
 export interface CollapsibleSectionConfig {
 	title: string;
@@ -158,12 +159,12 @@ export function createToggleSwitch(
  * Smooth scroll to an element within a container
  * @param container The scrollable container element
  * @param target The target element to scroll to
- * @param offset Offset from the top in pixels (default: 10)
+ * @param offset Offset from the top in pixels
  */
 export function smoothScrollToElement(
 	container: HTMLElement,
 	target: HTMLElement,
-	offset: number = 10
+	offset: number = UI_CONSTANTS.SCROLL_OFFSET
 ): void {
 	const top = target.offsetTop - offset;
 	container.scrollTo({

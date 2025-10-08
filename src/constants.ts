@@ -28,8 +28,18 @@ export const TIMEOUT_DELAYS = {
  * Notice durations in milliseconds
  */
 export const NOTICE_DURATIONS = {
+	/** Short notice duration for quick feedback */
+	SHORT: 3000,
 	/** Standard notice duration */
 	STANDARD: 5000,
 	/** Long notice duration for important messages */
 	LONG: 10000,
+} as const;
+
+/**
+ * UI Layout constants
+ */
+export const UI_CONSTANTS = {
+	/** Scroll offset from top in pixels */
+	SCROLL_OFFSET: 10,
 } as const;

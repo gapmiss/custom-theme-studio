@@ -5,7 +5,7 @@ import { createIconButton } from '../../../utils/uiHelpers';
 import { copyStringToClipboard, showNotice, Logger } from '../../../utils';
 import { CSSVariableManager } from '../../../managers/cssVariabManager';
 import { CustomThemeStudioSettings } from '../../../settings';
-import { DEBOUNCE_DELAYS } from '../../../constants';
+import { DEBOUNCE_DELAYS, NOTICE_DURATIONS } from '../../../constants';
 
 export interface VariableData {
 	name: string;
@@ -216,13 +216,13 @@ export class VariableItem {
 		// Validate the variable name
 		const validationError = this.validateVariableName(newName);
 		if (validationError) {
-			showNotice(validationError, 5000, 'error');
+			showNotice(validationError, NOTICE_DURATIONS.STANDARD, 'error');
 			return;
 		}
 
 		const valueInput = this.valueInput?.getValue() || '';
 		if (!newName || !valueInput) {
-			showNotice('Both fields are required', 5000, 'error');
+			showNotice('Both fields are required', NOTICE_DURATIONS.STANDARD, 'error');
 			return;
 		}
 
@@ -233,14 +233,14 @@ export class VariableItem {
 		if (this.config.isCustom) {
 			const nameInput = this.nameInput?.getValue() || '';
 			if (!nameInput || !newValue) {
-				showNotice('Both fields are required', 5000, 'error');
+				showNotice('Both fields are required', NOTICE_DURATIONS.STANDARD, 'error');
 				return;
 			}
 
 			// Validate the name
 			const validationError = this.validateVariableName(nameInput);
 			if (validationError) {
-				showNotice(validationError, 5000, 'error');
+				showNotice(validationError, NOTICE_DURATIONS.STANDARD, 'error');
 				this.nameInput?.focus();
 				return;
 			}
@@ -308,7 +308,7 @@ export class VariableItem {
 				}
 
 				this.destroy();
-				showNotice('Variable deleted', 5000, 'success');
+				showNotice('Variable deleted', NOTICE_DURATIONS.STANDARD, 'success');
 			}
 		} finally {
 			button.removeClass('mod-loading');
