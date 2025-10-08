@@ -375,7 +375,6 @@ export class CSSEditorManager {
 	changeListener = (delta: ace.Ace.Delta) => {
 		const timeout = window.setTimeout(() => {
 			let css = this.aceService.getValue();
-			// if (css && this.plugin.settings.autoApplyChanges) {
 			if (this.plugin.settings.autoApplyChanges) {
 				const timer = window.setTimeout(() => {
 					const css = this.aceService.getValue();
@@ -457,11 +456,6 @@ export class CSSEditorManager {
 		}
 
 		this.aceService.setValue(css, 1);
-
-		// Clear name input
-		// if (this.nameInputEl) {
-		// 	this.nameInputEl.value = '';
-		// }
 	}
 
 	/**
@@ -530,7 +524,6 @@ export class CSSEditorManager {
 
 	clearAppliedChanges(): void {
 		// Update the custom CSS
-		// this.updateCustomCSS(generateUniqueId(), '', '', '');
 		this.validationService.updateCustomCSS(generateUniqueId(), '', '');
 
 		// Apply the changes

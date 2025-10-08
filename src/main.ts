@@ -151,19 +151,20 @@ export default class CustomThemeStudioPlugin extends Plugin {
 		// Version 0 -> 1: Initial versioning (no actual changes needed)
 		if (version < 1) {
 			Logger.info(`Migrating settings from version ${version} to version 1`);
-			// Future migrations would go here
-			// Example:
-			// if (oldSettings.oldPropertyName) {
-			//     oldSettings.newPropertyName = oldSettings.oldPropertyName;
-			//     delete oldSettings.oldPropertyName;
-			// }
 		}
 
-		// Future migrations:
-		// if (version < 2) {
-		//     Logger.info('Migrating settings from version', version, 'to version 2');
-		//     // Migration logic for v2
-		// }
+		/**
+		 * MIGRATION TEMPLATE for future versions:
+		 *
+		 * if (version < 2) {
+		 *     Logger.info(`Migrating settings from version ${version} to version 2`);
+		 *     // Example: Rename a property
+		 *     if (oldSettings.oldPropertyName) {
+		 *         oldSettings.newPropertyName = oldSettings.oldPropertyName;
+		 *         delete oldSettings.oldPropertyName;
+		 *     }
+		 * }
+		 */
 
 		// Set current version
 		oldSettings.version = SETTINGS_VERSION;
