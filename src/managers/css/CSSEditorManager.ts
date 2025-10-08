@@ -42,9 +42,9 @@ export class CSSEditorManager {
 	constructor(workspace: Workspace, plugin: CustomThemeStudioPlugin, view: CustomThemeStudioView, private config: ICodeEditorConfig) {
 		this.plugin = plugin;
 		this.view = view;
-		this.app = this.app;
+		this.app = plugin.app;
 		this.workspace = workspace;
-		this.settings = this.settings;
+		this.settings = plugin.settings;
 		this.aceService = new AceService(this.plugin);
 		this.cssVariableManager = new CSSVariableManager(this.plugin);
 

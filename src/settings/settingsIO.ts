@@ -53,7 +53,17 @@ class SettingsIO {
     private async exportToVault(settingsData: string, app: App): Promise<boolean> {
         try {
             const filename = 'CTS_settings.json';
-            await app.vault.create(filename, settingsData);
+            const existingFile = app.vault.getAbstractFileByPath(filename);
+
+            if (existingFile instanceof TFile) {
+                // Create backup before overwriting
+                const backupName = `CTS_settings_backup_${Date.now()}.json`;
+                await app.vault.copy(existingFile, backupName);
+                await app.vault.modify(existingFile, settingsData);
+            } else {
+                await app.vault.create(filename, settingsData);
+            }
+
             new Notice(`Settings exported to vault: ${filename}`);
             return true;
         } catch (error) {

@@ -106,7 +106,7 @@ export function generateUniqueId(): string {
 }
 
 // https://github.com/chrisgrieser/obsidian-theme-design-utilities/blob/main/src/main.ts#L128
-export function freezeTimer(delay: number): void {
+export function freezeTimer(delay: number): () => void {
 	const freezeNotice = new Notice(`⚠ Will freeze Obsidian in ${delay}s`, (delay - 0.2) * 1000);
 	electronWindow.openDevTools(); // devtools open needed for the debugger to work
 
@@ -117,8 +117,14 @@ export function freezeTimer(delay: number): void {
 		passSecs += 0.1;
 	}, 100);
 
-	setTimeout(() => {
+	const timeoutId = setTimeout(() => {
 		debugger;
 		clearInterval(timer);
 	}, delay * 1000);
+
+	// Return cleanup function to prevent timer leak
+	return () => {
+		clearInterval(timer);
+		clearTimeout(timeoutId);
+	};
 }
