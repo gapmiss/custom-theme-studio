@@ -27,7 +27,8 @@ export class ElementSelectorManager {
 		this.cancelButton = this.cancelButton;
 
 		// Initialize specialized managers
-		this.selectorGenerator = new SelectorGenerator(this.plugin.settings);
+		// Pass plugin reference so SelectorGenerator can access settings dynamically
+		this.selectorGenerator = new SelectorGenerator(this.plugin);
 		this.highlighter = new ElementHighlighter(this.selectorGenerator);
 	}
 

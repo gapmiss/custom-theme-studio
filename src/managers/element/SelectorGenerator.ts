@@ -1,15 +1,18 @@
 import { copyStringToClipboard } from '../../utils';
-import { CustomThemeStudioSettings } from '../../settings';
+import CustomThemeStudioPlugin from '../../main';
 
 /**
  * Generates CSS selectors from HTML elements.
  * Handles both simple and specific selector generation modes.
+ *
+ * Uses a reference to the plugin to access settings dynamically,
+ * ensuring setting changes are immediately recognized.
  */
 export class SelectorGenerator {
-	private settings: CustomThemeStudioSettings;
+	private plugin: CustomThemeStudioPlugin;
 
-	constructor(settings: CustomThemeStudioSettings) {
-		this.settings = settings;
+	constructor(plugin: CustomThemeStudioPlugin) {
+		this.plugin = plugin;
 	}
 	/**
 	 * Generate a CSS selector for an element.
@@ -22,16 +25,18 @@ export class SelectorGenerator {
 		const tagName = element.tagName.toLowerCase();
 		const hasId = !!element.id;
 		const hasAriaLabel = element.hasAttribute('aria-label');
-		const dataAttrs = this.getDataAttributes(element);
 		const classes = Array.from(element.classList)
 			.filter(cls => !cls.includes('cts-element-selector-highlight') && !cls.includes('cts-element-selector-hover'));
 
 		// Determine the effective style based on useSpecific parameter and settings
-		let effectiveStyle = this.settings.selectorStyle;
+		let effectiveStyle = this.plugin.settings.selectorStyle;
 		if (useSpecific && effectiveStyle !== 'specific') {
 			// When useSpecific is true (Alt/Cmd keys), force specific mode
 			effectiveStyle = 'specific';
 		}
+
+		// Get data attributes (filtered based on effectiveStyle and exclusion patterns)
+		const dataAttrs = this.getDataAttributes(element, effectiveStyle);
 
 		let selector = '';
 
@@ -47,7 +52,7 @@ export class SelectorGenerator {
 
 		// Handle ID (highest priority) - always omit tag for IDs unless setting says otherwise
 		if (hasId) {
-			const idSelector = this.settings.selectorAlwaysIncludeTag ? `${tagName}#${element.id}` : `#${element.id}`;
+			const idSelector = this.plugin.settings.selectorAlwaysIncludeTag ? `${tagName}#${element.id}` : `#${element.id}`;
 			return selector + idSelector;
 		}
 
@@ -72,11 +77,54 @@ export class SelectorGenerator {
 		dataAttrs: Array<{ name: string, value: string }>,
 		classes: string[]
 	): string {
-		const alwaysIncludeTag = this.settings.selectorAlwaysIncludeTag;
-		const preferClasses = this.settings.selectorPreferClasses;
+		const alwaysIncludeTag = this.plugin.settings.selectorAlwaysIncludeTag;
+		const preferClasses = this.plugin.settings.selectorPreferClasses;
 
-		// Check for aria-label (very specific)
-		if (hasAriaLabel) {
+		// OPTION B: aria-label respects preferClasses setting
+		// Priority: ID > classes/data-attrs (based on preference) > aria-label > tag
+
+		// Prefer classes over data attributes
+		if (preferClasses) {
+			// Try classes first
+			if (classes.length > 0) {
+				const classSelector = classes.map(cls => `.${cls}`).join('');
+				return alwaysIncludeTag ? `${tagName}${classSelector}` : classSelector;
+			}
+			// Fall back to data attributes
+			if (dataAttrs.length > 0) {
+				const bestAttr = dataAttrs.sort((a, b) => a.name.length - b.name.length)[0];
+				let attrSelector = '';
+				if (this.shouldOmitAttributeValue(bestAttr.name, bestAttr.value)) {
+					attrSelector = `[${bestAttr.name}]`;
+				} else {
+					const value = this.escapeAttributeValue(bestAttr.value);
+					attrSelector = `[${bestAttr.name}="${value}"]`;
+				}
+				return alwaysIncludeTag ? `${tagName}${attrSelector}` : attrSelector;
+			}
+		} else {
+			// Prefer data attributes over classes
+			// Try data attributes first
+			if (dataAttrs.length > 0) {
+				const bestAttr = dataAttrs.sort((a, b) => a.name.length - b.name.length)[0];
+				let attrSelector = '';
+				if (this.shouldOmitAttributeValue(bestAttr.name, bestAttr.value)) {
+					attrSelector = `[${bestAttr.name}]`;
+				} else {
+					const value = this.escapeAttributeValue(bestAttr.value);
+					attrSelector = `[${bestAttr.name}="${value}"]`;
+				}
+				return alwaysIncludeTag ? `${tagName}${attrSelector}` : attrSelector;
+			}
+			// Fall back to classes
+			if (classes.length > 0) {
+				const classSelector = classes.map(cls => `.${cls}`).join('');
+				return alwaysIncludeTag ? `${tagName}${classSelector}` : classSelector;
+			}
+		}
+
+		// Fallback to aria-label if no classes or data attributes (check if excluded)
+		if (hasAriaLabel && !this.isAttributeExcluded('aria-label', 'minimal')) {
 			const ariaLabel = element.getAttribute('aria-label');
 			const escapedAriaLabel = this.escapeAttributeValue(ariaLabel!);
 			if (escapedAriaLabel) {
@@ -85,35 +133,13 @@ export class SelectorGenerator {
 			}
 		}
 
-		// Prefer classes or data attributes based on setting
-		if (preferClasses && classes.length > 0) {
-			const classSelector = classes.map(cls => `.${cls}`).join('');
-			return `${tagName}${classSelector}`;
-		}
-
-		// Check for data attributes
-		if (dataAttrs.length > 0) {
-			const bestAttr = dataAttrs.sort((a, b) => a.name.length - b.name.length)[0];
-			let attrSelector = '';
-			if (this.shouldOmitAttributeValue(bestAttr.name, bestAttr.value)) {
-				attrSelector = `[${bestAttr.name}]`;
-			} else {
-				const value = this.escapeAttributeValue(bestAttr.value);
-				attrSelector = `[${bestAttr.name}="${value}"]`;
-			}
-			return alwaysIncludeTag ? `${tagName}${attrSelector}` : attrSelector;
-		}
-
-		// Fallback to tag + classes
-		let selectorParts: string[] = [tagName];
-		if (classes.length > 0) {
-			selectorParts.push(classes.map(cls => `.${cls}`).join(''));
-		}
-		return selectorParts.join('');
+		// Final fallback: just the tag name
+		return tagName;
 	}
 
 	/**
 	 * Generate a balanced selector (tag + one primary attribute)
+	 * Balanced mode typically includes the tag, but respects alwaysIncludeTag=false for strong selectors like aria-label
 	 */
 	private generateBalancedSelector(
 		element: HTMLElement,
@@ -122,40 +148,59 @@ export class SelectorGenerator {
 		dataAttrs: Array<{ name: string, value: string }>,
 		classes: string[]
 	): string {
-		const preferClasses = this.settings.selectorPreferClasses;
+		const alwaysIncludeTag = this.plugin.settings.selectorAlwaysIncludeTag;
+		const preferClasses = this.plugin.settings.selectorPreferClasses;
+
+		// OPTION B: aria-label respects preferClasses setting
+		// For balanced mode, we typically include the tag with one attribute
+		// This makes it more specific than minimal but shorter than specific
 		let selectorParts: string[] = [tagName];
 
-		// Add aria-label if present (high priority)
-		if (hasAriaLabel) {
-			const ariaLabel = element.getAttribute('aria-label');
-			const escapedAriaLabel = this.escapeAttributeValue(ariaLabel!);
-			if (escapedAriaLabel) {
-				selectorParts.push(`[aria-label="${escapedAriaLabel}"]`);
+		// Prefer classes or data attributes based on setting
+		if (preferClasses) {
+			if (classes.length > 0) {
+				selectorParts.push(classes.map(cls => `.${cls}`).join(''));
+				return selectorParts.join('');
+			}
+			// Try data attributes if no classes
+			if (dataAttrs.length > 0) {
+				const bestAttr = dataAttrs.sort((a, b) => a.name.length - b.name.length)[0];
+				if (this.shouldOmitAttributeValue(bestAttr.name, bestAttr.value)) {
+					selectorParts.push(`[${bestAttr.name}]`);
+				} else {
+					const value = this.escapeAttributeValue(bestAttr.value);
+					selectorParts.push(`[${bestAttr.name}="${value}"]`);
+				}
+				return selectorParts.join('');
+			}
+		} else {
+			// Prefer data attributes over classes
+			if (dataAttrs.length > 0) {
+				const bestAttr = dataAttrs.sort((a, b) => a.name.length - b.name.length)[0];
+				if (this.shouldOmitAttributeValue(bestAttr.name, bestAttr.value)) {
+					selectorParts.push(`[${bestAttr.name}]`);
+				} else {
+					const value = this.escapeAttributeValue(bestAttr.value);
+					selectorParts.push(`[${bestAttr.name}="${value}"]`);
+				}
+				return selectorParts.join('');
+			}
+			// Fallback to classes
+			if (classes.length > 0) {
+				selectorParts.push(classes.map(cls => `.${cls}`).join(''));
 				return selectorParts.join('');
 			}
 		}
 
-		// Prefer classes or data attributes
-		if (preferClasses && classes.length > 0) {
-			selectorParts.push(classes.map(cls => `.${cls}`).join(''));
-			return selectorParts.join('');
-		}
-
-		// Add best data attribute
-		if (dataAttrs.length > 0) {
-			const bestAttr = dataAttrs.sort((a, b) => a.name.length - b.name.length)[0];
-			if (this.shouldOmitAttributeValue(bestAttr.name, bestAttr.value)) {
-				selectorParts.push(`[${bestAttr.name}]`);
-			} else {
-				const value = this.escapeAttributeValue(bestAttr.value);
-				selectorParts.push(`[${bestAttr.name}="${value}"]`);
+		// Fallback to aria-label if no classes or data attributes (check if excluded)
+		if (hasAriaLabel && !this.isAttributeExcluded('aria-label', 'balanced')) {
+			const ariaLabel = element.getAttribute('aria-label');
+			const escapedAriaLabel = this.escapeAttributeValue(ariaLabel!);
+			if (escapedAriaLabel) {
+				const ariaSelector = `[aria-label="${escapedAriaLabel}"]`;
+				// aria-label is specific enough to omit tag if setting allows
+				return alwaysIncludeTag ? `${tagName}${ariaSelector}` : ariaSelector;
 			}
-			return selectorParts.join('');
-		}
-
-		// Fallback to classes
-		if (classes.length > 0) {
-			selectorParts.push(classes.map(cls => `.${cls}`).join(''));
 		}
 
 		return selectorParts.join('');
@@ -171,7 +216,7 @@ export class SelectorGenerator {
 		dataAttrs: Array<{ name: string, value: string }>,
 		classes: string[]
 	): string {
-		const omitTag = !this.settings.selectorAlwaysIncludeTag &&
+		const omitTag = !this.plugin.settings.selectorAlwaysIncludeTag &&
 			this.canOmitTagName(element, false, hasAriaLabel, dataAttrs);
 		let selectorParts: string[] = [];
 
@@ -241,14 +286,56 @@ export class SelectorGenerator {
 	}
 
 	/**
-	 * Get all data-* attributes from an element
+	 * Check if an attribute name matches a wildcard pattern
+	 * Supports * as wildcard (e.g., "data-tooltip-*" matches "data-tooltip-position")
+	 * @param attributeName The attribute name to test
+	 * @param pattern The pattern with optional wildcards
+	 * @returns true if the attribute matches the pattern
 	 */
-	private getDataAttributes(element: HTMLElement): Array<{ name: string, value: string }> {
+	private matchesPattern(attributeName: string, pattern: string): boolean {
+		// Convert wildcard pattern to regex
+		// Escape special regex characters, then convert * to .*
+		const regexPattern = pattern
+			.replace(/[.+?^${}()|[\]\\]/g, '\\$&') // escape special chars
+			.replace(/\*/g, '.*'); // convert * to .*
+		return new RegExp(`^${regexPattern}$`).test(attributeName);
+	}
+
+	/**
+	 * Check if an attribute should be excluded based on settings
+	 * Only applies exclusions in Minimal/Balanced modes
+	 * @param attrName The attribute name to check
+	 * @param effectiveStyle The current selector style
+	 * @returns true if the attribute should be excluded
+	 */
+	private isAttributeExcluded(attrName: string, effectiveStyle: string): boolean {
+		// Only apply exclusions in Minimal/Balanced modes
+		// Specific mode includes everything
+		if (effectiveStyle === 'specific') {
+			return false;
+		}
+
+		const patterns = this.plugin.settings.selectorExcludedAttributes
+			.split('\n')
+			.map(p => p.trim())
+			.filter(p => p.length > 0);
+
+		return patterns.some(pattern => this.matchesPattern(attrName, pattern));
+	}
+
+	/**
+	 * Get all data-* attributes from an element
+	 * @param element The HTML element
+	 * @param effectiveStyle The current selector style (used for exclusion filtering)
+	 */
+	private getDataAttributes(element: HTMLElement, effectiveStyle: string): Array<{ name: string, value: string }> {
 		const dataAttributes: Array<{ name: string, value: string }> = [];
 		// Loop through all attributes
 		for (let i = 0; i < element.attributes.length; i++) {
 			const attr = element.attributes[i];
-			if (attr.name.startsWith('data-') && attr.name !== 'data-reactid') {
+			if (attr.name.startsWith('data-') &&
+			    attr.name !== 'data-reactid' &&
+			    !this.isAttributeExcluded(attr.name, effectiveStyle)) {
 				dataAttributes.push({
 					name: attr.name,
 					value: attr.value
@@ -262,8 +349,19 @@ export class SelectorGenerator {
 	 * Escape special characters in attribute values for CSS selectors
 	 */
 	private escapeAttributeValue(value: string): string {
-		// Replace quotes, backslashes, and other special characters
-		return value.replace(/["\\]/g, '\\$&');
+		return value
+			// Escape backslashes first (must be done before other escapes)
+			.replace(/\\/g, '\\\\')
+			// Escape quotes
+			.replace(/"/g, '\\"')
+			// Replace newlines with CSS escape sequence
+			.replace(/\n/g, '\\A ')
+			// Replace carriage returns
+			.replace(/\r/g, '\\D ')
+			// Replace tabs
+			.replace(/\t/g, '\\9 ')
+			// Replace form feeds
+			.replace(/\f/g, '\\C ');
 	}
 
 	/**
@@ -288,21 +386,28 @@ export class SelectorGenerator {
 			return true;
 		}
 
-		// Check attribute name for common dynamic patterns
+		const lowerAttrName = attrName.toLowerCase();
+
+		// Semantic patterns - check FIRST (higher priority)
+		// These are meaningful values that should be included
+		const semanticPatterns = ['type', 'mode', 'state', 'status', 'variant', 'theme', 'view', 'role', 'path', 'position'];
+
+		// More precise matching: check if attribute ends with -pattern or is exactly data-pattern
+		if (semanticPatterns.some(pattern =>
+			lowerAttrName.endsWith(`-${pattern}`) || lowerAttrName === `data-${pattern}`
+		)) {
+			return false;
+		}
+
+		// Dynamic patterns - omit these values as they're likely to change
 		const dynamicPatterns = [
-			'count', 'index', 'idx', 'position', 'order', 'number', 'num',
+			'count', 'index', 'idx', 'order', 'number', 'num',
 			'id', 'uuid', 'guid', 'key', 'timestamp', 'time'
 		];
 
-		const lowerAttrName = attrName.toLowerCase();
+		// Check if attribute name contains any dynamic pattern
 		if (dynamicPatterns.some(pattern => lowerAttrName.includes(pattern))) {
 			return true;
-		}
-
-		// For data-type, data-mode, data-state etc - keep the value (semantic)
-		const semanticPatterns = ['type', 'mode', 'state', 'status', 'variant', 'theme', 'view', 'role'];
-		if (semanticPatterns.some(pattern => lowerAttrName.includes(pattern))) {
-			return false;
 		}
 
 		// Default: include the value for safety

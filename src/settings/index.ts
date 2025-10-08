@@ -59,6 +59,7 @@ export interface CustomThemeStudioSettings {
 	selectorStyle: 'minimal' | 'balanced' | 'specific';
 	selectorPreferClasses: boolean;
 	selectorAlwaysIncludeTag: boolean;
+	selectorExcludedAttributes: string;
 	cssEditorDebounceDelay: number;
 }
 
@@ -102,6 +103,12 @@ export const DEFAULT_SETTINGS: CustomThemeStudioSettings = {
 	selectorStyle: 'minimal',
 	selectorPreferClasses: false,
 	selectorAlwaysIncludeTag: false,
+	selectorExcludedAttributes: `data-tooltip-*
+data-delay
+aria-expanded
+aria-current
+aria-controls
+aria-describedby`,
 	cssEditorDebounceDelay: 500
 };
 
@@ -239,6 +246,21 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				})
 			);
+
+		new Setting(containerEl)
+			.setName('Excluded attribute patterns')
+			.setDesc('Attributes matching these patterns will be excluded from Minimal and Balanced selectors (one per line). Supports wildcards like "data-tooltip-*". Specific mode includes all attributes.')
+			.addTextArea(text => text
+				.setPlaceholder('data-tooltip-*\ndata-delay\naria-expanded')
+				.setValue(this.plugin.settings.selectorExcludedAttributes)
+				.onChange(async (value) => {
+					this.plugin.settings.selectorExcludedAttributes = value;
+					await this.plugin.saveSettings();
+				})
+			)
+			.then(setting => {
+				setting.controlEl.querySelector('textarea')?.setAttribute('rows', '5');
+			});
 
 		new Setting(containerEl)
 			.setName('Generate CSS')
