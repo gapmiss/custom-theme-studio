@@ -133,12 +133,73 @@ class SettingsIO {
      * @return True if the settings object is valid, false otherwise.
      */
     private validateSettings(settings: any): settings is CustomThemeStudioSettings {
-        if (!settings) return false;
+        if (!settings || typeof settings !== 'object') return false;
 
+        // Required boolean fields
         if (typeof settings.themeEnabled !== 'boolean') return false;
+        if (typeof settings.autoApplyChanges !== 'boolean') return false;
+        if (typeof settings.exportThemeIncludeDisabled !== 'boolean') return false;
+        if (typeof settings.exportPrettierFormat !== 'boolean') return false;
+        if (typeof settings.showConfirmation !== 'boolean') return false;
+        if (typeof settings.enableFontImport !== 'boolean') return false;
+        if (typeof settings.enableColorPicker !== 'boolean') return false;
+        if (typeof settings.enableAceAutoCompletion !== 'boolean') return false;
+        if (typeof settings.enableAceSnippets !== 'boolean') return false;
+        if (typeof settings.enableAceColorPicker !== 'boolean') return false;
+        if (typeof settings.editorLineNumbers !== 'boolean') return false;
+        if (typeof settings.editorWordWrap !== 'boolean') return false;
+        if (typeof settings.viewScrollToTop !== 'boolean') return false;
+        if (typeof settings.generateComputedCSS !== 'boolean') return false;
+        if (typeof settings.selectorPreferClasses !== 'boolean') return false;
+        if (typeof settings.selectorAlwaysIncludeTag !== 'boolean') return false;
+        if (typeof settings.expandCSSVariables !== 'boolean') return false;
+        if (typeof settings.expandCSSRules !== 'boolean') return false;
+        if (typeof settings.expandExportTheme !== 'boolean') return false;
+        if (typeof settings.expandEditorSettings !== 'boolean') return false;
+
+        // Required string fields
+        if (typeof settings.customCSS !== 'string') return false;
+        if (typeof settings.exportThemeName !== 'string') return false;
+        if (typeof settings.exportThemeAuthor !== 'string') return false;
+        if (typeof settings.exportThemeURL !== 'string') return false;
+        if (typeof settings.lastSelectedSelector !== 'string') return false;
+        if (typeof settings.activeVariableTagFilter !== 'string') return false;
+        if (typeof settings.variableInputListener !== 'string') return false;
+        if (typeof settings.editorFontFamily !== 'string') return false;
+        if (typeof settings.editorTheme !== 'string') return false;
+        if (typeof settings.editorLightTheme !== 'string') return false;
+        if (typeof settings.editorDarkTheme !== 'string') return false;
+        if (typeof settings.editorKeyboard !== 'string') return false;
+        if (typeof settings.debugLevel !== 'string') return false;
+        if (typeof settings.selectorStyle !== 'string') return false;
+        if (typeof settings.selectorExcludedAttributes !== 'string') return false;
+
+        // Required number fields
+        if (typeof settings.editorFontSize !== 'number') return false;
+        if (typeof settings.cssEditorDebounceDelay !== 'number') return false;
+
+        // editorTabWidth can be number or string
+        if (typeof settings.editorTabWidth !== 'number' && typeof settings.editorTabWidth !== 'string') return false;
+
+        // Required array fields
         if (!Array.isArray(settings.cssVariables)) return false;
         if (!Array.isArray(settings.cssRules)) return false;
-        if (typeof settings.autoApplyChanges !== 'boolean') return false;
+        if (!Array.isArray(settings.expandedVariableCategories)) return false;
+
+        // Validate array contents
+        if (settings.cssVariables.length > 0) {
+            const variable = settings.cssVariables[0];
+            if (typeof variable.parent !== 'string' || typeof variable.variable !== 'string' || typeof variable.value !== 'string') {
+                return false;
+            }
+        }
+
+        if (settings.cssRules.length > 0) {
+            const rule = settings.cssRules[0];
+            if (typeof rule.uuid !== 'string' || typeof rule.rule !== 'string' || typeof rule.css !== 'string' || typeof rule.enabled !== 'boolean') {
+                return false;
+            }
+        }
 
         return true;
     }
