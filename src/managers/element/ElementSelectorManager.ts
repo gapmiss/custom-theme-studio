@@ -1,4 +1,4 @@
-import { Notice, ButtonComponent } from 'obsidian';
+import { Notice, ButtonComponent, debounce } from 'obsidian';
 import CustomThemeStudioPlugin from '../../main';
 import { CustomThemeStudioView } from '../../views/customThemeStudioView';
 import { generateUniqueId } from '../../utils';
@@ -269,6 +269,12 @@ export class ElementSelectorManager {
 						this.scrollToDivByUUID(uuid);
 					}, TIMEOUT_DELAYS.SCROLL_DELAY);
 				}
+
+				// Focus rule name input after UI is rendered and scroll completes
+				const focusRuleInput = debounce(() => {
+					view.cssEditorManager.focusRuleInput();
+				}, 250, false);
+				focusRuleInput();
 			}
 		}
 	}

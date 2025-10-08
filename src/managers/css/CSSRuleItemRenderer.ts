@@ -153,7 +153,7 @@ export class CSSRuleItemRenderer {
 
 			if (freshRule && await confirm(`Are you sure you want to delete the rule "${freshRule.rule}"?`, this.config.plugin.app)) {
 				await this.config.onDelete(freshRule, item);
-				showNotice('Element deleted', 5000, 'success');
+				showNotice('CSS rule deleted', 5000, 'success');
 			}
 
 			deleteButton.removeClass('mod-loading');

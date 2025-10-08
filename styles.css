@@ -826,6 +826,13 @@ body {
     resize: vertical;
 }
 
+/* ACE editor focus state */
+.cts-view .ace_editor.ace_focus {
+    border-color: var(--interactive-accent);
+    box-shadow: 0 0 0 2px var(--interactive-accent-hover);
+    outline: none;
+}
+
 .cts-view .editor-rule-container {
     margin-top: .5em;
     display: flex;

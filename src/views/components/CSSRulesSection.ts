@@ -1,3 +1,4 @@
+import { debounce } from 'obsidian';
 import { UIComponent, ComponentContext } from './UIComponent';
 import { createCollapsibleSection, createIconButton, createSearchInput } from '../../utils/uiHelpers';
 import { FontImportModal } from '../../modals/fontImportModal';
@@ -85,6 +86,12 @@ export class CSSRulesSection extends UIComponent {
 				this.scrollToElement(editorSection as HTMLElement);
 			}, 100);
 		}
+
+		// Focus rule name input after UI is rendered and scroll completes
+		const focusRuleInput = debounce(() => {
+			this.cssEditorManager.focusRuleInput();
+		}, 250, false);
+		focusRuleInput();
 	}
 
 	private async handleSelectElement(): Promise<void> {

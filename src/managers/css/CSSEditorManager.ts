@@ -1,4 +1,4 @@
-import { App, setIcon, Workspace } from 'obsidian';
+import { App, setIcon, Workspace, debounce } from 'obsidian';
 import CustomThemeStudioPlugin from '../../main';
 import { CustomThemeStudioView } from '../../views/customThemeStudioView';
 import { CustomThemeStudioSettings, CSSrule } from '../../settings';
@@ -555,6 +555,58 @@ export class CSSEditorManager {
 		this.editor!.session.on('change', this.changeListener);
 	}
 
+	/**
+	 * Focus the rule name input field
+	 */
+	focusRuleInput(): void {
+		if (this.ruleInputEl) {
+			this.ruleInputEl.focus();
+		}
+	}
+
+	/**
+	 * Focus the Ace editor and position cursor optimally
+	 * Positions cursor before the last closing brace for easy property addition
+	 */
+	focusAceEditor(): void {
+		if (!this.editor) return;
+
+		this.editor.focus();
+
+		// Find the last closing brace
+		const searchOptions = {
+			backwards: true,
+			wrap: false,
+			caseSensitive: true,
+			regExp: false
+		};
+
+		// Move cursor to end first
+		this.editor.navigateFileEnd();
+
+		// Search backwards for the last }
+		const range = this.editor.find('}', searchOptions);
+
+		if (range) {
+			// Position cursor at the end of the line before the closing brace
+			const row = range.start.row;
+			if (row > 0) {
+				// Go to previous line and position at end
+				this.editor.gotoLine(row, Number.MAX_VALUE);
+
+				// Get tab width from settings and create indentation
+				const tabWidth = Number(this.plugin.settings.editorTabWidth) || 4;
+				const indent = ' '.repeat(tabWidth);
+
+				this.editor.insert('\n' + indent);
+			} else {
+				// If closing brace is on first line, just position before it
+				this.editor.moveCursorTo(range.start.row, range.start.column);
+			}
+		}
+		// If no closing brace found, cursor stays at end of file
+	}
+
 	removeInlineEditor(): void {
 
 		this.editor!.session.off('change', this.changeListener);
@@ -615,8 +667,13 @@ export class CSSEditorManager {
 				setTimeout(() => {
 					this.scrollToDivByUUID(rule.uuid);
 				}, TIMEOUT_DELAYS.SCROLL_DELAY);
-				this.ruleInputEl!.focus();
 			}
+
+			// Focus Ace editor and move cursor to end after UI is rendered
+			const focusEditor = debounce(() => {
+				this.focusAceEditor();
+			}, 100, false);
+			focusEditor();
 		}
 	}
 
