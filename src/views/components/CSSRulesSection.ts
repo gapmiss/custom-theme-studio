@@ -1,6 +1,6 @@
 import { debounce } from 'obsidian';
 import { UIComponent, ComponentContext } from './UIComponent';
-import { createCollapsibleSection, createIconButton, createSearchInput } from '../../utils/uiHelpers';
+import { createCollapsibleSection, createIconButton, createSearchInput, smoothScrollToElement } from '../../utils/uiHelpers';
 import { FontImportModal } from '../../modals/fontImportModal';
 
 export class CSSRulesSection extends UIComponent {
@@ -233,11 +233,7 @@ export class CSSRulesSection extends UIComponent {
 
 	private scrollToElement(target: HTMLElement): void {
 		if (target && this.container) {
-			const top = target.offsetTop - 10;
-			this.container.scrollTo({
-				top: top,
-				behavior: "smooth"
-			});
+			smoothScrollToElement(this.container, target);
 		}
 	}
 

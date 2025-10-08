@@ -2,6 +2,7 @@ import { Notice, ButtonComponent, debounce } from 'obsidian';
 import CustomThemeStudioPlugin from '../../main';
 import { CustomThemeStudioView } from '../../views/customThemeStudioView';
 import { generateUniqueId } from '../../utils';
+import { smoothScrollToElement } from '../../utils/uiHelpers';
 import { TIMEOUT_DELAYS } from '../../constants';
 import { SelectorGenerator } from './SelectorGenerator';
 import { ElementHighlighter } from './ElementHighlighter';
@@ -283,14 +284,7 @@ export class ElementSelectorManager {
 	scrollToDivByUUID(uuid: string) {
 		const target = this.view.containerEl.querySelector(`input[value="${uuid}"]`)?.parentElement;
 		if (target) {
-			const container = this.view.containerEl;
-			if (container && target) {
-				const top = (target as HTMLElement).offsetTop - 10;
-				(container as HTMLElement).scrollTo({
-					top: top,
-					behavior: "smooth"
-				});
-			}
+			smoothScrollToElement(this.view.containerEl, target as HTMLElement);
 		}
 	}
 }

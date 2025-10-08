@@ -7,6 +7,7 @@ import { ICodeEditorConfig } from '../../interfaces/types';
 import * as ace from 'ace-builds';
 import { CSSVariableManager } from '../cssVariabManager';
 import { generateUniqueId, showNotice, Logger } from "../../utils";
+import { smoothScrollToElement } from "../../utils/uiHelpers";
 import { DEBOUNCE_DELAYS, TIMEOUT_DELAYS } from '../../constants';
 import { CSSRuleItemRenderer } from './CSSRuleItemRenderer';
 import { CSSRuleListManager } from './CSSRuleListManager';
@@ -813,15 +814,7 @@ export class CSSEditorManager {
 	scrollToDivByUUID(uuid: string) {
 		const target = this.view.containerEl.querySelector(`[data-cts-uuid="${uuid}"]`);
 		if (target) {
-			const container = this.view.containerEl;
-			if (container && target) {
-				const top = (target as HTMLElement).offsetTop - 10;
-				// container.scrollTop = top;
-				container.scrollTo({
-					top: top,
-					behavior: "smooth"
-				});
-			}
+			smoothScrollToElement(this.view.containerEl, target as HTMLElement);
 		}
 	}
 

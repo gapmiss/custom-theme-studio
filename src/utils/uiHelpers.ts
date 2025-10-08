@@ -153,3 +153,21 @@ export function createToggleSwitch(
 
 	return { toggle, label: labelEl };
 }
+
+/**
+ * Smooth scroll to an element within a container
+ * @param container The scrollable container element
+ * @param target The target element to scroll to
+ * @param offset Offset from the top in pixels (default: 10)
+ */
+export function smoothScrollToElement(
+	container: HTMLElement,
+	target: HTMLElement,
+	offset: number = 10
+): void {
+	const top = target.offsetTop - offset;
+	container.scrollTo({
+		top: top,
+		behavior: 'smooth'
+	});
+}

@@ -3,6 +3,7 @@ import CustomThemeStudioPlugin from '../../main';
 import { CustomThemeStudioView } from '../../views/customThemeStudioView';
 import { CSSrule } from '../../settings';
 import { CSSRuleItemRenderer } from './CSSRuleItemRenderer';
+import { smoothScrollToElement } from '../../utils/uiHelpers';
 
 /**
  * Manages the CSS rule list with incremental DOM updates.
@@ -152,11 +153,7 @@ export class CSSRuleListManager {
 	private scrollToElement(target: HTMLElement): void {
 		const container = this.view.containerEl;
 		if (container && target) {
-			const top = target.offsetTop - 10;
-			container.scrollTo({
-				top: top,
-				behavior: 'smooth'
-			});
+			smoothScrollToElement(container, target);
 		}
 	}
 

@@ -10,6 +10,7 @@ import { CSSVariablesSection } from './components/CSSVariablesSection';
 import { CSSRulesSection } from './components/CSSRulesSection';
 import { ExportSection } from './components/ExportSection';
 import { UIComponent, ComponentContext } from './components/UIComponent';
+import { smoothScrollToElement } from '../utils/uiHelpers';
 
 export const VIEW_TYPE_CTS = 'cts-view';
 
@@ -128,15 +129,8 @@ export class CustomThemeStudioView extends ItemView {
 	}
 
 	scrollToDiv(target: HTMLElement): void {
-		if (target) {
-			const container = this.containerEl;
-			if (container && target) {
-				const top = (target as HTMLElement).offsetTop - 10;
-				(container as HTMLElement).scrollTo({
-					top: top,
-					behavior: "smooth"
-				});
-			}
+		if (target && this.containerEl) {
+			smoothScrollToElement(this.containerEl, target);
 		}
 	}
 
