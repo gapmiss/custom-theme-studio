@@ -1,17 +1,17 @@
 # Custom Theme Studio
 
-An Obsidian.md plugin to create and tweak custom themes with live CSS editing, element styling, and instant previews. All without leaving Obsidian.
+A complete theme design studio for Obsidian. Create, customize, and export professional themes with visual tools, live CSS editing, and instant feedback—all without leaving your workspace.
 
 ## Features at a Glance
 
 | Feature              | Description                                                                                  |
 | -------------------- | -------------------------------------------------------------------------------------------- |
-| **CSS Variables**    | Edit colors, fonts, and other UI styles. Variables are searchable and organized by category. |
+| **CSS Variables**    | Edit colors, fonts, and other UI styles. Variables are searchable, filterable by category, with live counter updates. |
 | **Font Import**      | Import custom fonts and create base64 `@font-face` rules for your theme.                     |
-| **Live Editor**      | Ace editor with syntax highlighting, auto-complete, and built-in color picker.               |
-| **Visual Tools**     | Pick elements to style, preview changes in real-time, freeze UI for inspection.              |
-| **Theme Management** | Enable, disable, switch themes, or export as CSS with a manifest.                            |
-| **Settings**         | Backup, import/export, reset customizations, toggle themes.                                  |
+| **Live Editor**      | Ace editor with syntax highlighting, auto-complete, Prettier formatting, and built-in color picker.               |
+| **Visual Tools**     | Pick elements to style with configurable selector generation, preview changes in real-time, freeze UI for inspection.              |
+| **Theme Management** | Enable, disable, switch themes, or export as CSS with a manifest and Prettier formatting.                            |
+| **Settings**         | Backup, import/export, reset customizations, toggle themes with reactive updates.                                  |
 
 ---
 
@@ -21,27 +21,41 @@ An Obsidian.md plugin to create and tweak custom themes with live CSS editing, e
 
 - Edit built-in CSS variables for colors, fonts, and UI components
 - Organized into categories: components, editor, foundations, plugins, window, dark/light themes
-- Search and filter to quickly find variables
-- Color picker for HEX values
-- Import fonts and generate base64 `@font-face` CSS rules
+- Search and filter to quickly find variables with real-time result counter
+- Add custom variables with live counter updates
+- Color picker for HEX values with reactive updates
+- Category badges show item counts that update automatically
+- Tag-based filtering for quick navigation
 
 ### CSS Rules
 
-- Pick elements visually to target specific UI components
-- Advanced CSS editor with syntax highlighting
-- Live preview while editing
-- Search and filter rules
-- Save and manage multiple custom rules
+- **Smart Element Selector** with configurable selector generation:
+  - Three selector styles: Minimal (short), Balanced (moderate), Specific (detailed)
+  - Toggle preference for classes vs. data attributes
+  - Configure tag name inclusion
+  - Exclude unwanted attributes with wildcard patterns
+  - Handles special characters and aria-labels properly
+- Advanced CSS editor with syntax highlighting and auto-formatting
+- **In-editor Prettier formatting** with preserved undo/redo history
+- Smart cursor positioning when editing (auto-places cursor before closing brace)
+- Visual focus indicators for active editor
+- Live preview while editing with configurable debounce delay
+- Search and filter rules with result counter
+- Save and manage multiple custom rules with auto-scroll to newly created items
 - Apply imported fonts to any element
 
 ### CSS Editor
 
 - Built-in Ace editor with syntax highlighting and auto-complete
-- Customize editor settings: theme, font size, tab width
+- **One-click Prettier formatting** with undo support
+- Customize editor settings: theme, font size, tab width (2 or 4 spaces)
 - Optional line numbers and word wrap
-- Embedded color picker
+- Embedded color picker for Ace editor
+- Visual focus state with accent-colored border
+- Smart cursor positioning respects tab width settings
 - Keyboard shortcuts for faster editing
 - Auto-completion includes all Obsidian variables
+- Configurable debounce delay for auto-apply changes
 
 ### Theme Export
 
@@ -112,8 +126,14 @@ Edit Obsidian's built-in CSS variables to customize colors, fonts, and UI elemen
 Create custom CSS rules to style specific elements:
 
 - **Element selector**: Use `Ctrl/Cmd + P` → "Custom Theme Studio: Select an element for new CSS rule" to visually pick elements
+  - Configure selector generation in settings: choose between Minimal, Balanced, or Specific styles
+  - Prefer classes over attributes or vice versa
+  - Exclude specific attributes using wildcard patterns (e.g., `data-tooltip-*`)
 - **CSS editor**: Write custom CSS with syntax highlighting and auto-completion
-- **Live preview**: See changes in real-time as you type
+  - Click the sparkles icon (✨) to format CSS with Prettier (undoable with Ctrl/Cmd+Z)
+  - Cursor automatically positions for optimal editing
+  - Visual focus indicator shows when editor is active
+- **Live preview**: See changes in real-time as you type (configurable debounce delay)
 - **Font import**: Import custom fonts and generate @font-face rules
 
 ### Theme Export
@@ -135,8 +155,13 @@ Export your customizations as a complete Obsidian theme:
 
 - **Backup your work**: Use Settings > Export settings before major changes
 - **Element inspection**: Use the "Freeze Obsidian" command to inspect elements that disappear on hover
-- **Search efficiently**: Use the search boxes in CSS Variables and CSS Rules sections
+- **Search efficiently**: Use the search boxes in CSS Variables and CSS Rules sections - counters show results in real-time
 - **Test responsively**: Toggle your theme on/off to compare changes
+- **Format while editing**: Use the sparkles icon (✨) in the CSS editor to format your code with Prettier - it's undoable!
+- **Customize selectors**: Configure element selector behavior in settings for your preferred selector style
+- **Exclude noisy attributes**: Add patterns like `data-tooltip-*` to excluded attributes for cleaner selectors
+- **Smart cursor**: When editing CSS rules, the cursor automatically positions for adding new properties
+- **Adjust debounce**: Fine-tune the auto-apply delay slider in settings for optimal performance
 - **Share themes**: Export your theme and share the CSS/manifest files with others
 
 ## Credits
