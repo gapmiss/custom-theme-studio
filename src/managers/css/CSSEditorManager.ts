@@ -464,11 +464,41 @@ export class CSSEditorManager {
 		// }
 	}
 
+	/**
+	 * Validate and find element by CSS selector
+	 *
+	 * @param selector CSS selector to validate and query
+	 * @returns HTMLElement if found, null if invalid or not found
+	 */
 	findElementBySelector(selector: string): HTMLElement | null {
+		// Validate selector is not empty
+		if (!selector || selector.trim().length === 0) {
+			Logger.error('Empty selector provided');
+			showNotice('Selector cannot be empty', 3000, 'error');
+			return null;
+		}
+
+		// Check for dangerous patterns
+		const dangerousPatterns = [
+			/javascript:/i,
+			/<script/i,
+			/on\w+\s*=/i,  // onclick=, onerror=, etc.
+		];
+
+		for (const pattern of dangerousPatterns) {
+			if (pattern.test(selector)) {
+				Logger.error('Potentially dangerous selector:', selector);
+				showNotice('Selector contains unsafe content', 3000, 'error');
+				return null;
+			}
+		}
+
+		// Attempt to query the selector
 		try {
 			return document.querySelector(selector) as HTMLElement;
 		} catch (error) {
-			Logger.error('Invalid selector:', selector);
+			Logger.error(`Invalid CSS selector: ${selector}`, error);
+			showNotice('Invalid CSS selector syntax', 3000, 'error');
 			return null;
 		}
 	}
