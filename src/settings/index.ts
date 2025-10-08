@@ -135,6 +135,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 		const { containerEl } = this;
 
 		containerEl.empty();
+		containerEl.addClass('cts-settings-tab');
 
 		new Setting(containerEl)
 			.setName('Enable custom theme')

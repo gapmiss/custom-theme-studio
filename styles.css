@@ -1108,6 +1108,41 @@ body {
     min-width: 300px !important;
 }
 
+/* Settings collapsible sections */
+.cts-settings-tab .cts-collapsible-heading {
+    cursor: pointer;
+}
+
+.cts-settings-tab .cts-chevron-icon {
+    display: inline-block;
+    margin-left: 8px;
+    color: var(--interactive-accent);
+    transition: transform 0.2s ease;
+    vertical-align: middle;
+    width: 20px;
+    height: 20px;
+}
+
+.cts-settings-tab .cts-chevron-icon svg {
+    width: 20px;
+    height: 20px;
+    stroke-width: 3;
+}
+
+.cts-settings-tab .cts-editor-settings-container {
+    /* Container for collapsible editor settings */
+    padding: var(--size-4-3);
+    border-radius: var(--size-4-2);
+    background-color: var(--background-secondary);
+}
+
+.cts-settings-tab .setting-item-control:has(textarea) > textarea {
+    /* width: 100%; */
+    /* border: 1px solid hotpink !important; */
+        min-width: 200px;
+        min-height: 100px;
+}
+
 /* ================================================================================== */
 /* ================================ Ace Color Picker ================================ */
 /* ================================================================================== */
@@ -2535,29 +2570,4 @@ body {
 
 .colorsets-contextmenu.small .menu-item.small-hide {
     display: none;
-}
-
-/* Settings collapsible sections */
-.cts-collapsible-heading {
-    cursor: pointer;
-}
-
-.cts-chevron-icon {
-    display: inline-block;
-    margin-left: 8px;
-    color: var(--interactive-accent);
-    transition: transform 0.2s ease;
-    vertical-align: middle;
-    width: 20px;
-    height: 20px;
-}
-
-.cts-chevron-icon svg {
-    width: 20px;
-    height: 20px;
-    stroke-width: 3;
-}
-
-.cts-editor-settings-container {
-    /* Container for collapsible editor settings */
 }
