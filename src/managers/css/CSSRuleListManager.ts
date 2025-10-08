@@ -1,3 +1,4 @@
+import { debounce } from 'obsidian';
 import CustomThemeStudioPlugin from '../../main';
 import { CustomThemeStudioView } from '../../views/customThemeStudioView';
 import { CSSrule } from '../../settings';
@@ -132,11 +133,17 @@ export class CSSRuleListManager {
 	scrollToAndHighlight(element: HTMLElement): void {
 		if (!this.plugin.settings.viewScrollToTop) return;
 
-		this.scrollToElement(element);
+		// Use debounce to delay scroll until DOM layout is complete
+		const scrollDelayed = debounce(() => {
+			this.scrollToElement(element);
+		}, 100, false);
+		scrollDelayed();
+
 		element.addClass('blinking-effect');
-		setTimeout(() => {
+		const removeHighlight = debounce(() => {
 			element.removeClass('blinking-effect');
-		}, 3000);
+		}, 3000, false);
+		removeHighlight();
 	}
 
 	/**

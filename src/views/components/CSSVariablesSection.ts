@@ -1,4 +1,4 @@
-import { setIcon, ColorComponent } from 'obsidian';
+import { setIcon, ColorComponent, debounce } from 'obsidian';
 import { SimpleDebouncer } from '../../utils/Debouncer';
 import { UIComponent, ComponentContext } from './UIComponent';
 import { createCollapsibleSection, createIconButton, createSearchInput } from '../../utils/uiHelpers';
@@ -648,15 +648,20 @@ export class CSSVariablesSection extends UIComponent {
 
 			// Scroll to category if setting is enabled
 			if (this.plugin.settings.viewScrollToTop) {
-				setTimeout(() => {
+				// Use debounce to delay scroll until DOM layout is complete
+				const scrollDelayed = debounce(() => {
 					const top = customVarCategory.offsetTop - 10;
 					this.container.scrollTo({
 						top: top,
 						behavior: 'smooth'
 					});
-				}, 100);
+				}, 100, false);
+				scrollDelayed();
 			}
 		}
+
+		// Update the category count badge
+		this.updateCategoryItemCount('custom');
 	}
 
 
