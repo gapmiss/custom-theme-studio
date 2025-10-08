@@ -1,3 +1,24 @@
+/**
+ * DOMReferences - Efficient DOM query caching utility
+ *
+ * USAGE GUIDELINES:
+ * - Use for frequently accessed elements within a stable container
+ * - Call invalidate() or clearCache() when DOM structure changes
+ * - Prefer this over repeated querySelector() calls for the same selector
+ * - Use getAll() for dynamic collections (not cached, always fresh)
+ *
+ * WHEN NOT TO USE:
+ * - For one-time queries (caching overhead not worth it)
+ * - For elements in rapidly changing DOM (cache becomes stale)
+ * - For queries across different containers (scope to container)
+ *
+ * @example
+ * // In a component
+ * const refs = new DOMReferences(this.containerEl);
+ * const header = refs.get<HTMLDivElement>('.header'); // Cached
+ * const items = refs.getAll('.item'); // Not cached, always fresh
+ * refs.invalidate('.header'); // Clear cache after DOM change
+ */
 export class DOMReferences {
 	private container: HTMLElement;
 	private cache = new Map<string, HTMLElement | null>();

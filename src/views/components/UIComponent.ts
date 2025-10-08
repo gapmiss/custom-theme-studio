@@ -72,6 +72,14 @@ export abstract class UIComponent {
 
 	/**
 	 * Get a DOM element with caching, scoped to this component
+	 *
+	 * BEST PRACTICES:
+	 * - Use for elements that are accessed multiple times
+	 * - Call invalidateCache() after DOM modifications
+	 * - Prefer this over direct querySelector() for repeated queries
+	 *
+	 * @example
+	 * const header = this.getElement<HTMLDivElement>('.header');
 	 */
 	protected getElement<T extends HTMLElement = HTMLElement>(selector: string): T | null {
 		return this.domRefs.get<T>(selector);
@@ -79,6 +87,12 @@ export abstract class UIComponent {
 
 	/**
 	 * Get multiple DOM elements, scoped to this component
+	 *
+	 * NOTE: This is NOT cached and always returns fresh results.
+	 * Use for dynamic collections that change frequently.
+	 *
+	 * @example
+	 * const items = this.getElements('.item'); // Always fresh
 	 */
 	protected getElements<T extends HTMLElement = HTMLElement>(selector: string): NodeListOf<T> {
 		return this.domRefs.getAll<T>(selector);
@@ -86,6 +100,9 @@ export abstract class UIComponent {
 
 	/**
 	 * Get a required DOM element with error handling
+	 *
+	 * Throws an error if element not found. Use for critical elements
+	 * that must exist for the component to function.
 	 */
 	protected getRequiredElement<T extends HTMLElement = HTMLElement>(selector: string): T {
 		return this.domRefs.getRequired<T>(selector);
@@ -93,6 +110,16 @@ export abstract class UIComponent {
 
 	/**
 	 * Invalidate DOM cache when structure changes
+	 *
+	 * Call this after:
+	 * - Adding/removing elements from the DOM
+	 * - Replacing element content
+	 * - Any operation that changes the DOM structure
+	 *
+	 * @param selector Specific selector to invalidate, or omit to clear all
+	 * @example
+	 * this.invalidateCache('.variable-list'); // Clear specific
+	 * this.invalidateCache(); // Clear all cache
 	 */
 	protected invalidateCache(selector?: string): void {
 		if (selector) {
