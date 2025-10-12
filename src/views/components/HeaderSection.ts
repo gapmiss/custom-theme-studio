@@ -10,15 +10,8 @@ export class HeaderSection extends UIComponent {
 
 	render(): HTMLElement {
 		const section = this.createSection('theme-studio-header');
-
-		this.renderTitle(section);
 		this.renderControls(section);
-
 		return section;
-	}
-
-	private renderTitle(container: HTMLElement): void {
-		container.createEl('h3', { text: 'Custom Theme Studio' });
 	}
 
 	private renderControls(container: HTMLElement): void {

@@ -796,7 +796,7 @@ export class CSSVariablesSection extends UIComponent {
 		catToggleIcon.setAttr('aria-label', shouldExpand ? 'Collapse category' : 'Expand category');
 
 		if (shouldExpand && this.plugin.settings.viewScrollToTop) {
-			setTimeout(() => {
+			window.setTimeout(() => {
 				this.scrollToElement(container);
 			}, 100);
 		}
@@ -810,7 +810,7 @@ export class CSSVariablesSection extends UIComponent {
 		input.classList.remove('clear-variable-input--touched');
 	}
 
-	private handleColorInputSync(event: Event, colorPicker: any, defaultValue: string): void {
+	private handleColorInputSync(event: Event, colorPicker: ColorComponent, defaultValue: string): void {
 		const newValue = (event.target as HTMLInputElement).value;
 		colorPicker.setValue(newValue || defaultValue);
 	}

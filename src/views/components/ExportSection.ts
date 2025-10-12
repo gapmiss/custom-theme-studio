@@ -51,7 +51,7 @@ export class ExportSection extends UIComponent {
 
 	private renderThemeNameInput(container: HTMLElement): void {
 		const nameContainer = container.createDiv('export-form-item');
-		nameContainer.createSpan({ text: 'Theme Name:' });
+		nameContainer.createSpan({ text: 'Theme name:' });
 
 		this.nameInput = nameContainer.createEl('input', {
 			cls: 'export-form-theme-name',

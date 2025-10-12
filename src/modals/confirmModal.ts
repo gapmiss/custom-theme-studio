@@ -19,7 +19,7 @@ class ConfirmModal extends Modal {
     addButton(
         cls: string | string[],
         text: string,
-        callback?: (evt: MouseEvent) => any,
+        callback?: (evt: MouseEvent) => unknown,
     ) {
         this.buttonContainerEl
             .createEl(

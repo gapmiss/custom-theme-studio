@@ -131,7 +131,7 @@ export class ThemeManager {
 		return css;
 	}
 
-	startElementSelection(): void {
+	async startElementSelection(): Promise<void> {
 		// Find the view if it's open
 		const leaves = this.plugin.app.workspace.getLeavesOfType('cts-view');
 		if (leaves.length > 0) {
@@ -154,29 +154,28 @@ export class ThemeManager {
 
 		} else {
 			// Open the view first, then start selection
-			this.plugin.activateView().then(() => {
-				setTimeout(() => {
-					const newLeaves = this.plugin.app.workspace.getLeavesOfType('cts-view');
-					if (newLeaves.length > 0) {
-						const view = newLeaves[0].view as CustomThemeStudioView;
-						if (view?.elementSelectorManager) {
-							view.elementSelectorManager.startElementSelection();
+			await this.plugin.activateView();
+			window.setTimeout(() => {
+				const newLeaves = this.plugin.app.workspace.getLeavesOfType('cts-view');
+				if (newLeaves.length > 0) {
+					const view = newLeaves[0].view as CustomThemeStudioView;
+					if (view?.elementSelectorManager) {
+						view.elementSelectorManager.startElementSelection();
 
-							const section = window.activeDocument.querySelector<HTMLDivElement>('.rules-section');
-							const icon = section?.querySelector<HTMLDivElement>('.collapse-icon');
-							const content = section?.querySelector<HTMLDivElement>('.collapsible-content');
+						const section = window.activeDocument.querySelector<HTMLDivElement>('.rules-section');
+						const icon = section?.querySelector<HTMLDivElement>('.collapse-icon');
+						const content = section?.querySelector<HTMLDivElement>('.collapsible-content');
 
-							if (content && icon) {
-								content.classList.replace('hide', 'show');
+						if (content && icon) {
+							content.classList.replace('hide', 'show');
 
-								setIcon(icon, 'chevron-down');
-								icon.setAttr('aria-label', 'Collapse section');
-								icon.setAttr('data-tooltip-position', 'top');
-							}
+							setIcon(icon, 'chevron-down');
+							icon.setAttr('aria-label', 'Collapse section');
+							icon.setAttr('data-tooltip-position', 'top');
 						}
 					}
-				}, TIMEOUT_DELAYS.ELEMENT_SELECTION);
-			});
+				}
+			}, TIMEOUT_DELAYS.ELEMENT_SELECTION);
 		}
 	}
 
@@ -259,16 +258,15 @@ ${variablesCSS}
 ${rulesCSS}`;
 
 			let prettierCSS: string = (this.plugin.settings.exportPrettierFormat) ? await this.formatCSS(themeCSS) : themeCSS;
-			navigator.clipboard.writeText(prettierCSS).then(() => {
-				showNotice('Theme CSS copied to clipboard', NOTICE_DURATIONS.STANDARD, 'success');
-			});
+			await navigator.clipboard.writeText(prettierCSS);
+			showNotice('Theme CSS copied to clipboard', NOTICE_DURATIONS.STANDARD, 'success');
 		} catch (error) {
 			Logger.error('Failed to copy theme to clipboard:\n', error);
 			showNotice('Failed to copy theme to clipboard. Check the developer console for details', 10000, 'error');
 		}
 	}
 
-	copyManifestToClipboard(): void {
+	async copyManifestToClipboard(): Promise<void> {
 		try {
 			// Generate manifest.json content
 			const themeId: string = (this.plugin.settings.exportThemeName || DEFAULT_SETTINGS.exportThemeName)
@@ -283,9 +281,8 @@ ${rulesCSS}`;
 				authorUrl: this.plugin.settings.exportThemeURL || DEFAULT_SETTINGS.exportThemeURL
 			};
 
-			navigator.clipboard.writeText(JSON.stringify(manifest, null, 2)).then(() => {
-				showNotice('Manifest JSON copied to clipboard', NOTICE_DURATIONS.STANDARD, 'success');
-			});
+			await navigator.clipboard.writeText(JSON.stringify(manifest, null, 2));
+			showNotice('Manifest JSON copied to clipboard', NOTICE_DURATIONS.STANDARD, 'success');
 
 		} catch (error) {
 			Logger.error('Failed to copy manifest JSON to clipboard:', error);

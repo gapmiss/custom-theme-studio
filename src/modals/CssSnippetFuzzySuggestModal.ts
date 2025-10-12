@@ -93,7 +93,7 @@ export class CssSnippetFuzzySuggestModal extends FuzzySuggestModal<Snippets> {
 
                     // Scroll CSS rule to the top of view
                     if (this.plugin.settings.viewScrollToTop) {
-                        setTimeout(() => {
+                        window.setTimeout(() => {
                             const ruleDiv: HTMLElement | null = view.containerEl.querySelector(`[data-cts-uuid="${uuid}"]`);
                             view.scrollToDiv(ruleDiv!);
                         }, 100);

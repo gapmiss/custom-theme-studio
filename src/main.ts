@@ -153,7 +153,7 @@ export default class CustomThemeStudioPlugin extends Plugin {
 	 * Migrate settings from older versions to current schema
 	 * Add migration logic here as schema evolves
 	 */
-	private migrateSettings(oldSettings: any): Partial<CustomThemeStudioSettings> {
+	private migrateSettings(oldSettings: CustomThemeStudioSettings): Partial<CustomThemeStudioSettings> {
 		const version = oldSettings.version || 0;
 
 		// Version 0 -> 1: Initial versioning (no actual changes needed)

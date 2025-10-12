@@ -20,12 +20,7 @@ export class AddVariableModal extends Modal {
         if (contentEl.parentElement) {
             contentEl.parentElement.addClass('cts-add-variable-modal');
         }
-        contentEl.createEl(
-            'h3',
-            {
-                text: 'Add CSS variable'
-            }
-        );
+        new Setting(contentEl).setName('Add CSS variable').setHeading();
         // Variable name input
         const variableNameInput = new Setting(contentEl)
             .setName('Name')

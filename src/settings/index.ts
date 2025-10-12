@@ -221,9 +221,9 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 			.setName('Selector style preset')
 			.setDesc('Choose the style of CSS selectors generated when picking elements. "Minimal" creates short selectors, "Balanced" includes the tag name, and "Specific" includes all attributes.')
 			.addDropdown(dropdown => dropdown
-				.addOption('minimal', 'Minimal (Clean & Short)')
-				.addOption('balanced', 'Balanced (Moderate Specificity)')
-				.addOption('specific', 'Specific (Maximum Detail)')
+				.addOption('minimal', 'Minimal (clean & short)')
+				.addOption('balanced', 'Balanced (moderate specificity)')
+				.addOption('specific', 'Specific (maximum detail)')
 				.setValue(this.plugin.settings.selectorStyle)
 				.onChange(async (value: 'minimal' | 'balanced' | 'specific') => {
 					this.plugin.settings.selectorStyle = value;

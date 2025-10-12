@@ -5,14 +5,14 @@ import { debounce } from 'obsidian';
  */
 export class Debouncer {
 	private debouncedFunctions = new Map<string, {
-		fn: (...args: any[]) => void;
+		fn: (...args: unknown[]) => void;
 		cancel: () => void;
 	}>();
 
 	/**
 	 * Create a debounced function with cleanup capability
 	 */
-	debounce<T extends (...args: any[]) => void>(
+	debounce<T extends (...args: unknown[]) => void>(
 		key: string,
 		fn: T,
 		delay: number,
@@ -81,11 +81,11 @@ export class Debouncer {
  * Simple debouncer for single-use cases that wraps Obsidian's debounce
  */
 export class SimpleDebouncer {
-	private debouncedFn?: (...args: any[]) => void;
+	private debouncedFn?: (...args: unknown[]) => void;
 	private isDestroyed = false;
 
 	constructor(
-		fn: (...args: any[]) => void,
+		fn: (...args: unknown[]) => void,
 		delay: number,
 		immediate: boolean = false
 	) {
@@ -95,7 +95,7 @@ export class SimpleDebouncer {
 	/**
 	 * Execute the debounced function
 	 */
-	execute(...args: any[]): void {
+	execute(...args: unknown[]): void {
 		if (!this.isDestroyed && this.debouncedFn) {
 			this.debouncedFn(...args);
 		}
@@ -144,13 +144,13 @@ export function createDebouncedInput(
 /**
  * Create a debounced function for component methods using Obsidian's debounce
  */
-export function createDebouncedMethod<T extends (...args: any[]) => void>(
+export function createDebouncedMethod<T extends (...args: unknown[]) => void>(
 	fn: T,
 	delay: number,
 	immediate: boolean = false
 ): { execute: T; destroy: () => void } {
 	let isDestroyed = false;
-	const debouncedFn = debounce((...args: any[]) => {
+	const debouncedFn = debounce((...args: unknown[]) => {
 		if (!isDestroyed) {
 			fn(...args);
 		}

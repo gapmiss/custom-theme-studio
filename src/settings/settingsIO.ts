@@ -132,7 +132,7 @@ class SettingsIO {
      * @param settings - The settings object to validate.
      * @return True if the settings object is valid, false otherwise.
      */
-    private validateSettings(settings: any): settings is CustomThemeStudioSettings {
+    private validateSettings(settings: CustomThemeStudioSettings): settings is CustomThemeStudioSettings {
         if (!settings || typeof settings !== 'object') return false;
 
         // Required boolean fields

@@ -53,7 +53,7 @@ export class ChevronToggle {
 		setIcon(this.element, iconName);
 
 		if (animate && this.config.animationDuration! > 0) {
-			setTimeout(() => {
+			window.setTimeout(() => {
 				this.element.removeClass('chevron-animating');
 				this.element.style.removeProperty('--chevron-transition-duration');
 			}, this.config.animationDuration);

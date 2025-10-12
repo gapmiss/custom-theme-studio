@@ -26,7 +26,7 @@ function createHelpFragment(text: string, parent = '', category = ''): DocumentF
 	}
 
 	if (parent && category) {
-		const link = document.createElement('a');
+		const link = helpFragment.createEl('a');
 		link.className = 'external-link';
 		link.href = `https://docs.obsidian.md/Reference/CSS+variables/${parent}/${category}`;
 		link.textContent = `${category} - Developer Documentation`;

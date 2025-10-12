@@ -71,7 +71,7 @@ export class Logger {
 	/**
 	 * Log a debug message (most verbose)
 	 */
-	static debug(message: string, data?: any): void {
+	static debug(message: string, data?: unknown): void {
 		if (!Logger.shouldLog('debug')) return;
 
 		const location = Logger.getLocation();
@@ -87,7 +87,7 @@ export class Logger {
 	/**
 	 * Log an info message
 	 */
-	static info(message: string, data?: any): void {
+	static info(message: string, data?: unknown): void {
 		if (!Logger.shouldLog('info')) return;
 
 		const location = Logger.getLocation();
@@ -103,7 +103,7 @@ export class Logger {
 	/**
 	 * Log a warning message
 	 */
-	static warn(message: string, data?: any): void {
+	static warn(message: string, data?: unknown): void {
 		if (!Logger.shouldLog('warn')) return;
 
 		const location = Logger.getLocation();
@@ -119,7 +119,7 @@ export class Logger {
 	/**
 	 * Log an error message
 	 */
-	static error(message: string, data?: any): void {
+	static error(message: string, data?: unknown): void {
 		if (!Logger.shouldLog('error')) return;
 
 		const location = Logger.getLocation();

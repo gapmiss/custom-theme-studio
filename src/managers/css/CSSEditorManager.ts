@@ -233,7 +233,7 @@ export class CSSEditorManager {
 			const applyButton = buttonContainer.createEl(
 				'button',
 				{
-					text: 'Apply Changes'
+					text: 'Apply changes'
 				}
 			);
 			// Apply button
@@ -748,7 +748,7 @@ export class CSSEditorManager {
 
 			// Scroll editor to the top of view
 			if (this.plugin.settings.viewScrollToTop) {
-				setTimeout(() => {
+				window.setTimeout(() => {
 					this.scrollToDivByUUID(rule.uuid);
 				}, TIMEOUT_DELAYS.SCROLL_DELAY);
 			}
@@ -763,17 +763,20 @@ export class CSSEditorManager {
 
 	private async handleToggleRule(rule: CSSrule, button: HTMLElement): Promise<void> {
 		// Enable/disable other rule
-		const currentlyEditedIndex = await new Promise<number | boolean>((resolve) => {
+		// Find the currently edited index
+		const getCurrentlyEditedIndex = (): number | boolean => {
 			const ruleList = this.view.containerEl.querySelector('.css-rule');
 			const existingRules = ruleList!.querySelectorAll('.rule-item');
-			existingRules!.forEach((el, index) => {
+			for (let index = 0; index < existingRules.length; index++) {
+				const el = existingRules[index];
 				const openEditor = el.querySelector('.inline-rule-editor');
-				if (openEditor!) {
-					return resolve(index);
+				if (openEditor) {
+					return index;
 				}
-			});
-			return resolve(false);
-		});
+			}
+			return false;
+		};
+		const currentlyEditedIndex = getCurrentlyEditedIndex();
 
 		const existingIndex = this.plugin.settings.cssRules.findIndex(el => el.uuid === rule.uuid);
 
@@ -862,7 +865,7 @@ export class CSSEditorManager {
 	 * Clean up timers and resources
 	 */
 	destroy(): void {
-		this.timers.forEach(timer => clearTimeout(timer));
+		this.timers.forEach(timer => window.clearTimeout(timer));
 		this.timers = [];
 	}
 }

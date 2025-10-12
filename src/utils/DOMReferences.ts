@@ -107,7 +107,7 @@ export class DOMReferences {
 				this.cache.set(selector, element);
 				return element;
 			}
-			await new Promise(resolve => setTimeout(resolve, 50));
+			await new Promise(resolve => window.setTimeout(resolve, 50));
 		}
 
 		return null;

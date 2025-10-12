@@ -29,7 +29,7 @@ export class FontImportModal extends Modal {
 			contentEl.parentElement.addClass('cts-font-import-modal');
 		}
 
-		contentEl.createEl('h3', { text: 'Import font' });
+		new Setting(contentEl).setName('Import font').setHeading();
 
 		// Help notice regarding performance
 		contentEl.createDiv(
@@ -140,7 +140,7 @@ export class FontImportModal extends Modal {
 
 									// Scroll custom rule to the top of view
 									if (this.plugin.settings.viewScrollToTop) {
-										setTimeout(() => {
+										window.setTimeout(() => {
 											const ruleDiv: HTMLElement | null = view.containerEl.querySelector(`[data-cts-uuid="${uuid}"]`);
 											view.scrollToDiv(ruleDiv!);
 										}, 100);
@@ -214,9 +214,9 @@ export class FontImportModal extends Modal {
 		}
 
 		this.fontFilePath = filePaths[0];
-		const fileContent: any = fs.readFileSync(this.fontFilePath);
+		const fileContent = fs.readFileSync(this.fontFilePath);
 
-		return arrayBufferToBase64(fileContent);
+		return arrayBufferToBase64(fileContent as unknown as ArrayBuffer);
 	}
 
 }

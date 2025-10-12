@@ -1,6 +1,6 @@
 import { Logger } from './Logger';
 
-export type EventCallback<T = any> = (data: T) => void;
+export type EventCallback<T = unknown> = (data: T) => void;
 
 export interface EventMap {
 	'variable:updated': { name: string; value: string; category: string };
@@ -156,17 +156,17 @@ export class EventManager {
 	 */
 	waitFor<K extends EventKey>(event: K, timeout?: number): Promise<EventMap[K]> {
 		return new Promise((resolve, reject) => {
-			let timeoutId: NodeJS.Timeout | null = null;
+			let timeoutId: number | null = null;
 
 			const unsubscribe = this.once(event, (data) => {
 				if (timeoutId) {
-					clearTimeout(timeoutId);
+					window.clearTimeout(timeoutId);
 				}
 				resolve(data);
 			});
 
 			if (timeout) {
-				timeoutId = setTimeout(() => {
+				timeoutId = window.setTimeout(() => {
 					unsubscribe();
 					reject(new Error(`Event ${event} timeout after ${timeout}ms`));
 				}, timeout);

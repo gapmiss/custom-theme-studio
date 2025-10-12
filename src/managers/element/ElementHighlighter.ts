@@ -111,7 +111,7 @@ export class ElementHighlighter {
 				.createEl(
 					'strong',
 					{
-						text: 'Data Attributes:'
+						text: 'Data attributes:'
 					}
 				);
 			let attrList: HTMLElement = this.tooltip.createEl(

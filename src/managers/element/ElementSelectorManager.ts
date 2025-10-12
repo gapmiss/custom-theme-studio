@@ -263,7 +263,7 @@ export class ElementSelectorManager {
 
 				// Scroll editor to the top of view
 				if (this.plugin.settings.viewScrollToTop) {
-					setTimeout(() => {
+					window.setTimeout(() => {
 						this.scrollToDivByUUID(uuid);
 					}, TIMEOUT_DELAYS.SCROLL_DELAY);
 				}

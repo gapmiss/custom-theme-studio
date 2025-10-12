@@ -5,6 +5,7 @@ import { FontImportModal } from '../../modals/fontImportModal';
 
 export class CSSRulesSection extends UIComponent {
 	public ruleSearch: string = '';
+	ruleSearchCounter: HTMLElement;
 
 	constructor(context: ComponentContext) {
 		super(context);
@@ -82,7 +83,7 @@ export class CSSRulesSection extends UIComponent {
 		this.positionEditorSection(editorSection);
 
 		if (this.plugin.settings.viewScrollToTop) {
-			setTimeout(() => {
+			window.setTimeout(() => {
 				this.scrollToElement(editorSection as HTMLElement);
 			}, 100);
 		}
@@ -161,7 +162,7 @@ export class CSSRulesSection extends UIComponent {
 	private renderResultsCounter(container: HTMLElement): void {
 		const counter = container.createDiv('search-results-counter');
 		// Store reference for updates
-		(this as any).ruleSearchCounter = counter;
+		this.ruleSearchCounter = counter;
 	}
 
 	private updateSearchInputState(input: HTMLInputElement, searchTerm: string): void {
@@ -207,7 +208,7 @@ export class CSSRulesSection extends UIComponent {
 	}
 
 	private updateResultsCounter(term: string, results: number): void {
-		const counter = (this as any).ruleSearchCounter as HTMLElement;
+		const counter = this.ruleSearchCounter as HTMLElement;
 		if (counter) {
 			if (term) {
 				counter.textContent = `${results} rule${results !== 1 ? 's' : ''} found`;

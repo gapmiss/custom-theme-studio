@@ -13,7 +13,7 @@ export type SettingChangeCallback<K extends SettingKey> = (
 export interface SettingValidationResult {
 	valid: boolean;
 	error?: string;
-	sanitizedValue?: any;
+	sanitizedValue?: unknown;
 }
 
 export type SettingValidator<K extends SettingKey> = (
@@ -26,8 +26,8 @@ export type SettingValidator<K extends SettingKey> = (
  */
 export class SettingsManager {
 	private plugin: CustomThemeStudioPlugin;
-	private listeners = new Map<SettingKey, Set<SettingChangeCallback<any>>>();
-	private validators = new Map<SettingKey, SettingValidator<any>>();
+	private listeners = new Map<SettingKey, Set<SettingChangeCallback<SettingKey>>>();
+	private validators = new Map<SettingKey, SettingValidator<SettingKey>>();
 	private isUpdating = false;
 
 	constructor(plugin: CustomThemeStudioPlugin) {
@@ -77,7 +77,7 @@ export class SettingsManager {
 			}
 			// Use sanitized value if provided
 			if (validation.sanitizedValue !== undefined) {
-				value = validation.sanitizedValue;
+				value = validation.sanitizedValue as SettingValue<K>;
 			}
 		}
 
@@ -118,7 +118,7 @@ export class SettingsManager {
 		const { validate = true, persist = true, notify = true } = options;
 
 		this.isUpdating = true;
-		const oldValues = new Map<SettingKey, any>();
+		const oldValues = new Map<SettingKey, unknown>();
 
 		try {
 			// Validate all updates first
@@ -130,7 +130,7 @@ export class SettingsManager {
 						return false;
 					}
 					if (validation.sanitizedValue !== undefined) {
-						updates[key as SettingKey] = validation.sanitizedValue;
+						(updates as Record<string, unknown>)[key] = validation.sanitizedValue;
 					}
 				}
 			}
@@ -139,7 +139,7 @@ export class SettingsManager {
 			for (const [key, value] of Object.entries(updates)) {
 				const settingKey = key as SettingKey;
 				oldValues.set(settingKey, this.plugin.settings[settingKey]);
-				(this.plugin.settings as Record<string, any>)[settingKey] = value;
+				(this.plugin.settings as unknown as Record<string, unknown>)[settingKey] = value;
 			}
 
 			// Persist if requested
@@ -152,7 +152,7 @@ export class SettingsManager {
 				for (const [key, value] of Object.entries(updates)) {
 					const settingKey = key as SettingKey;
 					const oldValue = oldValues.get(settingKey);
-					this.notifyListeners(settingKey, value, oldValue);
+					this.notifyListeners(settingKey, value as SettingValue<typeof settingKey>, oldValue as SettingValue<typeof settingKey>);
 				}
 			}
 
@@ -161,7 +161,7 @@ export class SettingsManager {
 			Logger.error('Batch settings update failed:', error);
 			// Revert all changes
 			for (const [key, oldValue] of oldValues) {
-				(this.plugin.settings as Record<string, any>)[key] = oldValue;
+				(this.plugin.settings as unknown as Record<string, unknown>)[key] = oldValue;
 			}
 			return false;
 		} finally {
@@ -199,7 +199,7 @@ export class SettingsManager {
 	 */
 	onAnyChange(
 		keys: SettingKey[],
-		callback: (key: SettingKey, value: any, oldValue: any) => void
+		callback: (key: SettingKey, value: unknown, oldValue: unknown) => void
 	): () => void {
 		const unsubscribers = keys.map(key =>
 			this.onChange(key, (value, oldValue) => callback(key, value, oldValue))
@@ -300,12 +300,12 @@ export class SettingsManager {
 		});
 
 		// Array validators
-		this.addValidator('cssVariables', (value: any[]) => ({
+		this.addValidator('cssVariables', (value: unknown[]) => ({
 			valid: Array.isArray(value),
 			error: Array.isArray(value) ? undefined : 'cssVariables must be an array'
 		}));
 
-		this.addValidator('cssRules', (value: any[]) => ({
+		this.addValidator('cssRules', (value: unknown[]) => ({
 			valid: Array.isArray(value),
 			error: Array.isArray(value) ? undefined : 'cssRules must be an array'
 		}));

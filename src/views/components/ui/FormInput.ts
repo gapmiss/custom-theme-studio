@@ -525,13 +525,13 @@ export class VariableColorInput extends VariableClearableInput {
 				}
 
 				// Reset flag after a tick
-				setTimeout(() => {
+				window.setTimeout(() => {
 					this.isUpdatingFromPicker = false;
 				}, 0);
 			});
 
 		// Mark initialization as complete after a tick
-		setTimeout(() => {
+		window.setTimeout(() => {
 			isInitializing = false;
 		}, 0);
 

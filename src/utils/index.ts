@@ -16,15 +16,13 @@ declare const electronWindow: {
  * @param text The text to copy to clipboard
  * @param topic Optional topic name to display in the notification (e.g., "CSS Variable")
  */
-export function copyStringToClipboard(text: string, topic: string | undefined = undefined): void {
-	navigator.clipboard
-		.writeText(text)
-		.then(function () {
-			showNotice('"' + (topic !== undefined ? topic + '"' : 'Text') + ' copied to clipboard', NOTICE_DURATIONS.STANDARD, 'success');
-		})
-		.catch(function (error) {
-			Logger.error('Failed to copy to clipboard: ', error)
-		});
+export async function copyStringToClipboard(text: string, topic: string | undefined = undefined): Promise<void> {
+	try {
+		await navigator.clipboard.writeText(text);
+		showNotice('"' + (topic !== undefined ? topic + '"' : 'Text') + ' copied to clipboard', NOTICE_DURATIONS.STANDARD, 'success');
+	} catch (error) {
+		Logger.error('Failed to copy to clipboard: ', error);
+	}
 }
 
 /**
@@ -137,20 +135,20 @@ export function freezeTimer(delay: number): () => void {
 	electronWindow.openDevTools(); // devtools open needed for the debugger to work
 
 	let passSecs = 0;
-	const timer = setInterval(() => {
+	const timer = window.setInterval(() => {
 		const timePassed = (delay - passSecs).toFixed(1);
 		freezeNotice.setMessage(`⚠ Will freeze Obsidian in ${timePassed}s`);
 		passSecs += 0.1;
 	}, 100);
 
-	const timeoutId = setTimeout(() => {
+	const timeoutId = window.setTimeout(() => {
 		debugger;
-		clearInterval(timer);
+		window.clearInterval(timer);
 	}, delay * 1000);
 
 	// Return cleanup function to prevent timer leak
 	return () => {
-		clearInterval(timer);
-		clearTimeout(timeoutId);
+		window.clearInterval(timer);
+		window.clearTimeout(timeoutId);
 	};
 }

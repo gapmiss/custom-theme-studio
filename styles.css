@@ -10,9 +10,8 @@ body {
 }
 
 .cts-view {
-    padding: 10px;
+    padding: var(--size-4-4) var(--size-4-3) 3em var(--size-4-4);
     overflow-y: scroll;
-    padding-bottom: 3em;
 }
 
 /* settings */
