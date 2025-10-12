@@ -1,7 +1,7 @@
 {
 	"id": "custom-theme-studio",
 	"name": "Custom Theme Studio",
-	"version": "1.7.0",
+	"version": "1.7.1",
 	"minAppVersion": "1.5.0",
 	"description": "A theme design studio to create, customize, and export themes with visual tools, live CSS editing, and instant feedback—all without leaving your workspace.",
 	"author": "@gapmiss",

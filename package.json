@@ -1,6 +1,6 @@
 {
 	"name": "custom-theme-studio",
-	"version": "1.7.0",
+	"version": "1.7.1",
 	"description": "A complete theme design studio for Obsidian.md. Create, customize, and export professional themes with visual tools, live CSS editing, and instant feedback—all without leaving your workspace.",
 	"main": "main.js",
 	"scripts": {
