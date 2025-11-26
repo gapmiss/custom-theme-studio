@@ -4,6 +4,7 @@ import { ColorInput, ClearableInput, VariableColorInput, VariableClearableInput 
 import { createIconButton } from '../../../utils/uiHelpers';
 import { copyStringToClipboard, showNotice, Logger } from '../../../utils';
 import { CSSVariableManager } from '../../../managers/cssVariabManager';
+import { ThemeManager } from '../../../managers/themeManager';
 import { CustomThemeStudioSettings } from '../../../settings';
 import { DEBOUNCE_DELAYS, NOTICE_DURATIONS } from '../../../constants';
 
@@ -19,6 +20,7 @@ export interface VariableItemConfig {
 	category: string;
 	settings: CustomThemeStudioSettings;
 	cssVariableManager: CSSVariableManager;
+	themeManager: ThemeManager;
 	app: App;
 	isCustom?: boolean;
 	onUpdate?: (data: VariableData) => void;
@@ -75,8 +77,8 @@ export class VariableItem {
 	}
 
 	private applyThemeChanges(): void {
-		// This would typically call the theme manager
-		// For now, we'll use a placeholder
+		// Apply theme changes immediately
+		this.config.themeManager.applyIfEnabled();
 		Logger.debug('Applying theme changes for variable:', this.config.data.name);
 	}
 

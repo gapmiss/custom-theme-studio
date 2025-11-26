@@ -359,6 +359,7 @@ export class CSSVariablesSection extends UIComponent {
 			category,
 			settings: this.plugin.settings,
 			cssVariableManager: this.cssVariableManager,
+			themeManager: this.plugin.themeManager,
 			app: this.app,
 			isCustom,
 			onUpdate: (updatedData) => {
