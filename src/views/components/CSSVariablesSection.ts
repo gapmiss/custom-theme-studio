@@ -164,6 +164,9 @@ export class CSSVariablesSection extends UIComponent {
 		if (this.variableSearch !== '') {
 			this.updateVariableListVisibility();
 		}
+
+		// Update category count badges with filtered counts
+		this.updateAllFilteredCounts();
 	}
 
 	private renderSearch(container: HTMLElement): void {
@@ -178,6 +181,8 @@ export class CSSVariablesSection extends UIComponent {
 			},
 			onClear: () => {
 				this.variableSearch = '';
+				// Reset all variables to visible and update counts
+				this.filterVariables('');
 				this.resetVariableListVisibility();
 			}
 		});
@@ -298,6 +303,29 @@ export class CSSVariablesSection extends UIComponent {
 		}
 	}
 
+	/**
+	 * Get the count of visible (filtered) variables in a category
+	 */
+	private getFilteredCategoryItemCount(category: string): number {
+		const categoryEl = this.container.querySelector(`#variable-category-${category}`);
+		if (!categoryEl) return 0;
+
+		const variableList = categoryEl.querySelector('.variable-list') as HTMLElement;
+		if (!variableList) return 0;
+
+		// Count visible variable items in this category
+		let count = 0;
+		this.variableItems.forEach((item) => {
+			if (variableList.contains(item.getElement()) && item.isVisible()) {
+				count++;
+			}
+		});
+		return count;
+	}
+
+	/**
+	 * Update count badge for a single category with filtered count
+	 */
 	private updateCategoryItemCount(category: string): void {
 		const categoryEl = this.container.querySelector(`#variable-category-${category}`);
 		if (categoryEl) {
@@ -307,6 +335,46 @@ export class CSSVariablesSection extends UIComponent {
 				countBadge.textContent = `${newCount}`;
 			}
 		}
+	}
+
+	/**
+	 * Update all category count badges with filtered counts and hide empty categories
+	 */
+	private updateAllFilteredCounts(): void {
+		const categoryElements = this.container.querySelectorAll('.variable-category');
+
+		categoryElements.forEach((categoryEl: HTMLElement) => {
+			const categoryId = categoryEl.id;
+			const category = categoryId.replace('variable-category-', '');
+			const countBadge = categoryEl.querySelector('.category-item-count');
+			const variableList = categoryEl.querySelector('.variable-list') as HTMLElement;
+
+			if (!countBadge || !variableList) return;
+
+			// Get the tag filter for this category
+			const categoryTag = categoryEl.getAttribute('data-filter-tag');
+			const isTagVisible = this.activeTag === 'all' || categoryTag === this.activeTag;
+
+			if (!isTagVisible) {
+				// Category is hidden by tag filter - keep it hidden
+				categoryEl.addClass('hide');
+				categoryEl.removeClass('show');
+				return;
+			}
+
+			// Count visible items in this category
+			const filteredCount = this.getFilteredCategoryItemCount(category);
+			countBadge.textContent = `${filteredCount}`;
+
+			// Hide category if no visible items
+			if (filteredCount === 0) {
+				categoryEl.addClass('hide');
+				categoryEl.removeClass('show');
+			} else {
+				categoryEl.addClass('show');
+				categoryEl.removeClass('hide');
+			}
+		});
 	}
 
 	private renderCategoryVariables(container: HTMLElement, category: cssCategory): void {
@@ -696,6 +764,9 @@ export class CSSVariablesSection extends UIComponent {
 				visibleCount++;
 			}
 		});
+
+		// Update category count badges with filtered counts
+		this.updateAllFilteredCounts();
 
 		// Emit search event for analytics/debugging
 		this.eventManager.emit('search:variable', {
