@@ -111,7 +111,7 @@ export class CSSVariablesSection extends UIComponent {
 	private renderTagFilters(container: HTMLElement): void {
 		const filterTags = container.createDiv('filter-tags');
 		const tags = [
-			'all', 'components', 'editor', 'foundations',
+			'all', 'components', 'editor', 'foundations', 'mobile',
 			'plugins', 'window', 'theme-dark', 'theme-light', 'CTS'
 		];
 
