@@ -151,7 +151,7 @@ body {
     border-radius: 50%;
     color: var(--search-clear-button-color);
     cursor: var(--cursor);
-    top: 0px;
+    top: 7px;
     right: 5px;
     bottom: 0px;
     line-height: 0;
