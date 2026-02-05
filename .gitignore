@@ -1,5 +1,5 @@
 # vscode
-.vscode 
+.vscode
 
 # Intellij
 *.iml
@@ -27,3 +27,4 @@ obsidian-*.css
 obsidian.css
 
 .claude
+CLAUDE.md
