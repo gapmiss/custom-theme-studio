@@ -592,7 +592,8 @@
         "--raised-mask-background": "linear-gradient(to bottom left, white, transparent, white) border-box no-repeat",
         "--raised-mask": "linear-gradient(white, white) padding-box, linear-gradient(white, white) border-box",
         "--raised-mask-composite": "exclude, add",
-        "--raised-mask-border-width": "0"
+        "--raised-mask-border-width": "0",
+        "--raised-mask-display": "block"
     },
     "radiuses": {
         "--radius-s": "4px",
