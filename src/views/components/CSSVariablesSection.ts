@@ -273,6 +273,7 @@ export class CSSVariablesSection extends UIComponent {
 		if (shouldBeExpanded) {
 			variableListEl.removeClass('hide');
 			variableListEl.addClass('show');
+			container.addClass('expanded');
 			setIcon(catToggleIcon, 'chevron-down');
 			catToggleIcon.setAttr('aria-label', 'Collapse category');
 		}
@@ -863,6 +864,7 @@ export class CSSVariablesSection extends UIComponent {
 
 		variableListEl.toggleClass('show', shouldExpand);
 		variableListEl.toggleClass('hide', !shouldExpand);
+		container.toggleClass('expanded', shouldExpand);
 
 		setIcon(catToggleIcon, shouldExpand ? 'chevron-down' : 'chevron-right');
 		catToggleIcon.setAttr('aria-label', shouldExpand ? 'Collapse category' : 'Expand category');

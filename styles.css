@@ -228,10 +228,10 @@ body {
 }
 
 .cts-view .collapsible-header:hover {
-    color: var(--interactive-accent) !important;
+    color: var(--interactive-accent);
 
     &>button>svg {
-        stroke: var(--interactive-accent) !important;
+        stroke: var(--interactive-accent);
     }
 }
 
@@ -282,7 +282,7 @@ body {
 
 .cts-view a.tag-filter-active,
 .cts-view a.tag-filter-active:hover {
-    color: var(--text-on-accent) !important;
+    color: var(--text-on-accent);
     background-color: var(--interactive-accent);
 }
 
@@ -312,7 +312,7 @@ body {
     display: none;
 }
 
-.cts-view .variable-category:has(> div.variable-list.show) {
+.cts-view .variable-category.expanded {
     background-color: var(--background-primary);
 }
 
@@ -367,13 +367,13 @@ body {
 
         &>div.variable-name {
             &>span {
-                color: var(--color-base-60) !important;
-                font-size: var(--font-smallest) !important;
+                color: var(--color-base-60);
+                font-size: var(--font-smallest);
                 margin-right: .5em;
             }
 
             &>span:hover {
-                color: var(--interactive-accent) !important;
+                color: var(--interactive-accent);
             }
         }
 
@@ -426,12 +426,12 @@ body {
             padding-right: .2em;
 
             &>span {
-                color: var(--color-base-60) !important;
-                font-size: var(--font-smallest) !important;
+                color: var(--color-base-60);
+                font-size: var(--font-smallest);
             }
 
             &>span:hover {
-                color: var(--interactive-accent) !important;
+                color: var(--interactive-accent);
             }
         }
 
@@ -897,7 +897,7 @@ body {
     }
 }
 
-.cts-view .rule-item:has(.inline-rule-editor) {
+.cts-view .rule-item.editing {
     border: 2px solid var(--background-modifier-border);
     border-radius: var(--size-4-2);
     padding: var(--size-4-2);
@@ -929,8 +929,8 @@ body {
     background-color: var(--background-modifier-hover);
 }
 
-.cts-view .rule-item:has(.css-editor-section.show) .rule-item-title {
-    font-size: var(--font-ui-medium) !important;
+.cts-view .rule-item.editing .rule-item-title {
+    font-size: var(--font-ui-medium);
     color: var(--text-accent);
 }
 

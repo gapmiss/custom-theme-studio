@@ -704,9 +704,12 @@ export class CSSEditorManager {
 
 		this.editor.session.off('change', this.changeListener);
 
-		// Remove any existing inline editors
+		// Remove any existing inline editors and editing state from parent
 		const inlineEditors = activeDocument.querySelectorAll('.inline-rule-editor');
-		inlineEditors.forEach(editor => editor.remove());
+		inlineEditors.forEach(editor => {
+			editor.parentElement?.removeClass('editing');
+			editor.remove();
+		});
 
 		// Reset editing state
 		this.isEditingExisting = false;
@@ -743,7 +746,8 @@ export class CSSEditorManager {
 		this.isEditingExisting = true;
 		this.currentEditingElement = item;
 
-		// Create inline editor container
+		// Create inline editor container and mark parent as editing
+		item.addClass('editing');
 		const inlineEditor = item.createDiv('inline-rule-editor');
 
 		// Clone the editor section into the inline editor
