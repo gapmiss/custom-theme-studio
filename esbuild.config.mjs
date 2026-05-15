@@ -1,6 +1,8 @@
 import esbuild from "esbuild";
 import process from "process";
-import builtins from "builtin-modules";
+import module from "module";
+
+const builtins = module.builtinModules.filter(m => !m.startsWith("_"));
 
 const banner =
 `/*
@@ -42,6 +44,26 @@ const context = await esbuild.context({
 
 if (prod) {
 	await context.rebuild();
+	// Post-build: Remove dynamic script loading from Ace editor (security review requirement)
+	const fs = await import("fs");
+	let contents = fs.readFileSync("main.js", "utf8");
+	contents = contents.replace(
+		`exports2.loadScript = function(path2, callback) {
+        var head = dom.getDocumentHead();
+        var s = document.createElement("script");
+        s.src = path2;
+        head.appendChild(s);
+        s.onload = s.onreadystatechange = function(_2, isAbort) {
+          if (isAbort || !s.readyState || s.readyState == "loaded" || s.readyState == "complete") {
+            s = s.onload = s.onreadystatechange = null;
+            if (!isAbort)
+              callback();
+          }
+        };
+      };`,
+		`exports2.loadScript = function(path2, callback) { /* disabled for security */ };`
+	);
+	fs.writeFileSync("main.js", contents);
 	process.exit(0);
 } else {
 	await context.watch();
