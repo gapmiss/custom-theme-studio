@@ -679,8 +679,16 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 						if (await confirm('This will overwrite your current settings and cannot be undone. Continue?', this.plugin.app)) {
 							this.plugin.settings = importedSettings;
 							await this.plugin.saveData(this.plugin.settings);
-							new Notice('Settings imported successfully. The plugin will now be reloaded.');
-							void this.reload();
+
+							// Refresh the view if it's open
+							const leaves = this.app.workspace.getLeavesOfType('cts-view');
+							if (leaves.length > 0) {
+								void this.plugin.reloadView();
+							}
+
+							// Refresh settings display
+							this.display();
+							new Notice('Settings imported successfully');
 						}
 					}
 				});
@@ -755,13 +763,6 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 					}
 				}));
 
-	}
-
-	/** Reloads the plugin */
-	async reload() {
-		await this.app.plugins.disablePlugin('custom-theme-studio');
-		await this.app.plugins.enablePlugin('custom-theme-studio');
-		this.app.setting.openTabById('custom-theme-studio').display();
 	}
 
 }
