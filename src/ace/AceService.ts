@@ -22,16 +22,18 @@ export class AceService {
 		return this.editor;
 	}
 
-	async configureEditor(config: ICodeEditorConfig, fileExtension: string) {
+	async configureEditor(_config: ICodeEditorConfig, _fileExtension: string) {
 		if (!this.editor) return;
 
 		const languageMode = 'css';
-		const settings = this.getEditorSettings(languageMode, config, this.plugin);
+		const settings = this.getEditorSettings(languageMode, _config, this.plugin);
 
 		this.editor.setOptions(settings);
 		this.editor.getSession().setMode(`ace/mode/${languageMode}`, () => {
 			if (this.plugin.settings.enableAceColorPicker) {
+				// eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-unsafe-assignment
 				const AceColorPicker = require('../lib/ace-colorpicker');
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
 				AceColorPicker.load(ace, this.editor, {
 					hideDelay: 2000,
 					showDelay: 500,
@@ -45,13 +47,13 @@ export class AceService {
 		} else {
 			this.editor.setKeyboardHandler(`ace/keyboard/${this.plugin.settings.editorKeyboard}`);
 		}
-		this.updateTheme();
+		void this.updateTheme();
 	}
 
-	async updateTheme() {
+	updateTheme() {
 		if (!this.editor) return;
 		let themeName = this.plugin.settings.editorDarkTheme;
-		let isObsidianThemeDark = () => document.body.classList.contains('theme-dark');
+		const isObsidianThemeDark = () => activeDocument.body.classList.contains('theme-dark');
 
 		if (this.plugin.settings.editorTheme === 'Auto') {
 			themeName = isObsidianThemeDark()
@@ -97,7 +99,7 @@ export class AceService {
 		this.editor.setKeyboardHandler(handler);
 	}
 
-	private getEditorSettings(languageMode: string, config: ICodeEditorConfig, plugin: CustomThemeStudioPlugin) {
+	private getEditorSettings(languageMode: string, _config: ICodeEditorConfig, _plugin: CustomThemeStudioPlugin) {
 		return {
 			showLineNumbers: this.plugin.settings.editorLineNumbers,
 			fontSize: this.plugin.settings.editorFontSize,

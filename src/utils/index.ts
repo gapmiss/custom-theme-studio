@@ -33,7 +33,7 @@ export async function copyStringToClipboard(text: string, topic: string | undefi
  */
 export function showNotice(message: string, duration: number = 4000, type: string | undefined): void {
 
-	const fragment: DocumentFragment = document.createDocumentFragment();
+	const fragment: DocumentFragment = createFragment();
 
 	let wrapper: HTMLDivElement = fragment.createDiv({
 		attr: {
@@ -142,6 +142,7 @@ export function freezeTimer(delay: number): () => void {
 	}, 100);
 
 	const timeoutId = window.setTimeout(() => {
+		// eslint-disable-next-line no-debugger
 		debugger;
 		window.clearInterval(timer);
 	}, delay * 1000);

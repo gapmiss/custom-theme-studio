@@ -7,6 +7,29 @@ import fs from 'fs';
 import path from 'path';
 import { NOTICE_DURATIONS } from "../constants";
 
+interface ElectronDialogResult {
+	canceled: boolean;
+	filePaths: string[];
+}
+
+interface ElectronRemote {
+	dialog: {
+		showOpenDialog: (options: {
+			title: string;
+			filters: { name: string; extensions: string[] }[];
+			properties: string[];
+		}) => Promise<ElectronDialogResult>;
+	};
+}
+
+interface ElectronModule {
+	remote: ElectronRemote;
+}
+
+interface WindowWithRequire extends Window {
+	require?: (module: 'electron') => ElectronModule;
+}
+
 export class FontImportModal extends Modal {
 	plugin: CustomThemeStudioPlugin;
 	view: CustomThemeStudioView;
@@ -63,9 +86,9 @@ export class FontImportModal extends Modal {
 			{
 				cls: 'external-link',
 				href: 'https://docs.obsidian.md/Themes/App+themes/Embed+fonts+and+images+in+your+theme#Consider+file+size',
-				text: 'Embed fonts and images in your theme - Developer Documentation',
+				text: 'Embed fonts and images in your theme - developer documentation',
 				attr: {
-					'aria-label': 'https://docs.obsidian.md/Themes/App+themes/Embed+fonts+and+images+in+your+theme#Consider+file+size',
+					'aria-label': 'Obsidian developer documentation: embed fonts and images',
 					'data-tooltip-position': 'top',
 					tabindex: '0'
 				}
@@ -117,7 +140,7 @@ export class FontImportModal extends Modal {
 							css,
 							enabled: false
 						});
-						this.plugin.saveSettings();
+						void this.plugin.saveSettings();
 						this.close();
 
 						let leaf = this.app.workspace.getLeavesOfType(VIEW_TYPE_CTS).first();
@@ -132,10 +155,11 @@ export class FontImportModal extends Modal {
 								if (ruleList) {
 									ruleList.empty();
 									// Sort by "rule" value ASC
-									this.plugin.settings.cssRules.sort((a, b) => a.rule!.localeCompare(b.rule!));
+									this.plugin.settings.cssRules.sort((a, b) => a.rule.localeCompare(b.rule));
 									// Re-populate with all rules
 									this.plugin.settings.cssRules.forEach(rule => {
-										view.cssEditorManager.createRuleItem(ruleList as HTMLElement, rule);
+										// eslint-disable-next-line @typescript-eslint/no-deprecated
+					view.cssEditorManager.createRuleItem(ruleList as HTMLElement, rule);
 									});
 
 									// Scroll custom rule to the top of view
@@ -196,27 +220,30 @@ export class FontImportModal extends Modal {
 		return `@font-face {\n\tfont-family: "${this.fontName}";\n\tsrc: url(data:${mimeType};base64,${this.base64Content});\n}`;
 	}
 
-	private async importFontFile() {
-		const windowWithRequire = window as typeof window & { require?: NodeRequire };
-		const electron = windowWithRequire.require
-			? windowWithRequire.require('electron')
-			: null;
-		const remote = electron ? electron.remote : null;
+	private async importFontFile(): Promise<string | null> {
+		const windowWithRequire = window as WindowWithRequire;
+		if (!windowWithRequire.require) {
+			Logger.error('Electron require not available');
+			return null;
+		}
+
+		const electron = windowWithRequire.require('electron');
+		const remote = electron.remote;
 
 		const { canceled, filePaths } = await remote.dialog.showOpenDialog({
-			title: 'Import CFG Settings',
+			title: 'Import font file',
 			filters: [{ name: 'Font files', extensions: this.fontExtensions }],
 			properties: ['openFile'],
 		});
 
-		if (canceled || !filePaths || filePaths.length === 0) {
+		if (canceled || filePaths.length === 0) {
 			return null;
 		}
 
 		this.fontFilePath = filePaths[0];
 		const fileContent = fs.readFileSync(this.fontFilePath);
 
-		return arrayBufferToBase64(fileContent as unknown as ArrayBuffer);
+		return arrayBufferToBase64(fileContent);
 	}
 
 }

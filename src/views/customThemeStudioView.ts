@@ -52,7 +52,7 @@ export class CustomThemeStudioView extends ItemView {
 	}
 
 	getDisplayText(): string {
-		return 'Custom Theme Studio';
+		return 'Custom theme studio';
 	}
 
 	getIcon(): string {
@@ -93,8 +93,8 @@ export class CustomThemeStudioView extends ItemView {
 				target.tagName === 'A'
 			) {
 				const key = e.key;
-				const isEnter = key === 'Enter' || e.keyCode === 13;
-				const isSpace = key === ' ' || key === 'Spacebar' || e.keyCode === 32;
+				const isEnter = key === 'Enter';
+				const isSpace = key === ' ' || key === 'Spacebar';
 				if (isEnter || isSpace) {
 					e.preventDefault();
 					target.click();

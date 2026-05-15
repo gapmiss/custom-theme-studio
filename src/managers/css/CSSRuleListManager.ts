@@ -1,4 +1,4 @@
-import { debounce } from 'obsidian';
+import { debounce, setIcon } from 'obsidian';
 import CustomThemeStudioPlugin from '../../main';
 import { CustomThemeStudioView } from '../../views/customThemeStudioView';
 import { CSSrule } from '../../settings';
@@ -34,7 +34,7 @@ export class CSSRuleListManager {
 	 */
 	addRuleItem(rule: CSSrule): HTMLElement {
 		const sortedRules = [...this.plugin.settings.cssRules].sort((a, b) =>
-			a.rule!.localeCompare(b.rule!)
+			a.rule.localeCompare(b.rule)
 		);
 		const position = sortedRules.findIndex(r => r.uuid === rule.uuid);
 
@@ -71,7 +71,7 @@ export class CSSRuleListManager {
 
 		// Check if position in sorted list changed
 		const sortedRules = [...this.plugin.settings.cssRules].sort((a, b) =>
-			a.rule!.localeCompare(b.rule!)
+			a.rule.localeCompare(b.rule)
 		);
 		const newPosition = sortedRules.findIndex(r => r.uuid === uuid);
 		const currentPosition = Array.from(this.container.querySelectorAll('.rule-item')).indexOf(item);
@@ -117,7 +117,6 @@ export class CSSRuleListManager {
 		const enabledButton = item.querySelector('.rule-item-actions button:nth-child(2)') as HTMLElement;
 		if (!enabledButton) return;
 
-		const { setIcon } = require('obsidian');
 		if (enabled) {
 			setIcon(enabledButton, 'eye');
 			enabledButton.setAttr('aria-label', 'Disable this rule');
@@ -164,7 +163,7 @@ export class CSSRuleListManager {
 	populateList(): void {
 		this.container.empty();
 		const sortedRules = [...this.plugin.settings.cssRules].sort((a, b) =>
-			a.rule!.localeCompare(b.rule!)
+			a.rule.localeCompare(b.rule)
 		);
 		sortedRules.forEach(rule => {
 			this.renderer.createRuleItem(this.container, rule);

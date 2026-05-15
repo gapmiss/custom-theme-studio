@@ -166,7 +166,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Variable update trigger')
-			.setDesc('When to update CSS after changing variable values. Choose "Input" for live updates (every keystroke) or "Change" to update only when you finish editing (clicking away from the field).')
+			.setDesc('When to update CSS after changing variable values. Choose "input" for live updates (every keystroke) or "change" to update only when you finish editing (clicking away from the field).')
 			.addDropdown((dropdown) => {
 				dropdown
 					.addOptions({
@@ -182,7 +182,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Variable color picker')
-			.setDesc('Enable a color picker for CSS variables that have a default HEX color value.')
+			.setDesc('Enable a color picker for CSS variables that have a default hex color value.')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.enableColorPicker)
 				.onChange(async (value) => {
@@ -219,7 +219,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Selector style preset')
-			.setDesc('Choose the style of CSS selectors generated when picking elements. "Minimal" creates short selectors, "Balanced" includes the tag name, and "Specific" includes all attributes.')
+			.setDesc('Choose the style of CSS selectors generated when picking elements. "minimal" creates short selectors, "balanced" includes the tag name, and "specific" includes all attributes.')
 			.addDropdown(dropdown => dropdown
 				.addOption('minimal', 'Minimal (clean & short)')
 				.addOption('balanced', 'Balanced (moderate specificity)')
@@ -255,9 +255,9 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Excluded attribute patterns')
-			.setDesc('Attributes matching these patterns will be excluded from Minimal and Balanced selectors (one per line). Supports wildcards like "data-tooltip-*". Specific mode includes all attributes.')
+			.setDesc('Attributes matching these patterns will be excluded from minimal and balanced selectors (one per line). Supports wildcards like "data-tooltip-*". Specific mode includes all attributes.')
 			.addTextArea(text => text
-				.setPlaceholder('data-tooltip-*\ndata-delay\naria-expanded')
+				.setPlaceholder('Data-tooltip-*')
 				.setValue(this.plugin.settings.selectorExcludedAttributes)
 				.onChange(async (value) => {
 					this.plugin.settings.selectorExcludedAttributes = value;
@@ -345,15 +345,15 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		const editorSettingsContainer = containerEl.createDiv('cts-editor-settings-container');
 		if (!this.plugin.settings.expandEditorSettings) {
-			editorSettingsContainer.style.display = 'none';
+			editorSettingsContainer.addClass('cts-hidden');
 		}
 
-		editorSettingsHeading.settingEl.addEventListener('click', async () => {
+		editorSettingsHeading.settingEl.addEventListener('click', () => {
 			this.plugin.settings.expandEditorSettings = !this.plugin.settings.expandEditorSettings;
-			editorSettingsContainer.style.display = this.plugin.settings.expandEditorSettings ? 'block' : 'none';
+			editorSettingsContainer.toggleClass('cts-hidden', !this.plugin.settings.expandEditorSettings);
 			chevronIcon.empty();
 			setIcon(chevronIcon, this.plugin.settings.expandEditorSettings ? 'chevron-down' : 'chevron-right');
-			await this.plugin.saveSettings();
+			void this.plugin.saveSettings();
 		});
 
 		new Setting(editorSettingsContainer)
@@ -375,7 +375,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				.onChange(async (value) => {
 					if (!value) {
 						if (snippetsToggle.settingEl.querySelector('.checkbox-container')?.hasClass('is-enabled')) {
-							new Notice('Snippets are enabled and require that "Live auto completion" be enabled. Please disable the below "Snippets" toggle before disabling this setting.', 10000);
+							new Notice('Snippets are enabled and require that "live auto completion" be enabled. Please disable the below "snippets" toggle before disabling this setting.', 10000);
 							toggle.setValue(true);
 							return;
 						}
@@ -394,12 +394,12 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 					this.plugin.settings.enableAceSnippets = value;
 					if (value) {
 						if (!liveAutoCompletiongsToggle.settingEl.querySelector('.checkbox-container')?.hasClass('is-enabled')) {
-							new Notice('Please enable the above "Live auto completion" toggle before enabling this setting.', 10000);
+							new Notice('Please enable the above "live auto completion" toggle before enabling this setting.', 10000);
 							toggle.setValue(false);
 							this.plugin.settings.enableAceSnippets = false;
 						}
 					} else {
-						new Notice('Disabling this setting requires a reload of the Obsidian window. From the command palette, run the command "Reload app without saving." … Click this message to dismiss.', 0);
+						new Notice('Disabling this setting requires a reload of the Obsidian window. From the command palette, run the command "reload app without saving." … click this message to dismiss.', 0);
 					}
 					await this.plugin.saveSettings();
 				})
@@ -407,7 +407,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		new Setting(editorSettingsContainer)
 			.setName('Editor theme')
-			.setDesc('CSS editor color theme. "Auto" matches your Obsidian theme.')
+			.setDesc('CSS editor color theme. "auto" matches your Obsidian theme.')
 			.addDropdown(async (dropdown) => {
 				for (const key in THEME_COLOR) {
 					dropdown.addOption(key, key);
@@ -478,7 +478,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 					.onChange(async (value) => {
 						slider.sliderEl.setAttribute('aria-label', value.toString());
 						this.plugin.settings.editorFontSize = value;
-						this.plugin.saveSettings();
+						void this.plugin.saveSettings();
 					});
 				slider.sliderEl.setAttribute('aria-label', this.plugin.settings.editorFontSize.toString());
 				slider.sliderEl.setAttribute('data-tooltip-position', 'top');
@@ -497,7 +497,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		new Setting(editorSettingsContainer)
 			.setName('Font family')
-			.setDesc('Font family for the CSS editor (e.g., "Fira Code", "Monaco"). Leave empty for default.')
+			.setDesc('Font family for the CSS editor (e.g., "fira code", "monaco"). Leave empty for default.')
 			.addText(text => text
 				.setValue(this.plugin.settings.editorFontFamily)
 				.onChange(async (value) => {
@@ -574,7 +574,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 					let varInput: HTMLInputElement | null = window.document.querySelector('.cts-view .export-form-theme-name');
 					if (varInput) {
-						varInput!.value = value;
+						varInput.value = value;
 					}
 				}));
 
@@ -588,13 +588,14 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 					let varInput: HTMLInputElement | null = window.document.querySelector('.cts-view .export-form-theme-author');
 					if (varInput) {
-						varInput!.value = value;
+						varInput.value = value;
 					}
 				}));
 
 		new Setting(containerEl)
 			.setName('Author URL')
-			.setDesc('URL to your Github profile page (e.g. https://github.com/username). ')
+			// eslint-disable-next-line obsidianmd/ui/sentence-case -- URL protocol should not be capitalized
+			.setDesc('URL to your GitHub profile page (e.g. https://github.com/username). ')
 			.addText(text => text
 				.setValue(this.plugin.settings.exportThemeURL)
 				.onChange(async (value) => {
@@ -602,7 +603,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 					let varInput: HTMLInputElement | null = window.document.querySelector('.cts-view .export-form-theme-url');
 					if (varInput) {
-						varInput!.value = value;
+						varInput.value = value;
 					}
 				}));
 
@@ -628,7 +629,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('Prettier formatting')
-			.setDesc('Automatically format CSS using Prettier formatter.')
+			.setDesc('Automatically format CSS using prettier formatter.')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.exportPrettierFormat)
 				.onChange(async (value) => {
@@ -659,15 +660,15 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				})
 			);
 
-		new Setting(containerEl).setName('Settings backup').setHeading();
+		new Setting(containerEl).setName('Backup').setHeading();
 
 		new Setting(containerEl)
 			.setName('Export & import settings')
-			.setDesc('Export or import all plugin settings. Import will overwrite current settings. File saved to vault root as CTS_settings.json.')
+			.setDesc('Export or import all plugin settings. Import will overwrite current settings. File saved to vault root as cts_settings.json.')
 			.addButton((button) => {
 				button.setButtonText('Export');
-				button.onClick(async () => {
-					settingsIO.exportSettings(this.plugin.settings, this.app);
+				button.onClick(() => {
+					void settingsIO.exportSettings(this.plugin.settings, this.app);
 				});
 			})
 			.addButton((button) => {
@@ -679,7 +680,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 							this.plugin.settings = importedSettings;
 							await this.plugin.saveData(this.plugin.settings);
 							new Notice('Settings imported successfully. The plugin will now be reloaded.');
-							this.reload();
+							void this.reload();
 						}
 					}
 				});
@@ -698,9 +699,9 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 					if (await confirm('You may have unsaved changes. Reloading the view will reload all forms. Continue?', this.plugin.app)) {
 						try {
 							await this.plugin.reloadView();
-							new Notice('The Custom Theme Studio view has been reloaded');
+							new Notice('The custom theme studio view has been reloaded');
 						} catch (error) {
-							Logger.error(error);
+							Logger.error(error instanceof Error ? error.message : String(error));
 							new Notice('Failed to reload view. Check developer console for details.', 10000);
 						}
 					}
@@ -712,11 +713,11 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 			.setName('Debug level')
 			.setDesc('Control console logging verbosity for debugging')
 			.addDropdown(dropdown => dropdown
-				.addOption('none', 'None (No logs)')
+				.addOption('none', 'None (no logs)')
 				.addOption('error', 'Errors only')
 				.addOption('warn', 'Warnings and errors')
 				.addOption('info', 'Info, warnings, and errors')
-				.addOption('debug', 'Debug (All logs)')
+				.addOption('debug', 'Debug (all logs)')
 				.setValue(this.plugin.settings.debugLevel)
 				.onChange(async (value: 'none' | 'error' | 'warn' | 'info' | 'debug') => {
 					this.plugin.settings.debugLevel = value;
@@ -747,7 +748,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 						// Refresh the view if it's open
 						const leaves = this.app.workspace.getLeavesOfType('cts-view');
 						if (leaves.length > 0) {
-							this.plugin.reloadView();
+							void this.plugin.reloadView();
 						}
 						this.display();
 						new Notice('Theme has been reset');

@@ -19,7 +19,7 @@ export class CSSRulesSection extends UIComponent {
 			expanded: this.plugin.settings.expandCSSRules,
 			onToggle: (expanded) => {
 				this.plugin.settings.expandCSSRules = expanded;
-				this.saveSettings();
+				void this.saveSettings();
 			}
 		});
 
@@ -38,8 +38,8 @@ export class CSSRulesSection extends UIComponent {
 			icon: 'square-pen',
 			label: 'Add CSS rule',
 			classes: ['add-rule-button'],
-			onClick: async () => {
-				await this.handleAddRule();
+			onClick: () => {
+				void this.handleAddRule();
 			}
 		});
 
@@ -47,8 +47,8 @@ export class CSSRulesSection extends UIComponent {
 			icon: 'mouse-pointer-square-dashed',
 			label: 'Select an element',
 			classes: ['select-element-button'],
-			onClick: async () => {
-				await this.handleSelectElement();
+			onClick: () => {
+				void this.handleSelectElement();
 			}
 		});
 
@@ -115,7 +115,7 @@ export class CSSRulesSection extends UIComponent {
 	}
 
 	private removeInlineEditors(): void {
-		const inlineEditors = document.querySelectorAll('.inline-rule-editor');
+		const inlineEditors = activeDocument.querySelectorAll('.inline-rule-editor');
 		inlineEditors.forEach(editor => editor.remove());
 	}
 
@@ -139,7 +139,7 @@ export class CSSRulesSection extends UIComponent {
 			placeholder: 'Search CSS rules…',
 			onInput: (searchTerm) => {
 				this.ruleSearch = searchTerm;
-				this.filterCSSRules(searchTerm);
+				void this.filterCSSRules(searchTerm);
 				this.updateSearchInputState(searchInput, searchTerm);
 			},
 			onClear: () => {
@@ -182,8 +182,9 @@ export class CSSRulesSection extends UIComponent {
 
 		// Initial population of the list
 		this.plugin.settings.cssRules
-			.sort((a, b) => a.rule!.localeCompare(b.rule!))
+			.sort((a, b) => a.rule.localeCompare(b.rule))
 			.forEach(rule => {
+				// eslint-disable-next-line @typescript-eslint/no-deprecated
 				this.cssEditorManager.createRuleItem(ruleList, rule);
 			});
 	}
@@ -208,7 +209,7 @@ export class CSSRulesSection extends UIComponent {
 	}
 
 	private updateResultsCounter(term: string, results: number): void {
-		const counter = this.ruleSearchCounter as HTMLElement;
+		const counter = this.ruleSearchCounter;
 		if (counter) {
 			if (term) {
 				counter.textContent = `${results} rule${results !== 1 ? 's' : ''} found`;

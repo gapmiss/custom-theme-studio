@@ -152,7 +152,7 @@ export class SettingsManager {
 				for (const [key, value] of Object.entries(updates)) {
 					const settingKey = key as SettingKey;
 					const oldValue = oldValues.get(settingKey);
-					this.notifyListeners(settingKey, value as SettingValue<typeof settingKey>, oldValue as SettingValue<typeof settingKey>);
+					this.notifyListeners(settingKey, value, oldValue as SettingValue<typeof settingKey>);
 				}
 			}
 

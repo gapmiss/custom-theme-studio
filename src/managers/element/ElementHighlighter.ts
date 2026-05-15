@@ -16,7 +16,7 @@ export class ElementHighlighter {
 	 * Initialize the tooltip element
 	 */
 	createTooltip(): HTMLElement {
-		this.tooltip = document.body.appendChild(
+		this.tooltip = activeDocument.body.appendChild(
 			createDiv('cts-element-selector-tooltip hide')
 		);
 		return this.tooltip;
@@ -89,7 +89,7 @@ export class ElementHighlighter {
 				.createEl(
 					'strong',
 					{
-						text: 'aria-label: '
+						text: 'Aria-label: '
 					}
 				)
 				.createSpan(

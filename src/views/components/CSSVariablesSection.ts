@@ -2,7 +2,7 @@ import { setIcon, ColorComponent, debounce } from 'obsidian';
 import { SimpleDebouncer } from '../../utils/Debouncer';
 import { UIComponent, ComponentContext } from './UIComponent';
 import { createCollapsibleSection, createIconButton, createSearchInput } from '../../utils/uiHelpers';
-import { type cssVariable, allCategories, cssCategory, cssVariableDefaults } from '../../managers/cssVariabManager';
+import { allCategories, cssCategory, cssVariableDefaults } from '../../managers/cssVariabManager';
 import { CSSVariable } from '../../settings';
 import { copyStringToClipboard, showNotice, Logger } from '../../utils';
 import { AddVariableModal } from '../../modals/addVariableModal';
@@ -67,7 +67,7 @@ export class CSSVariablesSection extends UIComponent {
 					section: 'variables',
 					expanded
 				});
-				this.saveSettings();
+				void this.saveSettings();
 			}
 		});
 
@@ -141,7 +141,7 @@ export class CSSVariablesSection extends UIComponent {
 
 		// Save active tag filter to settings
 		this.plugin.settings.activeVariableTagFilter = filterTag!;
-		this.saveSettings();
+		void this.saveSettings();
 
 		tags.forEach((tag) => {
 			const tagButton = filterContainer.querySelector(`[data-tag-filter="${tag.toLowerCase()}"]`);
@@ -157,8 +157,8 @@ export class CSSVariablesSection extends UIComponent {
 				(this.activeTag === 'all' && (filterTag === 'all' || filter === filterTag)) ||
 				(this.activeTag !== 'all' && filter === filterTag);
 
-			(element as HTMLElement).toggleClass('show', showCategory);
-			(element as HTMLElement).toggleClass('hide', !showCategory);
+			(element).toggleClass('show', showCategory);
+			(element).toggleClass('hide', !showCategory);
 		});
 
 		if (this.variableSearch !== '') {
@@ -172,17 +172,17 @@ export class CSSVariablesSection extends UIComponent {
 	private renderSearch(container: HTMLElement): void {
 		const searchContainer = container.querySelector('.search-container') as HTMLElement;
 
-		const { searchInput } = createSearchInput(searchContainer || container, {
+		createSearchInput(searchContainer || container, {
 			placeholder: 'Search CSS variables…',
 			onInput: (searchTerm) => {
 				this.variableSearch = searchTerm;
-				this.filterVariables(searchTerm);
-				this.updateVariableListVisibility();
+				void this.filterVariables(searchTerm);
+				void this.updateVariableListVisibility();
 			},
 			onClear: () => {
 				this.variableSearch = '';
 				// Reset all variables to visible and update counts
-				this.filterVariables('');
+				void this.filterVariables('');
 				this.resetVariableListVisibility();
 			}
 		});
@@ -226,7 +226,7 @@ export class CSSVariablesSection extends UIComponent {
 		categoryEl.toggleClass('show', showCategory);
 		categoryEl.toggleClass('hide', !showCategory);
 
-		const { header, content: variableListEl } = this.createCategoryHeader(categoryEl, category);
+		const { content: variableListEl } = this.createCategoryHeader(categoryEl, category);
 
 		if (category.help) {
 			this.addCategoryHelp(variableListEl, category.help);
@@ -388,7 +388,7 @@ export class CSSVariablesSection extends UIComponent {
 	private renderCustomVariables(container: HTMLElement, category: string): void {
 		const items = this.plugin.settings.cssVariables
 			.filter(v => v.parent === 'custom')
-			.sort((a, b) => a.variable!.localeCompare(b.variable!));
+			.sort((a, b) => a.variable.localeCompare(b.variable));
 
 		items.forEach((item) => {
 			this.createVariableItemComponent(container, {
@@ -402,7 +402,7 @@ export class CSSVariablesSection extends UIComponent {
 	private renderDefaultVariables(container: HTMLElement, category: string): void {
 		const items = cssVariableDefaults
 			.filter(cat => cat.cat === category)
-			.sort((a, b) => a.variable!.localeCompare(b.variable!));
+			.sort((a, b) => a.variable.localeCompare(b.variable));
 
 		items.forEach((item) => {
 			this.createVariableItemComponent(container, {
@@ -462,7 +462,7 @@ export class CSSVariablesSection extends UIComponent {
 		});
 
 		this.plugin.settings.customCSS = fullCSS;
-		this.saveSettings();
+		void this.saveSettings();
 
 		// Apply changes
 		this.plugin.themeManager.applyIfEnabled();
@@ -480,7 +480,7 @@ export class CSSVariablesSection extends UIComponent {
 
 		// Update search counter if filtering is active
 		if (this.variableSearch !== '') {
-			this.filterVariables(this.variableSearch);
+			void this.filterVariables(this.variableSearch);
 		}
 	}
 
@@ -649,12 +649,12 @@ export class CSSVariablesSection extends UIComponent {
 	}
 
 	private addCopyDefaultButton(container: HTMLElement, defaultValue: string): void {
-		const copyButton = createIconButton(container, {
+		createIconButton(container, {
 			icon: 'copy',
 			label: 'Copy default value "' + defaultValue + '" to clipboard',
 			classes: ['copy-default-value'],
 			onClick: () => {
-				copyStringToClipboard(defaultValue, defaultValue);
+				void copyStringToClipboard(defaultValue, defaultValue);
 			}
 		});
 	}
@@ -793,7 +793,7 @@ export class CSSVariablesSection extends UIComponent {
 
 			const iconName = shouldExpand ? 'chevron-down' : 'chevron-right';
 			const ariaLabel = shouldExpand ? 'Collapse category' : 'Expand category';
-			setIcon(variableListIcon!, iconName);
+			setIcon(variableListIcon, iconName);
 			variableListIcon?.setAttr('aria-label', ariaLabel);
 			variableListIcon?.setAttr('data-tooltip-position', 'top');
 		});
@@ -813,7 +813,7 @@ export class CSSVariablesSection extends UIComponent {
 			el.parentElement?.toggleClass('show', shouldShowCategory);
 			el.parentElement?.toggleClass('hide', !shouldShowCategory);
 
-			setIcon(variableListIcon!, 'chevron-right');
+			setIcon(variableListIcon, 'chevron-right');
 			variableListIcon?.setAttr('aria-label', 'Expand category');
 			variableListIcon?.setAttr('data-tooltip-position', 'top');
 		});
@@ -859,7 +859,7 @@ export class CSSVariablesSection extends UIComponent {
 			this.plugin.settings.expandedVariableCategories =
 				this.plugin.settings.expandedVariableCategories.filter(id => id !== categoryId);
 		}
-		this.saveSettings();
+		void this.saveSettings();
 
 		variableListEl.toggleClass('show', shouldExpand);
 		variableListEl.toggleClass('hide', !shouldExpand);

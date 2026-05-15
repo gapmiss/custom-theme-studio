@@ -8,7 +8,7 @@ import * as ace from 'ace-builds';
 import { CSSVariableManager } from '../cssVariabManager';
 import { generateUniqueId, showNotice, Logger } from "../../utils";
 import { smoothScrollToElement } from "../../utils/uiHelpers";
-import { DEBOUNCE_DELAYS, TIMEOUT_DELAYS, NOTICE_DURATIONS } from '../../constants';
+import { TIMEOUT_DELAYS, NOTICE_DURATIONS } from '../../constants';
 import { CSSRuleItemRenderer } from './CSSRuleItemRenderer';
 import { CSSRuleListManager } from './CSSRuleListManager';
 import { CSSValidationService } from './CSSValidationService';
@@ -58,7 +58,7 @@ export class CSSEditorManager {
 			plugin: this.plugin,
 			view: this.view,
 			aceService: this.aceService,
-			onEdit: (rule, item) => this.handleEditRule(rule, item),
+			onEdit: (rule, item) => { void this.handleEditRule(rule, item); },
 			onToggle: (rule, button) => this.handleToggleRule(rule, button),
 			onDelete: (rule, item) => this.handleDeleteRule(rule, item)
 		});
@@ -134,16 +134,19 @@ export class CSSEditorManager {
 
 		this.editor = this.aceService.createEditor(this.editorEl);
 
-		this.aceService.configureEditor(this.config, 'css');
+		void this.aceService.configureEditor(this.config, 'css');
 
 		// Snippet manager
 		// https://stackoverflow.com/questions/26089258/ace-editor-manually-adding-snippets/66923593#66923593
 		// https://ace.c9.io/build/kitchen-sink.html
 		if (this.plugin.settings.enableAceSnippets) {
 			this.editor.setOption('enableSnippets', true);
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
 			const snippetManager = ace.require('ace/snippets').snippetManager;
 			const snippetContent = this.cssVariableManager.snippetManagerVars();
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
 			const snippets = snippetManager.parseSnippetFile(snippetContent);
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
 			snippetManager.register(snippets, 'css');
 		}
 		// Editor options
@@ -262,14 +265,15 @@ export class CSSEditorManager {
 			{
 				cls: 'clickable-icon',
 				attr: {
-					'aria-label': 'Format CSS with Prettier',
+					'aria-label': 'Format CSS with prettier',
 					'data-tooltip-position': 'top'
 				}
 			}
 		);
 		setIcon(formatButton, 'wand-sparkles');
 
-		formatButton.addEventListener('click', async () => {
+		formatButton.addEventListener('click', () => {
+			void (async () => {
 			const currentCSS = this.aceService.getValue();
 			if (!currentCSS || currentCSS.trim() === '') {
 				showNotice('No CSS to format', 2000, 'info');
@@ -283,7 +287,9 @@ export class CSSEditorManager {
 			const formatted = await this.validationService.formatCSS(currentCSS);
 			if (formatted) {
 				// Use replace instead of setValue to preserve undo stack
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
 				const Range = ace.require('ace/range').Range;
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
 				const fullRange = new Range(
 					0, 0,
 					this.editor.session.getLength(),
@@ -291,6 +297,7 @@ export class CSSEditorManager {
 				);
 
 				// Replace content - this is undoable with Ctrl/Cmd+Z
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 				this.editor.session.replace(fullRange, formatted);
 
 				// Try to restore cursor position (or close to it)
@@ -302,7 +309,8 @@ export class CSSEditorManager {
 				}
 
 				showNotice('CSS formatted successfully', 2000, 'success');
-			}
+				}
+			})();
 		});
 
 		const settingsButton = buttonContainer.createEl(
@@ -343,7 +351,8 @@ export class CSSEditorManager {
 		});
 
 		// Save button
-		saveButton.addEventListener('click', async () => {
+		saveButton.addEventListener('click', () => {
+			void (async () => {
 			if (await this.saveElement()) {
 				// Hide the editor section after saving
 				if (!this.isEditingExisting) {
@@ -355,8 +364,9 @@ export class CSSEditorManager {
 			}
 
 			if (this.view.ruleSearch) {
-				await this.view.filterCSSRules(this.view.ruleSearch);
-			}
+					await this.view.filterCSSRules(this.view.ruleSearch);
+				}
+			})();
 		});
 
 		// Cancel button
@@ -374,16 +384,15 @@ export class CSSEditorManager {
 		});
 
 		this.plugin.registerEvent(
-			this.workspace.on('css-change', async () => {
+			this.workspace.on('css-change', () => {
 				this.aceService.updateTheme();
 			})
 		);
 	}
 
 	// Auto-apply changes when typing (with debounce)
-	changeListener = (delta: ace.Ace.Delta) => {
+	changeListener = (_delta: ace.Ace.Delta) => {
 		const timeout = window.setTimeout(() => {
-			let css = this.aceService.getValue();
 			if (this.plugin.settings.autoApplyChanges) {
 				const timer = window.setTimeout(() => {
 					const css = this.aceService.getValue();
@@ -397,7 +406,7 @@ export class CSSEditorManager {
 		this.timers.push(timeout);
 	}
 
-	setRule(uuid: string, rule: string, isEditingExisting: boolean): void {
+	setRule(uuid: string, rule: string, _isEditingExisting: boolean): void {
 		if (!this.ruleInputEl || !this.editorUUID) return;
 
 		// Try to find existing rule with this UUID
@@ -418,7 +427,7 @@ export class CSSEditorManager {
 			this.generateDefaultCSS(rule);
 			showNotice(`Element selected: ${rule}`, NOTICE_DURATIONS.STANDARD, 'success');
 		}
-		this.editor!.session.on('change', this.changeListener);
+		this.editor.session.on('change', this.changeListener);
 	}
 
 	generateDefaultCSS(selector: string): void {
@@ -498,7 +507,7 @@ export class CSSEditorManager {
 
 		// Attempt to query the selector
 		try {
-			return document.querySelector(selector) as HTMLElement;
+			return activeDocument.querySelector(selector);
 		} catch (error) {
 			Logger.error(`Invalid CSS selector: ${selector}`, error);
 			showNotice('Invalid CSS selector syntax', NOTICE_DURATIONS.SHORT, 'error');
@@ -525,7 +534,7 @@ export class CSSEditorManager {
 			return;
 		}
 		// Update the custom CSS
-		this.validationService.updateCustomCSS(uuid, rule, css);
+		void this.validationService.updateCustomCSS(uuid, rule, css);
 
 		// Apply the changes
 		this.validationService.applyTheme();
@@ -533,7 +542,7 @@ export class CSSEditorManager {
 
 	clearAppliedChanges(): void {
 		// Update the custom CSS
-		this.validationService.updateCustomCSS(generateUniqueId(), '', '');
+		void this.validationService.updateCustomCSS(generateUniqueId(), '', '');
 
 		// Apply the changes
 		this.validationService.applyTheme();
@@ -580,7 +589,7 @@ export class CSSEditorManager {
 		}
 
 		// Save settings
-		this.plugin.saveSettings();
+		void this.plugin.saveSettings();
 
 		// Update the custom CSS
 		await this.validationService.updateCustomCSS(uuid, rule, css);
@@ -636,7 +645,7 @@ export class CSSEditorManager {
 		this.isEditingExisting = false;
 		this.currentEditingElement = null;
 
-		this.editor!.session.on('change', this.changeListener);
+		this.editor.session.on('change', this.changeListener);
 	}
 
 	/**
@@ -693,10 +702,10 @@ export class CSSEditorManager {
 
 	removeInlineEditor(): void {
 
-		this.editor!.session.off('change', this.changeListener);
+		this.editor.session.off('change', this.changeListener);
 
 		// Remove any existing inline editors
-		const inlineEditors = document.querySelectorAll('.inline-rule-editor');
+		const inlineEditors = activeDocument.querySelectorAll('.inline-rule-editor');
 		inlineEditors.forEach(editor => editor.remove());
 
 		// Reset editing state
@@ -761,7 +770,7 @@ export class CSSEditorManager {
 		}
 	}
 
-	private async handleToggleRule(rule: CSSrule, button: HTMLElement): Promise<void> {
+	private async handleToggleRule(rule: CSSrule, _button: HTMLElement): Promise<void> {
 		// Enable/disable other rule
 		// Find the currently edited index
 		const getCurrentlyEditedIndex = (): number | boolean => {
@@ -798,8 +807,8 @@ export class CSSEditorManager {
 			if (cssRule.enabled) {
 				// Need currently edited index here
 				if (index === currentlyEditedIndex) {
-					let css = this.aceService.getValue();
-					fullCSS += `/* ${cssRule.rule} */\n${css}\n\n`;
+					const currentCss = this.aceService.getValue();
+					fullCSS += `/* ${cssRule.rule} */\n${currentCss}\n\n`;
 				} else {
 					fullCSS += `/* ${cssRule.rule} */\n${cssRule.css}\n\n`;
 				}
@@ -808,13 +817,13 @@ export class CSSEditorManager {
 		});
 
 		this.plugin.settings.customCSS = fullCSS;
-		this.plugin.saveSettings();
+		void this.plugin.saveSettings();
 
 		// Apply changes
 		this.validationService.applyTheme();
 	}
 
-	private async handleDeleteRule(rule: CSSrule, item: HTMLElement): Promise<void> {
+	private async handleDeleteRule(rule: CSSrule, _item: HTMLElement): Promise<void> {
 		// Remove from settings
 		this.plugin.settings.cssRules = this.plugin.settings.cssRules.filter(
 			el => el.uuid !== rule.uuid
@@ -835,9 +844,6 @@ export class CSSEditorManager {
 		// INCREMENTAL UPDATE: Remove only this item
 		if (this.ruleListManager) {
 			this.ruleListManager.removeRuleItem(rule.uuid);
-		} else {
-			// Fallback to DOM removal
-			item.remove();
 		}
 
 		// Update search counter if filtering is active

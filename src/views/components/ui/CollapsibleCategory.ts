@@ -55,7 +55,7 @@ export class CollapsibleCategory {
 		this.chevronIcon = this.toggleButton.createSpan('category-chevron');
 		setIcon(this.chevronIcon, 'chevron-down');
 
-		const titleElement = this.header.createSpan({
+		this.header.createSpan({
 			cls: 'category-title',
 			text: this.config.title
 		});

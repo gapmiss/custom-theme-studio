@@ -48,61 +48,66 @@ export class CssSnippetFuzzySuggestModal extends FuzzySuggestModal<Snippets> {
         return item.basename;
     }
 
-    async onChooseItem(item: Snippets, _evt: MouseEvent | KeyboardEvent) {
-        let css = await this.readSnippetFile(this.app, item);
-        let uuid = generateUniqueId();
-        let rule = "Snippet: " + item.name;
-        // Add new rule
-        this.plugin.settings.cssRules.push({
-            uuid,
-            rule,
-            css,
-            enabled: false
-        });
-        this.plugin.saveSettings();
+    onChooseItem(item: Snippets, _evt: MouseEvent | KeyboardEvent): void {
+        void (async () => {
+            const css = await this.readSnippetFile(this.app, item);
+            const uuid = generateUniqueId();
+            const rule = "Snippet: " + item.name;
+            // Add new rule
+            this.plugin.settings.cssRules.push({
+                uuid,
+                rule,
+                css,
+                enabled: false
+            });
+            void this.plugin.saveSettings();
 
-        let leaf = this.app.workspace.getLeavesOfType(VIEW_TYPE_CTS).first();
-        if (leaf) {
-            if (!await confirm('The snippet has been saved as a new CSS rule. Click "OK" to reload the "Custom Theme Studio" view or if you have unsaved changes, click "Cancel" to reload the view manually at a later time.', this.plugin.app)) {
-                return;
-            }
-            await this.app.workspace.revealLeaf(leaf);
-            if (leaf.view instanceof CustomThemeStudioView) {
-                let view = leaf.view;
-                const ruleList = view.containerEl.querySelector('.css-rule');
-                if (ruleList) {
-                    ruleList.empty();
-                    // Sort by "rule" value ASC
-                    this.plugin.settings.cssRules.sort((a, b) => a.rule!.localeCompare(b.rule!));
-                    // Re-populate with all rules
-                    this.plugin.settings.cssRules.forEach(rule => {
-                        view.cssEditorManager.createRuleItem(ruleList as HTMLElement, rule);
-                    });
+            const leaf = this.app.workspace.getLeavesOfType(VIEW_TYPE_CTS).first();
+            if (leaf) {
+                if (!await confirm('The snippet has been saved as a new CSS rule. Click "OK" to reload the "Custom Theme Studio" view or if you have unsaved changes, click "Cancel" to reload the view manually at a later time.', this.plugin.app)) {
+                    return;
+                }
+                await this.app.workspace.revealLeaf(leaf);
+                if (leaf.view instanceof CustomThemeStudioView) {
+                    const view = leaf.view;
+                    const ruleList = view.containerEl.querySelector('.css-rule');
+                    if (ruleList) {
+                        ruleList.empty();
+                        // Sort by "rule" value ASC
+                        this.plugin.settings.cssRules.sort((a, b) => a.rule.localeCompare(b.rule));
+                        // Re-populate with all rules
+                        this.plugin.settings.cssRules.forEach(r => {
+                            // eslint-disable-next-line @typescript-eslint/no-deprecated
+                            view.cssEditorManager.createRuleItem(ruleList as HTMLElement, r);
+                        });
 
-                    const rulesSection = view.containerEl.querySelector('.rules-section');
-                    const ruleSection = rulesSection!.querySelector('.collapsible-content');
-                    const toggleIcon: HTMLElement | null = rulesSection!.querySelector('.collapse-icon');
+                        const rulesSection = view.containerEl.querySelector('.rules-section');
+                        const ruleSection = rulesSection?.querySelector('.collapsible-content');
+                        const toggleIcon: HTMLElement | null = rulesSection?.querySelector('.collapse-icon') ?? null;
 
-                    if (ruleSection && toggleIcon) {
-                        ruleSection.classList.replace('hide', 'show');
+                        if (ruleSection && toggleIcon) {
+                            ruleSection.classList.replace('hide', 'show');
 
-                        setIcon(toggleIcon, 'chevron-down');
-                        toggleIcon.setAttr('aria-label', 'Collapse section');
-                        toggleIcon.setAttr('data-tooltip-position', 'top');
-                    }
+                            setIcon(toggleIcon, 'chevron-down');
+                            toggleIcon.setAttr('aria-label', 'Collapse section');
+                            toggleIcon.setAttr('data-tooltip-position', 'top');
+                        }
 
-                    // Scroll CSS rule to the top of view
-                    if (this.plugin.settings.viewScrollToTop) {
-                        window.setTimeout(() => {
-                            const ruleDiv: HTMLElement | null = view.containerEl.querySelector(`[data-cts-uuid="${uuid}"]`);
-                            view.scrollToDiv(ruleDiv!);
-                        }, 100);
+                        // Scroll CSS rule to the top of view
+                        if (this.plugin.settings.viewScrollToTop) {
+                            window.setTimeout(() => {
+                                const ruleDiv: HTMLElement | null = view.containerEl.querySelector(`[data-cts-uuid="${uuid}"]`);
+                                if (ruleDiv) {
+                                    view.scrollToDiv(ruleDiv);
+                                }
+                            }, 100);
+                        }
                     }
                 }
+            } else {
+                showNotice('The snippet has been saved as a new CSS rule', NOTICE_DURATIONS.STANDARD, 'success');
             }
-        } else {
-            showNotice('The snippet has been saved as a new CSS rule', NOTICE_DURATIONS.STANDARD, 'success');
-        }
+        })();
     }
 
     getSnippetDirectory(app: App) {

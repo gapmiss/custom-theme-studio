@@ -18,7 +18,7 @@ interface CssVariable {
 
 // Utility to build a help fragment
 function createHelpFragment(text: string, parent = '', category = ''): DocumentFragment {
-	const helpFragment = document.createDocumentFragment();
+	const helpFragment = activeDocument.createDocumentFragment();
 
 	if (text !== '') {
 		helpFragment.append(text);
@@ -203,7 +203,7 @@ export class CSSVariableManager {
 				customVars.push(obj); // Add the new variable to the list
 			}
 		}
-		this.plugin.saveSettings();
+		void this.plugin.saveSettings();
 	}
 
 	snippetManagerVars(): string {

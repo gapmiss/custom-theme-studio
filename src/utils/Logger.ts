@@ -62,7 +62,7 @@ export class Logger {
 				const filename = fullPath.split('/').pop() || fullPath;
 				return `${filename}:${line}`;
 			}
-		} catch (e) {
+		} catch {
 			// Silently fail if stack trace parsing fails
 		}
 		return '';
@@ -78,9 +78,9 @@ export class Logger {
 		const formattedMessage = Logger.formatMessage('Debug', message, location);
 
 		if (data !== undefined) {
-			console.log(formattedMessage, data);
+			console.debug(formattedMessage, data);
 		} else {
-			console.log(formattedMessage);
+			console.debug(formattedMessage);
 		}
 	}
 
@@ -94,9 +94,9 @@ export class Logger {
 		const formattedMessage = Logger.formatMessage('Info', message, location);
 
 		if (data !== undefined) {
-			console.info(formattedMessage, data);
+			console.debug(formattedMessage, data);
 		} else {
-			console.info(formattedMessage);
+			console.debug(formattedMessage);
 		}
 	}
 

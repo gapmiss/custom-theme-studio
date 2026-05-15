@@ -21,7 +21,7 @@ export class ExportSection extends UIComponent {
 			expanded: this.plugin.settings.expandExportTheme,
 			onToggle: (expanded) => {
 				this.plugin.settings.expandExportTheme = expanded;
-				this.saveSettings();
+				void this.saveSettings();
 			}
 		});
 
@@ -103,14 +103,14 @@ export class ExportSection extends UIComponent {
 	private renderIncludeDisabledToggle(container: HTMLElement): void {
 		const includeDisabledContainer = container.createDiv('export-form-item include-disabled-toggle');
 
-		const { toggle } = createToggleSwitch(
+		createToggleSwitch(
 			includeDisabledContainer,
 			'include-disabled-switch',
 			'Include disabled CSS rules when exporting',
 			this.plugin.settings.exportThemeIncludeDisabled,
-			async (checked) => {
+			(checked) => {
 				this.plugin.settings.exportThemeIncludeDisabled = checked;
-				await this.saveSettings();
+				void this.saveSettings();
 			}
 		);
 	}
@@ -118,14 +118,14 @@ export class ExportSection extends UIComponent {
 	private renderPrettierToggle(container: HTMLElement): void {
 		const enablePrettierContainer = container.createDiv('export-form-item enable-prettier-toggle');
 
-		const { toggle } = createToggleSwitch(
+		createToggleSwitch(
 			enablePrettierContainer,
 			'enable-prettier-switch',
-			'Format CSS with Prettier formatter',
+			'Format CSS with prettier formatter',
 			this.plugin.settings.exportPrettierFormat,
-			async (checked) => {
+			(checked) => {
 				this.plugin.settings.exportPrettierFormat = checked;
-				await this.saveSettings();
+				void this.saveSettings();
 			}
 		);
 	}
@@ -144,8 +144,8 @@ export class ExportSection extends UIComponent {
 		createIconButton(exportCSSButtons, {
 			icon: 'download',
 			label: 'Export CSS',
-			onClick: async () => {
-				this.plugin.themeManager.exportThemeCSS();
+			onClick: () => {
+				void this.plugin.themeManager.exportThemeCSS();
 			}
 		});
 
@@ -154,7 +154,7 @@ export class ExportSection extends UIComponent {
 			label: 'Copy CSS to clipboard',
 			classes: ['copy-css-button'],
 			onClick: () => {
-				this.plugin.themeManager.copyThemeToClipboard();
+				void this.plugin.themeManager.copyThemeToClipboard();
 			}
 		});
 	}
@@ -166,8 +166,8 @@ export class ExportSection extends UIComponent {
 		createIconButton(exportManifestButtons, {
 			icon: 'download',
 			label: 'Export manifest JSON',
-			onClick: async () => {
-				this.plugin.themeManager.exportThemeManifest();
+			onClick: () => {
+				void this.plugin.themeManager.exportThemeManifest();
 			}
 		});
 
@@ -176,22 +176,22 @@ export class ExportSection extends UIComponent {
 			label: 'Copy manifest JSON to clipboard',
 			classes: ['copy-manifest-button'],
 			onClick: () => {
-				this.plugin.themeManager.copyManifestToClipboard();
+				void this.plugin.themeManager.copyManifestToClipboard();
 			}
 		});
 	}
 
 	// Event Handler Methods
 	private handleNameInputChange(value: string): void {
-		this.settingsManager.update('exportThemeName', value);
+		void this.settingsManager.update('exportThemeName', value);
 	}
 
 	private handleAuthorInputChange(value: string): void {
-		this.settingsManager.update('exportThemeAuthor', value);
+		void this.settingsManager.update('exportThemeAuthor', value);
 	}
 
 	private handleURLInputChange(value: string): void {
-		this.settingsManager.update('exportThemeURL', value);
+		void this.settingsManager.update('exportThemeURL', value);
 	}
 
 	private setupReactiveListeners(): void {

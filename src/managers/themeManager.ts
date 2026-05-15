@@ -29,7 +29,8 @@ export class ThemeManager {
 		// Remove existing style element if it exists
 		this.removeCustomTheme();
 
-		// Create style element
+		// Create style element - dynamic CSS injection is core functionality
+		// eslint-disable-next-line obsidianmd/no-forbidden-elements, obsidianmd/prefer-active-doc
 		this.styleEl = document.createElement('style');
 		this.styleEl.id = 'custom-theme-studio-css';
 
@@ -40,6 +41,7 @@ export class ThemeManager {
 		this.styleEl.textContent = (variablesCSS !== '' ? (variablesCSS + '\n\n') : '') + rulesCSS;
 
 		// Add to document
+		// eslint-disable-next-line obsidianmd/prefer-active-doc
 		document.head.appendChild(this.styleEl);
 	}
 
@@ -61,6 +63,7 @@ export class ThemeManager {
 			this.styleEl.remove();
 			this.styleEl = null;
 		} else {
+			// eslint-disable-next-line obsidianmd/prefer-active-doc
 			const existingStyle: HTMLElement | null = document.getElementById('custom-theme-studio-css');
 			if (existingStyle) {
 				existingStyle.remove();
@@ -83,9 +86,9 @@ export class ThemeManager {
 			showNotice('Custom theme disabled', NOTICE_DURATIONS.STANDARD, 'error');
 		}
 
-		this.plugin.saveSettings();
+		void this.plugin.saveSettings();
 
-		let themeToggle: HTMLInputElement | null = window.document.querySelector('.cts-view [id="theme-toggle-switch"]');
+		const themeToggle: HTMLInputElement | null = activeDocument.querySelector('.cts-view [id="theme-toggle-switch"]');
 		if (themeToggle) {
 			if (this.plugin.settings.themeEnabled) {
 				themeToggle.checked = true;

@@ -25,7 +25,7 @@ export class ElementSelectorManager {
 	constructor(plugin: CustomThemeStudioPlugin, view: CustomThemeStudioView) {
 		this.plugin = plugin;
 		this.view = view;
-		this.cancelButton = this.cancelButton;
+		// cancelButton initialized later in noticeWithCancel
 
 		// Initialize specialized managers
 		// Pass plugin reference so SelectorGenerator can access settings dynamically
@@ -41,18 +41,18 @@ export class ElementSelectorManager {
 		this.isSelecting = true;
 
 		// Add class to body for cursor styling
-		document.body.classList.add('cts-element-selector-active');
+		activeDocument.body.classList.add('cts-element-selector-active');
 
 		// Create tooltip
 		this.highlighter.createTooltip();
 
 		// Add event listeners
-		document.addEventListener('mouseover', this.handleMouseOver);
-		document.addEventListener('mouseout', this.handleMouseOut);
+		activeDocument.addEventListener('mouseover', this.handleMouseOver);
+		activeDocument.addEventListener('mouseout', this.handleMouseOut);
 
 		// Add click listener in capture phase to prevent default actions early
-		document.addEventListener('click', this.handleClick, true);
-		document.addEventListener('keydown', this.handleKeyDown);
+		activeDocument.addEventListener('click', this.handleClick, true);
+		activeDocument.addEventListener('keydown', this.handleKeyDown);
 
 		// Notice with cancel button
 		this.noticeElement = this.noticeWithCancel({
@@ -88,7 +88,7 @@ export class ElementSelectorManager {
 							.setButtonText(cancelText)
 							.setClass('cts-element-selector-cancel')
 							.setTooltip('Stop element selection');
-						this.cancelButton.onClick((e) => {
+						this.cancelButton.onClick(() => {
 							new Notice('Element selection cancelled');
 						});
 					}
@@ -96,7 +96,8 @@ export class ElementSelectorManager {
 			}),
 			timeout
 		);
-		notice.containerEl.setAttr('data-notice-element', 'cts-element-selector-notice');
+		// Notice element data attribute for identification
+		notice.containerEl?.setAttr?.('data-notice-element', 'cts-element-selector-notice');
 		return notice;
 	}
 
@@ -108,21 +109,21 @@ export class ElementSelectorManager {
 		this.isSelecting = false;
 
 		// Remove class from body
-		document.body.classList.remove('cts-element-selector-active');
+		activeDocument.body.classList.remove('cts-element-selector-active');
 
 		// Clean up highlighter (tooltip and highlight)
 		this.highlighter.destroy();
 
 		// Remove any hover classes that might be left
-		document.querySelectorAll('.cts-element-selector-hover').forEach(el => {
+		activeDocument.querySelectorAll('.cts-element-selector-hover').forEach(el => {
 			el.classList.remove('cts-element-selector-hover');
 		});
 
 		// Remove event listeners
-		document.removeEventListener('mouseover', this.handleMouseOver);
-		document.removeEventListener('mouseout', this.handleMouseOut);
-		document.removeEventListener('click', this.handleClick, true);
-		document.removeEventListener('keydown', this.handleKeyDown);
+		activeDocument.removeEventListener('mouseover', this.handleMouseOver);
+		activeDocument.removeEventListener('mouseout', this.handleMouseOut);
+		activeDocument.removeEventListener('click', this.handleClick, true);
+		activeDocument.removeEventListener('keydown', this.handleKeyDown);
 
 		this.noticeElement.hide();
 	}
@@ -134,7 +135,6 @@ export class ElementSelectorManager {
 		const target = e.target as HTMLElement;
 
 		// Skip the tooltip and notice cancel button
-		const tooltip = this.highlighter.getHighlightedElement();
 		if (
 			target.closest('.cts-element-selector-tooltip') ||
 			target.closest('.cts-element-selector-cancel')
@@ -246,9 +246,6 @@ export class ElementSelectorManager {
 		// Create new rule with this selector
 		const uuid = generateUniqueId();
 
-		// Get the rule list
-		const ruleList = this.view.containerEl.querySelector('.css-rule');
-
 		// Set the rule in the CSS editor manager
 		const leaves = this.plugin.app.workspace.getLeavesOfType('cts-view');
 		if (leaves.length > 0) {
@@ -281,7 +278,7 @@ export class ElementSelectorManager {
 	scrollToDivByUUID(uuid: string) {
 		const target = this.view.containerEl.querySelector(`input[value="${uuid}"]`)?.parentElement;
 		if (target) {
-			smoothScrollToElement(this.view.containerEl, target as HTMLElement);
+			smoothScrollToElement(this.view.containerEl, target);
 		}
 	}
 }

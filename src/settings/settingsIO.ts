@@ -110,15 +110,15 @@ class SettingsIO {
             }
 
             const fileContent = await app.vault.read(file);
-            const importedSettings = JSON.parse(fileContent);
+            const importedSettings: unknown = JSON.parse(fileContent);
 
-            if (!this.validateSettings(importedSettings)) {
+            if (!this.validateSettings(importedSettings as CustomThemeStudioSettings)) {
                 new Notice('Invalid settings file format');
                 return null;
             }
 
             new Notice('Settings imported from vault successfully');
-            return importedSettings;
+            return importedSettings as CustomThemeStudioSettings;
         } catch (error) {
             Logger.error('Failed to import from vault:', error);
             new Notice('Failed to import settings from vault');

@@ -22,13 +22,13 @@ export class HeaderSection extends UIComponent {
 	}
 
 	private renderThemeEnabledToggle(container: HTMLElement): void {
-		const { toggle, label } = createToggleSwitch(
+		createToggleSwitch(
 			container,
 			'theme-toggle-switch',
 			'Enable theme',
 			this.plugin.settings.themeEnabled,
-			async () => {
-				this.plugin.themeManager.toggleCustomTheme();
+			() => {
+				void this.plugin.themeManager.toggleCustomTheme();
 			}
 		);
 	}
@@ -43,8 +43,8 @@ export class HeaderSection extends UIComponent {
 		toggleThemeButton.setAttr('data-tooltip-position', 'top');
 		setIcon(toggleThemeButton, getCurrentTheme(this.app) === 'obsidian' ? 'sun' : 'moon');
 
-		toggleThemeButton.addEventListener('click', async () => {
-			this.handleThemeToggle(toggleThemeButton);
+		toggleThemeButton.addEventListener('click', () => {
+			void this.handleThemeToggle(toggleThemeButton);
 		});
 	}
 

@@ -1,6 +1,6 @@
-import { setIcon, App } from 'obsidian';
+import { App } from 'obsidian';
 import { SimpleDebouncer } from '../../../utils/Debouncer';
-import { ColorInput, ClearableInput, VariableColorInput, VariableClearableInput } from './FormInput';
+import { VariableColorInput, VariableClearableInput } from './FormInput';
 import { createIconButton } from '../../../utils/uiHelpers';
 import { copyStringToClipboard, showNotice, Logger } from '../../../utils';
 import { CSSVariableManager } from '../../../managers/cssVariabManager';
@@ -175,7 +175,7 @@ export class VariableItem {
 			label: `Copy default value "${this.config.data.defaultValue}" to clipboard`,
 			classes: ['copy-default-value'],
 			onClick: () => {
-				copyStringToClipboard(this.config.data.defaultValue!, this.config.data.defaultValue!);
+				void copyStringToClipboard(this.config.data.defaultValue!, this.config.data.defaultValue);
 			}
 		});
 	}
@@ -185,8 +185,8 @@ export class VariableItem {
 			icon: 'trash',
 			label: 'Delete this variable',
 			classes: ['delete-variable-button', 'mod-destructive'],
-			onClick: async () => {
-				await this.handleDelete(deleteButton);
+			onClick: () => {
+				void this.handleDelete(deleteButton);
 			}
 		});
 	}
@@ -279,7 +279,7 @@ export class VariableItem {
 
 	private updateCustomVariable(name: string, value: string): void {
 		this.config.cssVariableManager.updateVariable(
-			this.config.data.uuid!,
+			this.config.data.uuid,
 			name,
 			value,
 			this.config.category
@@ -367,7 +367,7 @@ export class VariableItem {
 	// Event Handler Methods
 	private handleVariableNameCopy(): void {
 		const varReference = `var(${this.config.data.name})`;
-		copyStringToClipboard(varReference, varReference);
+		void copyStringToClipboard(varReference, varReference);
 	}
 
 	destroy(): void {

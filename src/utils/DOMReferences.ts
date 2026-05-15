@@ -37,7 +37,7 @@ export class DOMReferences {
 		}
 
 		if (!this.cache.has(selector)) {
-			const element = this.container.querySelector(selector) as T | null;
+			const element = this.container.querySelector<HTMLElement>(selector);
 			this.cache.set(selector, element);
 		}
 
@@ -52,7 +52,7 @@ export class DOMReferences {
 			throw new Error('DOMReferences has been destroyed');
 		}
 
-		return this.container.querySelectorAll(selector) as NodeListOf<T>;
+		return this.container.querySelectorAll(selector);
 	}
 
 	/**

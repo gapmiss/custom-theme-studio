@@ -33,8 +33,8 @@ export default class CustomThemeStudioPlugin extends Plugin {
 		);
 
 		// Add ribbon icon
-		this.addRibbonIcon('paintbrush', 'Custom Theme Studio', () => {
-			this.activateView();
+		this.addRibbonIcon('paintbrush', 'Custom theme studio', () => {
+			void this.activateView();
 		});
 
 		// Add command to open the view
@@ -42,7 +42,7 @@ export default class CustomThemeStudioPlugin extends Plugin {
 			id: 'open-theme-studio',
 			name: 'Open view',
 			callback: () => {
-				this.activateView();
+				void this.activateView();
 			}
 		});
 
@@ -51,7 +51,7 @@ export default class CustomThemeStudioPlugin extends Plugin {
 			id: 'toggle-custom-theme',
 			name: 'Toggle custom theme',
 			callback: () => {
-				this.themeManager.toggleCustomTheme();
+				void this.themeManager.toggleCustomTheme();
 			}
 		});
 
@@ -60,7 +60,7 @@ export default class CustomThemeStudioPlugin extends Plugin {
 			id: 'select-element-for-css-rule',
 			name: 'Select an element for new CSS rule',
 			callback: () => {
-				this.themeManager.startElementSelection();
+				void this.themeManager.startElementSelection();
 			}
 		});
 
@@ -122,7 +122,7 @@ export default class CustomThemeStudioPlugin extends Plugin {
 			}
 			await leaf.setViewState({ type: VIEW_TYPE_CTS, active: true });
 		}
-		workspace.revealLeaf(leaf);
+		void workspace.revealLeaf(leaf);
 	}
 
 	onunload() {
@@ -138,8 +138,8 @@ export default class CustomThemeStudioPlugin extends Plugin {
 	 * Merges loaded settings with default values and ensures version is set.
 	 */
 	async loadSettings() {
-		const loadedData = await this.loadData();
-		const migratedData = this.migrateSettings(loadedData || {});
+		const loadedData = await this.loadData() as Partial<CustomThemeStudioSettings> | null;
+		const migratedData = this.migrateSettings(loadedData ?? {});
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, migratedData);
 
 		// Ensure version is set
@@ -153,7 +153,7 @@ export default class CustomThemeStudioPlugin extends Plugin {
 	 * Migrate settings from older versions to current schema
 	 * Add migration logic here as schema evolves
 	 */
-	private migrateSettings(oldSettings: CustomThemeStudioSettings): Partial<CustomThemeStudioSettings> {
+	private migrateSettings(oldSettings: Partial<CustomThemeStudioSettings>): Partial<CustomThemeStudioSettings> {
 		const version = oldSettings.version || 0;
 
 		// Version 0 -> 1: Initial versioning (no actual changes needed)
@@ -193,12 +193,11 @@ export default class CustomThemeStudioPlugin extends Plugin {
 	 */
 	async reloadView(): Promise<void> {
 		const leaves = this.app.workspace.getLeavesOfType(VIEW_TYPE_CTS);
-		leaves.forEach((leaf) => {
+		for (const leaf of leaves) {
 			if (leaf.view instanceof CustomThemeStudioView) {
-				// Refresh the view if it's open
-				(leaf.view as CustomThemeStudioView).onOpen();
+				void leaf.view.onOpen();
 			}
-		});
+		}
 	}
 
 }

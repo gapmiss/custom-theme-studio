@@ -269,7 +269,7 @@ export class SelectorGenerator {
 	copySelectorToClipboard(element: HTMLElement): void {
 		// Use generateSelector with specific mode and parent context
 		const selector = this.generateSelector(element, true, true);
-		copyStringToClipboard(selector, selector);
+		void copyStringToClipboard(selector, selector);
 	}
 
 	/**

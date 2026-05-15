@@ -1,3 +1,4 @@
+import { debounce } from 'obsidian';
 import { Logger } from './Logger';
 
 export type EventCallback<T = unknown> = (data: T) => void;
@@ -298,13 +299,12 @@ export class CommonEventHandlers {
 		delay: number = 300
 	): () => void {
 		let isDestroyed = false;
-		const { debounce } = require('obsidian');
 
 		const debouncedHandler = debounce((value: string) => {
 			if (!isDestroyed) {
 				handler(value);
 			}
-		}, delay);
+		}, delay, true);
 
 		const inputHandler = () => {
 			if (!isDestroyed) {

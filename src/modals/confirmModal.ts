@@ -1,20 +1,28 @@
 import { App, Modal } from 'obsidian';
 
-type PromiseVal<T = void> = T | PromiseLike<T>;
-
 class ConfirmModal extends Modal {
     buttonContainerEl = this.modalEl.createDiv('modal-button-container');
-    private resolve: ((value: PromiseVal<boolean>) => void) | null = null;
+    private resolve: ((value: boolean) => void) | null = null;
+    private openPromise: Promise<boolean> | null = null;
     constructor(app: App) {
         super(app);
         this.containerEl.addClass('mod-confirmation');
         this.containerEl.addClass('snippet-import-confirmation');
         this.addCancelButton();
-        this.addButton('', 'OK', () => this.resolve && this.resolve(true));
+        this.addButton('', 'OK', () => {
+            if (this.resolve) {
+                this.resolve(true);
+            }
+        });
     }
-    open(): Promise<boolean> {
+    open(): void {
         super.open();
-        return new Promise((resolve) => (this.resolve = resolve));
+        this.openPromise = new Promise((resolve) => {
+            this.resolve = resolve;
+        });
+    }
+    waitForResult(): Promise<boolean> {
+        return this.openPromise ?? Promise.resolve(false);
     }
     addButton(
         cls: string | string[],
@@ -32,23 +40,29 @@ class ConfirmModal extends Modal {
                     }
                 }
             )
-            .addEventListener('click', async (evt) => {
-                callback && (await callback(evt));
-                this.close();
+            .addEventListener('click', (evt) => {
+                if (callback) {
+                    void Promise.resolve(callback(evt)).then(() => this.close());
+                } else {
+                    this.close();
+                }
             });
         return this;
     }
     onClose() {
-        this.resolve && this.resolve(false);
+        if (this.resolve) {
+            this.resolve(false);
+        }
     }
 
     addCancelButton() {
-        this.addButton('confirm-modal-cancel-button', 'Cancel', this.close.bind(this));
+        this.addButton('confirm-modal-cancel-button', 'Cancel', () => this.close());
     }
 }
 
-export const confirm = (message: string | DocumentFragment, app: App) => {
+export const confirm = (message: string | DocumentFragment, app: App): Promise<boolean> => {
     const modal = new ConfirmModal(app);
     modal.contentEl.setText(message);
-    return modal.open();
+    modal.open();
+    return modal.waitForResult();
 };

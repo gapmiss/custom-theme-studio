@@ -5,7 +5,7 @@ import { CSSrule } from '../../settings';
 import { AceService } from '../../ace/AceService';
 import { confirm } from '../../modals/confirmModal';
 import { showNotice } from '../../utils';
-import { TIMEOUT_DELAYS, NOTICE_DURATIONS } from '../../constants';
+import { NOTICE_DURATIONS } from '../../constants';
 
 export interface CSSRuleItemConfig {
 	plugin: CustomThemeStudioPlugin;
@@ -92,23 +92,25 @@ export class CSSRuleItemRenderer {
 		editButton.setAttr('tabindex', '0');
 		setIcon(editButton, 'edit');
 
-		editButton.addEventListener('click', async () => {
-			// Check if editor section is already visible
-			const editorSection = this.config.view.containerEl.querySelector('.css-editor-section');
-			const isEditorVisible = editorSection && getComputedStyle(editorSection).display !== 'none';
+		editButton.addEventListener('click', () => {
+			void (async () => {
+				// Check if editor section is already visible
+				const editorSection = this.config.view.containerEl.querySelector('.css-editor-section');
+				const isEditorVisible = editorSection && getComputedStyle(editorSection).display !== 'none';
 
-			if (isEditorVisible && this.config.plugin.settings.showConfirmation) {
-				if (!await confirm('You have an unsaved CSS rule form open. Editing another rule will discard your changes. Continue?', this.config.plugin.app)) {
-					return;
+				if (isEditorVisible && this.config.plugin.settings.showConfirmation) {
+					if (!await confirm('You have an unsaved CSS rule form open. Editing another rule will discard your changes. Continue?', this.config.plugin.app)) {
+						return;
+					}
 				}
-			}
 
-			// Get fresh data from settings to avoid stale closure
-			const uuid = item.getAttribute('data-cts-uuid')!;
-			const freshRule = this.config.plugin.settings.cssRules.find(r => r.uuid === uuid);
-			if (freshRule) {
-				this.config.onEdit(freshRule, item);
-			}
+				// Get fresh data from settings to avoid stale closure
+				const uuid = item.getAttribute('data-cts-uuid')!;
+				const freshRule = this.config.plugin.settings.cssRules.find(r => r.uuid === uuid);
+				if (freshRule) {
+					this.config.onEdit(freshRule, item);
+				}
+			})();
 		});
 	}
 
@@ -125,13 +127,15 @@ export class CSSRuleItemRenderer {
 			enabledButton.setAttr('aria-label', 'Enable this rule');
 		}
 
-		enabledButton.addEventListener('click', async () => {
-			// Get fresh data from settings to avoid stale closure
-			const uuid = item.getAttribute('data-cts-uuid')!;
-			const freshRule = this.config.plugin.settings.cssRules.find(r => r.uuid === uuid);
-			if (freshRule) {
-				await this.config.onToggle(freshRule, enabledButton);
-			}
+		enabledButton.addEventListener('click', () => {
+			void (async () => {
+				// Get fresh data from settings to avoid stale closure
+				const uuid = item.getAttribute('data-cts-uuid')!;
+				const freshRule = this.config.plugin.settings.cssRules.find(r => r.uuid === uuid);
+				if (freshRule) {
+					await this.config.onToggle(freshRule, enabledButton);
+				}
+			})();
 		});
 	}
 
@@ -144,19 +148,21 @@ export class CSSRuleItemRenderer {
 		deleteButton.setAttr('tabindex', '0');
 		setIcon(deleteButton, 'trash');
 
-		deleteButton.addEventListener('click', async () => {
-			deleteButton.addClass('mod-loading');
+		deleteButton.addEventListener('click', () => {
+			void (async () => {
+				deleteButton.addClass('mod-loading');
 
-			// Get fresh data from settings to avoid stale closure
-			const uuid = item.getAttribute('data-cts-uuid')!;
-			const freshRule = this.config.plugin.settings.cssRules.find(r => r.uuid === uuid);
+				// Get fresh data from settings to avoid stale closure
+				const uuid = item.getAttribute('data-cts-uuid')!;
+				const freshRule = this.config.plugin.settings.cssRules.find(r => r.uuid === uuid);
 
-			if (freshRule && await confirm(`Are you sure you want to delete the rule "${freshRule.rule}"?`, this.config.plugin.app)) {
-				await this.config.onDelete(freshRule, item);
-				showNotice('CSS rule deleted', NOTICE_DURATIONS.STANDARD, 'success');
-			}
+				if (freshRule && await confirm(`Are you sure you want to delete the rule "${freshRule.rule}"?`, this.config.plugin.app)) {
+					await this.config.onDelete(freshRule, item);
+					showNotice('CSS rule deleted', NOTICE_DURATIONS.STANDARD, 'success');
+				}
 
-			deleteButton.removeClass('mod-loading');
-		});
+				deleteButton.removeClass('mod-loading');
+				})();
+			});
 	}
 }
