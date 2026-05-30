@@ -2,6 +2,8 @@
 
 A complete theme design studio for Obsidian. Create, customize, and export professional themes with visual tools, live CSS editing, and instant feedback—all without leaving your workspace.
 
+> **Requires Obsidian v1.13.0 or later.** For older Obsidian versions, install a previous plugin release manually.
+
 ## Features at a Glance
 
 | Feature              | Description                                                                                  |
@@ -21,11 +23,14 @@ A complete theme design studio for Obsidian. Create, customize, and export profe
 
 - Edit built-in CSS variables for colors, fonts, and UI components
 - Organized into categories: components, editor, foundations, plugins, window, dark/light themes
+- **Deprecated category**: Legacy variables (RGB variants, HSL variants) kept for theme compatibility
 - Search and filter to quickly find variables with real-time result counter
 - Add custom variables with live counter updates
 - Color picker for HEX values with reactive updates
 - Category badges show item counts that update automatically
 - Tag-based filtering for quick navigation
+
+> **Note:** As of Obsidian v1.13.0, many CSS variables now use `color-mix()` instead of `rgba()`/`hsla()`. The deprecated category contains legacy variables for backwards compatibility with older themes.
 
 ### CSS Rules
 
