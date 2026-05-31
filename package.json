@@ -15,7 +15,6 @@
 	"author": "",
 	"license": "MIT",
 	"devDependencies": {
-		"@types/file-saver": "^2.0.7",
 		"@types/node": "^16.11.6",
 		"@types/prettier": "^2.7.3",
 		"@typescript-eslint/parser": "^8.59.3",
@@ -29,7 +28,6 @@
 	"dependencies": {
 		"ace-builds": "^1.43.2",
 		"esbuild": "^0.25.8",
-		"file-saver": "^2.0.5",
 		"prettier": "^3.6.2"
 	}
 }

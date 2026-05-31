@@ -63,6 +63,20 @@ if (prod) {
       };`,
 		`exports2.loadScript = function(path2, callback) { /* disabled for security */ };`
 	);
+	// Remove XMLHttpRequest from Ace editor's net module (plugin scanner disclosure)
+	contents = contents.replace(
+		`exports2.get = function(url, callback) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", url, true);
+        xhr.onreadystatechange = function() {
+          if (xhr.readyState === 4) {
+            callback(xhr.responseText);
+          }
+        };
+        xhr.send(null);
+      };`,
+		`exports2.get = function(url, callback) { /* disabled: use bundled resources */ };`
+	);
 	fs.writeFileSync("main.js", contents);
 	process.exit(0);
 } else {

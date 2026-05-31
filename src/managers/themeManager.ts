@@ -2,13 +2,21 @@ import { Notice, setIcon } from 'obsidian';
 import CustomThemeStudioPlugin from '../main';
 import { CSSVariableManager } from './cssVariabManager';
 import { CSSVariable, CustomThemeStudioSettings, DEFAULT_SETTINGS } from '../settings';
-import { saveAs } from 'file-saver';
 import * as prettier from 'prettier';
 import * as css from 'prettier/plugins/postcss';
 import { showNotice, Logger } from "../utils";
 import type { ThemeManifest } from '../interfaces/theme';
 import { TIMEOUT_DELAYS, NOTICE_DURATIONS } from '../constants';
 import { CustomThemeStudioView } from '../views/customThemeStudioView';
+
+function saveAs(blob: Blob, filename: string): void {
+	const url = URL.createObjectURL(blob);
+	const a = activeDocument.createElement('a');
+	a.href = url;
+	a.download = filename;
+	a.click();
+	URL.revokeObjectURL(url);
+}
 
 export class ThemeManager {
 	plugin: CustomThemeStudioPlugin;
