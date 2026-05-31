@@ -26,8 +26,9 @@ body {
     float: right;
 }
 
-.cts-editor-options-warning {
-    color: var(--text-muted) !important;
+.cts-view .cts-editor-options-warning,
+.cts-settings-tab .cts-editor-options-warning {
+    color: var(--text-muted);
     font-size: var(--font-small);
     margin-block-start: .75em;
 }
@@ -644,8 +645,8 @@ body {
 }
 
 /* prevent the clear input icon from blocking the input text */
-.variable-value-input.clear-variable-input--touched {
-    padding-right: 25px !important;
+.cts-view input.variable-value-input.clear-variable-input--touched {
+    padding-right: 25px;
 }
 
 /* rule section */
@@ -668,36 +669,45 @@ body {
 
 /* color picker */
 /* Ensure custom variables have same size color picker */
-.cts-view .custom-variable-item .variable-color-picker,
+.cts-view .custom-variables-list .custom-variable-item .variable-color-picker,
 .cts-view .custom-variable-item .variable-input-wrapper .variable-color-picker {
-    --swatch-radius: 4px !important;
-    --swatch-width: 20px !important;
-    --swatch-height: 20px !important;
+    --swatch-radius: 4px;
+    --swatch-width: 20px;
+    --swatch-height: 20px;
 }
 
 /* Add visible border to color swatches for better visibility with dark colors */
-.cts-view .clickable-icon.color-picker-setting-icon,
-.cts-view .variable-color-picker .clickable-icon {
-    border: 1px solid var(--background-modifier-border) !important;
-    box-sizing: border-box !important;
+.cts-view .variable-item .variable-color-picker .clickable-icon,
+.cts-view .custom-variable-item .variable-color-picker .clickable-icon,
+.cts-view .clickable-icon.color-picker-setting-icon {
+    border: 1px solid var(--background-modifier-border);
+    box-sizing: border-box;
 }
 
 /* Add hover interaction to color picker */
-.cts-view .variable-color-picker:hover .clickable-icon {
+.cts-view .variable-item .variable-color-picker:hover .clickable-icon,
+.cts-view .custom-variable-item .variable-color-picker:hover .clickable-icon {
     transform: scale(1.1);
-    border-color: var(--interactive-accent) !important;
+    border-color: var(--interactive-accent);
 }
 
-/* element selector */
-.cts-element-selector-highlight,
-.cts-element-selector-hover {
-    outline: var(--element-selector-highlight-outline) !important;
-    background-color: var(--element-selector-highlight-background-color) !important;
+/* element selector - high specificity selectors to override theme styles */
+html body .cts-element-selector-highlight,
+html body .cts-element-selector-hover,
+html body div.cts-element-selector-highlight,
+html body span.cts-element-selector-highlight,
+html body a.cts-element-selector-highlight,
+html body button.cts-element-selector-highlight {
+    outline: var(--element-selector-highlight-outline);
+    background-color: var(--element-selector-highlight-background-color);
 }
 
-/* cursor while element selector is active */
-.cts-element-selector-active * {
-    cursor: var(--cursor) !important;
+/* cursor while element selector is active - high specificity chain */
+html body.cts-element-selector-active .workspace *,
+html body.cts-element-selector-active .modal-container *,
+html body.cts-element-selector-active .workspace-leaf *,
+html body.cts-element-selector-active .view-content * {
+    cursor: var(--cursor);
 }
 
 /* Tooltip styles */
@@ -941,10 +951,10 @@ body {
 }
 
 /* Increase touch targets for rule item buttons */
-.cts-view .rule-item-actions button.clickable-icon {
-    min-width: 28px !important;
-    min-height: 28px !important;
-    padding: 4px !important;
+.cts-view .rule-item .rule-item-actions button.clickable-icon {
+    min-width: 28px;
+    min-height: 28px;
+    padding: 4px;
 }
 
 .cts-view .rule-item-delete-button:hover {
@@ -1036,13 +1046,13 @@ body {
     font-size: var(--font-smaller);
 }
 
-.cts-view .export-section .button-container {
+.cts-view .export-section .collapsible-content .button-container {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     align-content: flex-start;
     align-items: center;
-    margin-block: .5em !important;
+    margin-block: .5em;
 
     & div {
         padding: .5em;
@@ -1055,14 +1065,14 @@ body {
 }
 
 /* Make export buttons more prominent */
-.cts-view .export-section .button-container div button {
-    min-width: 32px !important;
-    min-height: 32px !important;
+.cts-view .export-section .collapsible-content .button-container div button.clickable-icon {
+    min-width: 32px;
+    min-height: 32px;
 }
 
 /* Style the section labels */
-.cts-view .export-section .button-container div>span {
-    font-weight: 600 !important;
+.cts-view .export-section .collapsible-content .button-container div>span {
+    font-weight: 600;
     min-width: 80px;
 }
 
@@ -1070,8 +1080,8 @@ body {
     line-height: 1.5em;
 }
 
-.cts-font-import-modal {
-    width: 800px !important;
+.modal.cts-font-import-modal {
+    width: 800px;
 
     & .cts-font-import-modal-desc {
         font-size: var(--font-smaller);
@@ -1084,14 +1094,12 @@ body {
     border-radius: var(--tag-radius);
 }
 
-.modal:has(.confirm-modal-cancel-button) {
-    & .confirm-modal-cancel-button:focus {
-        box-shadow: 0 0 0 3px var(--background-modifier-border-focus);
-    }
+.modal .confirm-modal-cancel-button:focus {
+    box-shadow: 0 0 0 3px var(--background-modifier-border-focus);
 }
 
-.cts-add-variable-modal .setting-item-control>input {
-    min-width: 300px !important;
+.modal.cts-add-variable-modal .setting-item-control>input {
+    min-width: 300px;
 }
 
 /* Settings collapsible sections */
@@ -1122,11 +1130,9 @@ body {
     background-color: var(--background-secondary);
 }
 
-.cts-settings-tab .setting-item-control:has(textarea) > textarea {
-    /* width: 100%; */
-    /* border: 1px solid hotpink !important; */
-        min-width: 200px;
-        min-height: 100px;
+.cts-settings-tab .setting-item-control > textarea {
+    min-width: 200px;
+    min-height: 100px;
 }
 
 /* ================================================================================== */
@@ -1735,26 +1741,26 @@ body {
     border-radius: 0px;
 }
 
-.ace-colorpicker.sketch>.colorpicker-body>.control .drag-bar,
-.ace-colorpicker.sketch>.colorpicker-body>.control .drag-bar2 {
+.ace-colorpicker.sketch.ace-colorpicker>.colorpicker-body>.control .drag-bar,
+.ace-colorpicker.sketch.ace-colorpicker>.colorpicker-body>.control .drag-bar2 {
     top: 50%;
     left: 0;
     width: 2px;
     height: 50%;
     transform: translateX(-50%) translateY(-50%);
     border-radius: 1px;
-    bottom: 1px !important;
+    bottom: 1px;
 }
 
-.ace-colorpicker.sketch>.colorpicker-body>.control .drag-bar.first,
-.ace-colorpicker.sketch>.colorpicker-body>.control .drag-bar2.first {
+.ace-colorpicker.sketch.ace-colorpicker>.colorpicker-body>.control .drag-bar.first,
+.ace-colorpicker.sketch.ace-colorpicker>.colorpicker-body>.control .drag-bar2.first {
     left: 0px;
-    transform: translateX(50%) translateY(-50%) !important;
+    transform: translateX(50%) translateY(-50%);
 }
 
-.ace-colorpicker.sketch>.colorpicker-body>.control .drag-bar.last,
-.ace-colorpicker.sketch>.colorpicker-body>.control .drag-bar2.last {
-    transform: translateX(-150%) translateY(-50%) !important;
+.ace-colorpicker.sketch.ace-colorpicker>.colorpicker-body>.control .drag-bar.last,
+.ace-colorpicker.sketch.ace-colorpicker>.colorpicker-body>.control .drag-bar2.last {
+    transform: translateX(-150%) translateY(-50%);
 }
 
 .ace-colorpicker.sketch>.colorpicker-body>.information .information-change {
@@ -1765,28 +1771,28 @@ body {
     display: inherit;
 }
 
-.ace-colorpicker.sketch>.colorpicker-body>.information.rgb .information-item.hsl {
-    display: none !important;
+.ace-colorpicker.sketch.ace-colorpicker>.colorpicker-body>.information.rgb .information-item.hsl {
+    display: none;
 }
 
-.ace-colorpicker.sketch>.colorpicker-body>.information.hex .information-item.hex {
+.ace-colorpicker.sketch.ace-colorpicker>.colorpicker-body>.information.hex .information-item.hex {
     display: inherit;
 }
 
-.ace-colorpicker.sketch>.colorpicker-body>.information.hex .information-item.hsl {
-    display: none !important;
+.ace-colorpicker.sketch.ace-colorpicker>.colorpicker-body>.information.hex .information-item.hsl {
+    display: none;
 }
 
-.ace-colorpicker.sketch>.colorpicker-body>.information.hsl .information-item.rgb {
-    display: none !important;
+.ace-colorpicker.sketch.ace-colorpicker>.colorpicker-body>.information.hsl .information-item.rgb {
+    display: none;
 }
 
-.ace-colorpicker.sketch>.colorpicker-body>.information.hsl .information-item.hsl {
+.ace-colorpicker.sketch.ace-colorpicker>.colorpicker-body>.information.hsl .information-item.hsl {
     display: inherit;
 }
 
-.ace-colorpicker.sketch>.colorpicker-body>.information .information-item {
-    display: inline-flex !important;
+.ace-colorpicker.sketch.ace-colorpicker>.colorpicker-body>.information .information-item {
+    display: inline-flex;
     margin-right: 0px;
 }
 
