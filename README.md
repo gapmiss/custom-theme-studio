@@ -4,6 +4,31 @@ A complete theme design studio for Obsidian. Create, customize, and export profe
 
 > **Requires Obsidian v1.13.0 or later.** For older Obsidian versions, install a previous plugin release manually.
 
+## Installation
+
+[Install from community.obsidian.md](https://community.obsidian.md/plugins/custom-theme-studio)
+
+From Obsidian's settings or preferences:
+
+1. Community Plugins > Browse
+2. Search for "Custom Theme Studio"
+
+Manually:
+
+1. download the latest [release](https://github.com/gapmiss/custom-theme-studio/releases/latest) archive
+2. uncompress the downloaded archive
+3. move the `custom-theme-studio` folder to `/path/to/vault/.obsidian/plugins/` 
+4.  Settings > Community plugins > reload **Installed plugins**
+5.  enable plugin
+
+or:
+
+1.  download `main.js`, `manifest.json` & `styles.css` from the latest [release](https://github.com/gapmiss/custom-theme-studio/releases/latest)
+2.  create a new folder `/path/to/vault/.obsidian/plugins/custom-theme-studio`
+3.  move all 3 files to `/path/to/vault/.obsidian/plugins/custom-theme-studio`
+4.  Settings > Community plugins > reload **Installed plugins**
+5.  enable plugin
+
 ## Features at a Glance
 
 | Feature              | Description                                                                                  |
@@ -74,32 +99,6 @@ A complete theme design studio for Obsidian. Create, customize, and export profe
 - Import/export settings for backup or sharing
 - Reset theme customizations
 - Toggle theme on/off globally
-
-## Installation
-
-[Available on Obsidian.md/plugins](https://obsidian.md/plugins?search=custom-theme-studio)
-
-### From Obsidian
-
-1. Open Obsidian Settings
-2. Go to Community Plugins and disable Safe Mode
-3. Click Browse and search for "Custom Theme Studio"
-4. Install the plugin and enable it
-
-### Manual Installation
-
-1. Download `main.js`, `manifest.json` & `styles.css` from the latest [release](https://github.com/gapmiss/custom-theme-studio/releases/)
-2. Create a new folder `/path/to/vault/.obsidian/plugins/custom-theme-studio`
-3. Move all 3 files to `/path/to/vault/.obsidian/plugins/custom-theme-studio`
-4. Settings > Community plugins > Reload plugins
-5. Enable the "Custom Theme Studio" plugin in the community plugin list
-
-### Via BRAT (Beta Reviewer's Auto-update Tool):
-
-1. Ensure the [BRAT](https://github.com/TfTHacker/obsidian42-brat) plugin is installed
-2. Trigger the command Obsidian42 - BRAT: Add a beta plugin for testing
-3. Enter this repository, gapmiss/custom-theme-studio
-4. Enable the "Custom Theme Studio" plugin in the community plugin list
 
 ## Usage
 
