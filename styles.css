@@ -1130,6 +1130,10 @@ html body.cts-element-selector-active .view-content * {
     background-color: var(--background-secondary);
 }
 
+.cts-settings-tab .cts-editor-settings-container.cts-hidden {
+    display: none;
+}
+
 .cts-settings-tab .setting-item-control > textarea {
     min-width: 200px;
     min-height: 100px;

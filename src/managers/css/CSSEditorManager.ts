@@ -665,39 +665,8 @@ export class CSSEditorManager {
 		if (!this.editor) return;
 
 		this.editor.focus();
-
-		// Find the last closing brace
-		const searchOptions = {
-			backwards: true,
-			wrap: false,
-			caseSensitive: true,
-			regExp: false
-		};
-
-		// Move cursor to end first
-		this.editor.navigateFileEnd();
-
-		// Search backwards for the last }
-		const range = this.editor.find('}', searchOptions);
-
-		if (range) {
-			// Position cursor at the end of the line before the closing brace
-			const row = range.start.row;
-			if (row > 0) {
-				// Go to previous line and position at end
-				this.editor.gotoLine(row, Number.MAX_VALUE);
-
-				// Get tab width from settings and create indentation
-				const tabWidth = Number(this.plugin.settings.editorTabWidth) || 4;
-				const indent = ' '.repeat(tabWidth);
-
-				this.editor.insert('\n' + indent);
-			} else {
-				// If closing brace is on first line, just position before it
-				this.editor.moveCursorTo(range.start.row, range.start.column);
-			}
-		}
-		// If no closing brace found, cursor stays at end of file
+		this.editor.moveCursorTo(0, 0);
+		this.editor.clearSelection();
 	}
 
 	removeInlineEditor(): void {
