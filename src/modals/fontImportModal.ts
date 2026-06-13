@@ -3,32 +3,7 @@ import type CustomThemeStudioPlugin from "../main";
 import { CustomThemeStudioView, VIEW_TYPE_CTS } from "../views/customThemeStudioView";
 import { generateUniqueId, showNotice, Logger } from "../utils";
 import { confirm } from "./confirmModal";
-import fs from 'fs';
-import path from 'path';
 import { NOTICE_DURATIONS } from "../constants";
-
-interface ElectronDialogResult {
-	canceled: boolean;
-	filePaths: string[];
-}
-
-interface ElectronRemote {
-	dialog: {
-		showOpenDialog: (options: {
-			title: string;
-			filters: { name: string; extensions: string[] }[];
-			properties: string[];
-		}) => Promise<ElectronDialogResult>;
-	};
-}
-
-interface ElectronModule {
-	remote: ElectronRemote;
-}
-
-interface WindowWithRequire extends Window {
-	require?: (module: 'electron') => ElectronModule;
-}
 
 export class FontImportModal extends Modal {
 	plugin: CustomThemeStudioPlugin;
@@ -36,13 +11,13 @@ export class FontImportModal extends Modal {
 	private fontName: string = '';
 	private base64Content: string | null = '';
 	private fontExtensions: string[];
-	private fontFilePath: string;
+	private fontFileName: string;
 
 	constructor(app: App, plugin: CustomThemeStudioPlugin) {
 		super(app);
 		this.plugin = plugin;
 		this.fontExtensions = ['ttf', 'otf', 'woff', 'woff2'];
-		this.fontFilePath = '';
+		this.fontFileName = '';
 	}
 
 	async onOpen() {
@@ -158,7 +133,7 @@ export class FontImportModal extends Modal {
 									this.plugin.settings.cssRules.sort((a, b) => a.rule.localeCompare(b.rule));
 									// Re-populate with all rules
 									this.plugin.settings.cssRules.forEach(rule => {
-										// eslint-disable-next-line @typescript-eslint/no-deprecated
+										// eslint-disable-next-line @typescript-eslint/no-deprecated -- createRuleItem is the current API for rule rendering
 					view.cssEditorManager.createRuleItem(ruleList as HTMLElement, rule);
 									});
 
@@ -198,8 +173,8 @@ export class FontImportModal extends Modal {
 
 	private generateFontFaceRule(): string {
 		let mimeType: string;
-		let ext = path.extname(this.fontFilePath);
-		// Determine the MIME type based on file extension
+		const dotIndex = this.fontFileName.lastIndexOf('.');
+		const ext = dotIndex !== -1 ? this.fontFileName.slice(dotIndex).toLowerCase() : '';
 		switch (ext) {
 			case '.woff':
 				mimeType = 'font/woff';
@@ -221,29 +196,37 @@ export class FontImportModal extends Modal {
 	}
 
 	private async importFontFile(): Promise<string | null> {
-		const windowWithRequire = window as WindowWithRequire;
-		if (!windowWithRequire.require) {
-			Logger.error('Electron require not available');
-			return null;
-		}
+		return new Promise((resolve) => {
+			const input = this.contentEl.createEl('input', {
+				attr: {
+					type: 'file',
+					accept: this.fontExtensions.map(e => `.${e}`).join(','),
+				}
+			});
+			input.addClass('cts-hidden');
 
-		const electron = windowWithRequire.require('electron');
-		const remote = electron.remote;
+			const cleanup = () => { input.remove(); };
 
-		const { canceled, filePaths } = await remote.dialog.showOpenDialog({
-			title: 'Import font file',
-			filters: [{ name: 'Font files', extensions: this.fontExtensions }],
-			properties: ['openFile'],
+			input.addEventListener('change', () => {
+				const file = input.files?.[0];
+				cleanup();
+				if (!file) {
+					resolve(null);
+					return;
+				}
+				this.fontFileName = file.name;
+				void file.arrayBuffer().then((buffer) => {
+					resolve(arrayBufferToBase64(buffer));
+				});
+			});
+
+			input.addEventListener('cancel', () => {
+				cleanup();
+				resolve(null);
+			});
+
+			input.click();
 		});
-
-		if (canceled || filePaths.length === 0) {
-			return null;
-		}
-
-		this.fontFilePath = filePaths[0];
-		const fileContent = fs.readFileSync(this.fontFilePath);
-
-		return arrayBufferToBase64(fileContent);
 	}
 
 }

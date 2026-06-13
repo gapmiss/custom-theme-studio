@@ -141,12 +141,12 @@ export class CSSEditorManager {
 		// https://ace.c9.io/build/kitchen-sink.html
 		if (this.plugin.settings.enableAceSnippets) {
 			this.editor.setOption('enableSnippets', true);
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access -- Ace snippet API is untyped
 			const snippetManager = ace.require('ace/snippets').snippetManager;
 			const snippetContent = this.cssVariableManager.snippetManagerVars();
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access -- Ace snippet API is untyped
 			const snippets = snippetManager.parseSnippetFile(snippetContent);
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access -- Ace snippet API is untyped
 			snippetManager.register(snippets, 'css');
 		}
 		// Editor options
@@ -287,9 +287,9 @@ export class CSSEditorManager {
 			const formatted = await this.validationService.formatCSS(currentCSS);
 			if (formatted) {
 				// Use replace instead of setValue to preserve undo stack
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access -- Ace Range class is untyped
 				const Range = ace.require('ace/range').Range;
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call -- Ace Range constructor is untyped
 				const fullRange = new Range(
 					0, 0,
 					this.editor.session.getLength(),
@@ -297,7 +297,7 @@ export class CSSEditorManager {
 				);
 
 				// Replace content - this is undoable with Ctrl/Cmd+Z
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-argument -- Ace Range instance is untyped
 				this.editor.session.replace(fullRange, formatted);
 
 				// Try to restore cursor position (or close to it)

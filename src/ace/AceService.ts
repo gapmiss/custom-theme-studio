@@ -31,9 +31,9 @@ export class AceService {
 		this.editor.setOptions(settings);
 		this.editor.getSession().setMode(`ace/mode/${languageMode}`, () => {
 			if (this.plugin.settings.enableAceColorPicker) {
-				// eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-unsafe-assignment
+				// eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-unsafe-assignment -- untyped JS library
 				const AceColorPicker = require('../lib/ace-colorpicker');
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access -- untyped JS library
 				AceColorPicker.load(ace, this.editor, {
 					hideDelay: 2000,
 					showDelay: 500,

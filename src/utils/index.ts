@@ -142,7 +142,7 @@ export function freezeTimer(delay: number): () => void {
 	}, 100);
 
 	const timeoutId = window.setTimeout(() => {
-		// eslint-disable-next-line no-debugger
+		// eslint-disable-next-line no-debugger -- intentional breakpoint for development diagnostics
 		debugger;
 		window.clearInterval(timer);
 	}, delay * 1000);

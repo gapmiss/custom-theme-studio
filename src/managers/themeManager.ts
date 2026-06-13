@@ -38,7 +38,7 @@ export class ThemeManager {
 		this.removeCustomTheme();
 
 		// Create style element - dynamic CSS injection is core functionality
-		// eslint-disable-next-line obsidianmd/no-forbidden-elements, obsidianmd/prefer-active-doc
+		// eslint-disable-next-line obsidianmd/no-forbidden-elements, obsidianmd/prefer-active-doc -- dynamic style element for theme CSS injection
 		this.styleEl = document.createElement('style');
 		this.styleEl.id = 'custom-theme-studio-css';
 
@@ -49,7 +49,7 @@ export class ThemeManager {
 		this.styleEl.textContent = (variablesCSS !== '' ? (variablesCSS + '\n\n') : '') + rulesCSS;
 
 		// Add to document
-		// eslint-disable-next-line obsidianmd/prefer-active-doc
+		// eslint-disable-next-line obsidianmd/prefer-active-doc -- theme style must attach to main document head
 		document.head.appendChild(this.styleEl);
 	}
 
@@ -71,7 +71,7 @@ export class ThemeManager {
 			this.styleEl.remove();
 			this.styleEl = null;
 		} else {
-			// eslint-disable-next-line obsidianmd/prefer-active-doc
+			// eslint-disable-next-line obsidianmd/prefer-active-doc -- must query main document for cleanup
 			const existingStyle: HTMLElement | null = document.getElementById('custom-theme-studio-css');
 			if (existingStyle) {
 				existingStyle.remove();

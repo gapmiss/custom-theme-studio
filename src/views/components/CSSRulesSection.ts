@@ -184,7 +184,7 @@ export class CSSRulesSection extends UIComponent {
 		this.plugin.settings.cssRules
 			.sort((a, b) => a.rule.localeCompare(b.rule))
 			.forEach(rule => {
-				// eslint-disable-next-line @typescript-eslint/no-deprecated
+				// eslint-disable-next-line @typescript-eslint/no-deprecated -- createRuleItem is the current API for rule rendering
 				this.cssEditorManager.createRuleItem(ruleList, rule);
 			});
 	}

@@ -77,7 +77,7 @@ export class CssSnippetFuzzySuggestModal extends FuzzySuggestModal<Snippets> {
                         this.plugin.settings.cssRules.sort((a, b) => a.rule.localeCompare(b.rule));
                         // Re-populate with all rules
                         this.plugin.settings.cssRules.forEach(r => {
-                            // eslint-disable-next-line @typescript-eslint/no-deprecated
+                            // eslint-disable-next-line @typescript-eslint/no-deprecated -- createRuleItem is the current API for rule rendering
                             view.cssEditorManager.createRuleItem(ruleList as HTMLElement, r);
                         });
 
