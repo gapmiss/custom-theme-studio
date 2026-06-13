@@ -1,4 +1,4 @@
-import { App, PluginSettingTab, Setting, Notice, setIcon, SliderComponent, DropdownComponent } from 'obsidian';
+import { App, PluginSettingTab, Notice, setIcon, SliderComponent, SettingDefinitionItem } from 'obsidian';
 import { AceLightThemesList, AceDarkThemesList, AceKeyboardList } from '../ace/AceThemes';
 import { confirm } from '../modals/confirmModal';
 import CustomThemeStudioPlugin from '../main';
@@ -117,11 +117,21 @@ aria-describedby`,
 	cssEditorDebounceDelay: 500
 };
 
-const THEME_COLOR: Record<string, string> = {
-	Auto: 'Auto',
-	Light: 'Light',
-	Dark: 'Dark',
-};
+function themesToRecord(themes: Record<string, string>[]): Record<string, string> {
+	const result: Record<string, string> = {};
+	for (const theme of themes) {
+		result[theme.value] = theme.name;
+	}
+	return result;
+}
+
+function stringsToRecord(items: string[]): Record<string, string> {
+	const result: Record<string, string> = {};
+	for (const item of items) {
+		result[item] = item;
+	}
+	return result;
+}
 
 export class CustomThemeStudioSettingTab extends PluginSettingTab {
 	plugin: CustomThemeStudioPlugin;
@@ -131,638 +141,587 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 		this.plugin = plugin;
 	}
 
+	/* eslint-disable @typescript-eslint/no-deprecated -- super.display() needed to add CSS scope class */
 	display(): void {
-		const { containerEl } = this;
-
-		containerEl.empty();
-		containerEl.addClass('cts-settings-tab');
-
-		new Setting(containerEl)
-			.setName('Enable custom theme')
-			.setDesc('Toggle your custom theme on or off.')
-			.addToggle(toggle => toggle
-				.setValue(this.plugin.settings.themeEnabled)
-				.onChange(async (value) => {
-					this.plugin.settings.themeEnabled = value;
-					if (value) {
-						this.plugin.themeManager.applyCustomTheme();
-					} else {
-						this.plugin.themeManager.removeCustomTheme();
-					}
-					await this.plugin.saveSettings();
-					// Update view checkbox
-					let themeToggle: HTMLInputElement | null = window.document.querySelector('.cts-view [id="theme-toggle-switch"]');
-					if (themeToggle) {
-						if (value) {
-							themeToggle.checked = true;
-						} else {
-							themeToggle.checked = false;
-						}
-					}
-				})
-			);
-
-		new Setting(containerEl).setName('CSS variables').setHeading();
-
-		new Setting(containerEl)
-			.setName('Variable update trigger')
-			.setDesc('When to update CSS after changing variable values. Choose "input" for live updates (every keystroke) or "change" to update only when you finish editing (clicking away from the field).')
-			.addDropdown((dropdown) => {
-				dropdown
-					.addOptions({
-						'input': 'input',
-						'change': 'change',
-					})
-					.setValue(this.plugin.settings.variableInputListener)
-					.onChange(async (newValue) => {
-						this.plugin.settings.variableInputListener = newValue;
-						await this.plugin.saveSettings();
-					});
-			});
-
-		new Setting(containerEl)
-			.setName('Variable color picker')
-			.setDesc('Enable a color picker for CSS variables that have a default hex color value.')
-			.addToggle(toggle => toggle
-				.setValue(this.plugin.settings.enableColorPicker)
-				.onChange(async (value) => {
-					this.plugin.settings.enableColorPicker = value;
-					await this.plugin.saveSettings();
-				})
-			);
-
-		new Setting(containerEl).setName('CSS rules').setHeading();
-
-		new Setting(containerEl)
-			.setName('Font import')
-			.setDesc('Enable font imports to create @font-face CSS rules.')
-			.addToggle(toggle => toggle
-				.setValue(this.plugin.settings.enableFontImport)
-				.onChange(async (value) => {
-					this.plugin.settings.enableFontImport = value;
-					await this.plugin.saveSettings();
-				})
-			);
-
-		new Setting(containerEl)
-			.setName('Warn before discarding changes')
-			.setDesc('Warn before discarding unsaved changes when closing or switching between CSS editors.')
-			.addToggle(toggle => toggle
-				.setValue(this.plugin.settings.showConfirmation)
-				.onChange(async (value) => {
-					this.plugin.settings.showConfirmation = value;
-					await this.plugin.saveSettings();
-				})
-			);
-
-		new Setting(containerEl).setName('Element selector').setHeading();
-
-		new Setting(containerEl)
-			.setName('Selector style preset')
-			.setDesc('Choose the style of CSS selectors generated when picking elements. "minimal" creates short selectors, "balanced" includes the tag name, and "specific" includes all attributes.')
-			.addDropdown(dropdown => dropdown
-				.addOption('minimal', 'Minimal (clean & short)')
-				.addOption('balanced', 'Balanced (moderate specificity)')
-				.addOption('specific', 'Specific (maximum detail)')
-				.setValue(this.plugin.settings.selectorStyle)
-				.onChange(async (value: 'minimal' | 'balanced' | 'specific') => {
-					this.plugin.settings.selectorStyle = value;
-					await this.plugin.saveSettings();
-				})
-			);
-
-		new Setting(containerEl)
-			.setName('Prefer classes over attributes')
-			.setDesc('When enabled, prioritize class selectors (e.g., .my-class) over data attributes.')
-			.addToggle(toggle => toggle
-				.setValue(this.plugin.settings.selectorPreferClasses)
-				.onChange(async (value) => {
-					this.plugin.settings.selectorPreferClasses = value;
-					await this.plugin.saveSettings();
-				})
-			);
-
-		new Setting(containerEl)
-			.setName('Always include tag names')
-			.setDesc('When enabled, always include the HTML tag (e.g., div[data-foo] instead of [data-foo]).')
-			.addToggle(toggle => toggle
-				.setValue(this.plugin.settings.selectorAlwaysIncludeTag)
-				.onChange(async (value) => {
-					this.plugin.settings.selectorAlwaysIncludeTag = value;
-					await this.plugin.saveSettings();
-				})
-			);
-
-		new Setting(containerEl)
-			.setName('Excluded attribute patterns')
-			.setDesc('Attributes matching these patterns will be excluded from minimal and balanced selectors (one per line). Supports wildcards like "data-tooltip-*". Specific mode includes all attributes.')
-			.addTextArea(text => text
-				.setPlaceholder('Data-tooltip-*')
-				.setValue(this.plugin.settings.selectorExcludedAttributes)
-				.onChange(async (value) => {
-					this.plugin.settings.selectorExcludedAttributes = value;
-					await this.plugin.saveSettings();
-				})
-			)
-			.then(setting => {
-				setting.controlEl.querySelector('textarea')?.setAttribute('rows', '5');
-			});
-
-		new Setting(containerEl)
-			.setName('Generate CSS')
-			.setDesc('Automatically populate the CSS editor with common properties (color, background, font, etc.) when selecting an element.')
-			.addToggle(toggle => toggle
-				.setValue(this.plugin.settings.generateComputedCSS)
-				.onChange(async (value) => {
-					this.plugin.settings.generateComputedCSS = value;
-					await this.plugin.saveSettings();
-				})
-			);
-
-		new Setting(containerEl).setName('CSS editor').setHeading();
-
-		new Setting(containerEl)
-			.setName('Auto-apply changes')
-			.setDesc('Automatically preview changes "live" as you make them. Changes become permanent once the CSS is saved.')
-			.addToggle(toggle => toggle
-				.setValue(this.plugin.settings.autoApplyChanges)
-				.onChange(async (value) => {
-					this.plugin.settings.autoApplyChanges = value;
-					await this.plugin.saveSettings();
-				})
-			);
-
-		let noticeDiv = this.containerEl.createDiv('cts-auto-apply-changes-notice');
-		let noticeIcon = noticeDiv.createDiv('cts-auto-apply-changes-notice-icon');
-		noticeIcon.setAttribute('aria-label', 'Notice');
-		noticeIcon.setAttribute('data-tooltip-position', 'top');
-		let noticeText = noticeDiv.createDiv('cts-auto-apply-changes-notice-text');
-		noticeText.textContent = 'When enabled, every keystroke triggers a "live" refresh of your theme. This can lead to unwanted styling and possibly make Obsidian unusable.';
-		setIcon((noticeIcon), 'alert-triangle');
-
-		this.containerEl.appendChild(noticeDiv);
-
-		let debounceDelaySlider: SliderComponent;
-		new Setting(containerEl)
-			.setName('Auto-apply change delay')
-			.setDesc('Delay before live-previewing CSS changes while typing (requires auto-apply). Lower values = faster feedback but may cause performance issues.')
-			.addSlider(slider => {
-				debounceDelaySlider = slider;
-				slider
-					.setLimits(0, 2000, 100)
-					.setValue(this.plugin.settings.cssEditorDebounceDelay)
-					.onChange(async (value) => {
-						slider.sliderEl.setAttribute('aria-label', value.toString() + 'ms');
-						this.plugin.settings.cssEditorDebounceDelay = value;
-						await this.plugin.saveSettings();
-					});
-				slider.sliderEl.setAttribute('aria-label', this.plugin.settings.cssEditorDebounceDelay.toString() + 'ms');
-				slider.sliderEl.setAttribute('data-tooltip-position', 'top');
-				slider.sliderEl.setAttribute('data-tooltip-delay', '100');
-			})
-			.addExtraButton(button => button
-				.setIcon('rotate-ccw')
-				.setTooltip(`Restore default (${DEFAULT_SETTINGS.cssEditorDebounceDelay.toString()})`)
-				.onClick(async () => {
-					debounceDelaySlider.setValue(DEFAULT_SETTINGS.cssEditorDebounceDelay);
-					debounceDelaySlider.sliderEl.setAttribute('aria-label', DEFAULT_SETTINGS.cssEditorDebounceDelay.toString());
-					this.plugin.settings.cssEditorDebounceDelay = 500;
-					await this.plugin.saveSettings();
-				})
-			);
-
-		// CSS editor settings collapsible section
-		const editorSettingsHeading = new Setting(containerEl)
-			.setName('CSS editor preferences')
-			.setHeading()
-			.setTooltip('Click to expand/collapse CSS editor preferences');
-
-		editorSettingsHeading.settingEl.addClass('cts-collapsible-heading');
-
-		// Add chevron icon
-		const chevronIcon = editorSettingsHeading.nameEl.createDiv('cts-chevron-icon');
-		setIcon(chevronIcon, this.plugin.settings.expandEditorSettings ? 'chevron-down' : 'chevron-right');
-
-		const editorSettingsContainer = containerEl.createDiv('cts-editor-settings-container');
-		if (!this.plugin.settings.expandEditorSettings) {
-			editorSettingsContainer.addClass('cts-hidden');
-		}
-
-		editorSettingsHeading.settingEl.addEventListener('click', () => {
-			this.plugin.settings.expandEditorSettings = !this.plugin.settings.expandEditorSettings;
-			editorSettingsContainer.toggleClass('cts-hidden', !this.plugin.settings.expandEditorSettings);
-			chevronIcon.empty();
-			setIcon(chevronIcon, this.plugin.settings.expandEditorSettings ? 'chevron-down' : 'chevron-right');
-			void this.plugin.saveSettings();
-		});
-
-		new Setting(editorSettingsContainer)
-			.setName('Editor color picker')
-			.setDesc('Show inline color picker for hex/rgb values.')
-			.addToggle(toggle => toggle
-				.setValue(this.plugin.settings.enableAceColorPicker)
-				.onChange(async (value) => {
-					this.plugin.settings.enableAceColorPicker = value;
-					await this.plugin.saveSettings();
-				})
-			);
-
-		let liveAutoCompletiongsToggle = new Setting(editorSettingsContainer)
-			.setName('Live auto completion')
-			.setDesc('Show auto-completion suggestions while typing CSS properties and values.')
-			.addToggle(toggle => toggle
-				.setValue(this.plugin.settings.enableAceAutoCompletion)
-				.onChange(async (value) => {
-					if (!value) {
-						if (snippetsToggle.settingEl.querySelector('.checkbox-container')?.hasClass('is-enabled')) {
-							new Notice('Snippets are enabled and require that "live auto completion" be enabled. Please disable the below "snippets" toggle before disabling this setting.', 10000);
-							toggle.setValue(true);
-							return;
-						}
-					}
-					this.plugin.settings.enableAceAutoCompletion = value;
-					await this.plugin.saveSettings();
-				})
-			);
-
-		let snippetsToggle = new Setting(editorSettingsContainer)
-			.setName('Snippets')
-			.setDesc('Show Obsidian CSS variables in auto-completion (requires live auto-completion).')
-			.addToggle(toggle => toggle
-				.setValue(this.plugin.settings.enableAceSnippets)
-				.onChange(async (value) => {
-					this.plugin.settings.enableAceSnippets = value;
-					if (value) {
-						if (!liveAutoCompletiongsToggle.settingEl.querySelector('.checkbox-container')?.hasClass('is-enabled')) {
-							new Notice('Please enable the above "live auto completion" toggle before enabling this setting.', 10000);
-							toggle.setValue(false);
-							this.plugin.settings.enableAceSnippets = false;
-						}
-					} else {
-						new Notice('Disabling this setting requires a reload of the Obsidian window. From the command palette, run the command "reload app without saving." … click this message to dismiss.', 0);
-					}
-					await this.plugin.saveSettings();
-				})
-			);
-
-		new Setting(editorSettingsContainer)
-			.setName('Editor theme')
-			.setDesc('CSS editor color theme. "auto" matches your Obsidian theme.')
-			.addDropdown(async (dropdown) => {
-				for (const key in THEME_COLOR) {
-					dropdown.addOption(key, key);
-				}
-				dropdown.setValue(this.plugin.settings.editorTheme);
-				dropdown.onChange(async (option) => {
-					this.plugin.settings.editorTheme = option;
-					await this.plugin.saveSettings();
-				});
-			});
-
-		new Setting(editorSettingsContainer)
-			.setName('Light mode theme')
-			.setDesc('Syntax highlighting theme when Obsidian is in light mode.')
-			.addDropdown((dropdown) => {
-				AceLightThemesList.forEach((theme) => {
-					dropdown
-						.addOption(theme.value, theme.name)
-				})
-				dropdown
-					.setValue(this.plugin.settings.editorLightTheme)
-					.onChange(async (newValue) => {
-						this.plugin.settings.editorLightTheme = newValue;
-						await this.plugin.saveSettings();
-					});
-			});
-
-		new Setting(editorSettingsContainer)
-			.setName('Dark mode theme')
-			.setDesc('Syntax highlighting theme when Obsidian is in dark mode.')
-			.addDropdown((dropdown) => {
-				AceDarkThemesList.forEach((theme) => {
-					dropdown
-						.addOption(theme.value, theme.name)
-				})
-				dropdown
-					.setValue(this.plugin.settings.editorDarkTheme)
-					.onChange(async (newValue) => {
-						this.plugin.settings.editorDarkTheme = newValue;
-						await this.plugin.saveSettings();
-					});
-			});
-
-		new Setting(editorSettingsContainer)
-			.setName('Keyboard shortcuts')
-			.setDesc('Keyboard shortcut scheme for the CSS editor.')
-			.addDropdown((dropdown) => {
-				AceKeyboardList.forEach((binding) => {
-					dropdown.addOption(binding, binding)
-				})
-				dropdown
-					.setValue(this.plugin.settings.editorKeyboard)
-					.onChange(async (newValue) => {
-						this.plugin.settings.editorKeyboard = newValue;
-						await this.plugin.saveSettings();
-					});
-			});
-
-		let fontSizeSlider: SliderComponent;
-		new Setting(editorSettingsContainer)
-			.setName('Font size')
-			.setDesc('Set the font size of the CSS editor.')
-			.addSlider(slider => {
-				fontSizeSlider = slider;
-				slider
-					.setLimits(5, 30, 1)
-					.setValue(this.plugin.settings.editorFontSize)
-					.onChange(async (value) => {
-						slider.sliderEl.setAttribute('aria-label', value.toString());
-						this.plugin.settings.editorFontSize = value;
-						void this.plugin.saveSettings();
-					});
-				slider.sliderEl.setAttribute('aria-label', this.plugin.settings.editorFontSize.toString());
-				slider.sliderEl.setAttribute('data-tooltip-position', 'top');
-				slider.sliderEl.setAttribute('data-tooltip-delay', '100');
-			})
-			.addExtraButton(button => button
-				.setIcon('rotate-ccw')
-				.setTooltip('Restore default (15)')
-				.onClick(async () => {
-					fontSizeSlider.setValue(15);
-					fontSizeSlider.sliderEl.setAttribute('aria-label', '15');
-					this.plugin.settings.editorFontSize = 15;
-					await this.plugin.saveSettings();
-				})
-			);
-
-		new Setting(editorSettingsContainer)
-			.setName('Font family')
-			.setDesc('Font family for the CSS editor (e.g., "fira code", "monaco"). Leave empty for default.')
-			.addText(text => text
-				.setValue(this.plugin.settings.editorFontFamily)
-				.onChange(async (value) => {
-					this.plugin.settings.editorFontFamily = value;
-					await this.plugin.saveSettings();
-				})
-			);
-
-		let tabWidthDropdown: DropdownComponent;
-		new Setting(editorSettingsContainer)
-			.setName('Tab width')
-			.setDesc('Indentation width (spaces per tab level). Standard is 2 or 4.')
-			.addDropdown((dropdown) => {
-				tabWidthDropdown = dropdown;
-				dropdown
-					.addOptions({
-						'2': '2',
-						'4': '4',
-					})
-					.setValue(this.plugin.settings.editorTabWidth.toString())
-					.onChange(async (newValue) => {
-						this.plugin.settings.editorTabWidth = newValue;
-						await this.plugin.saveSettings();
-					});
-			})
-			.addExtraButton(button => button
-				.setIcon('rotate-ccw')
-				.setTooltip(`Restore default (${DEFAULT_SETTINGS.editorTabWidth.toString()})`)
-				.onClick(async () => {
-					tabWidthDropdown.setValue(DEFAULT_SETTINGS.editorTabWidth.toString());
-					this.plugin.settings.editorTabWidth = DEFAULT_SETTINGS.editorTabWidth.toString();
-					await this.plugin.saveSettings();
-				})
-			);
-
-		new Setting(editorSettingsContainer)
-			.setName('Word wrap')
-			.setDesc('Wrap long lines instead of scrolling horizontally.')
-			.addToggle(toggle => toggle
-				.setValue(this.plugin.settings.editorWordWrap)
-				.onChange(async (value) => {
-					this.plugin.settings.editorWordWrap = value;
-					await this.plugin.saveSettings();
-
-				}));
-
-		new Setting(editorSettingsContainer)
-			.setName('Line numbers')
-			.setDesc('Show line numbers in the CSS editor.')
-			.addToggle(toggle => toggle
-				.setValue(this.plugin.settings.editorLineNumbers)
-				.onChange(async (value) => {
-					this.plugin.settings.editorLineNumbers = value;
-					await this.plugin.saveSettings();
-				})
-			);
-
-		new Setting(containerEl).setName('Theme export').setHeading();
-
-		containerEl.createDiv(
-			{
-				cls: 'cts-theme-export-description',
-				text: 'These settings can also be changed at time of export.'
-			}
-		);
-
-		new Setting(containerEl)
-			.setName('Theme name')
-			.setDesc('The name or title for your exported theme. ')
-			.addText(text => text
-				.setValue(this.plugin.settings.exportThemeName)
-				.onChange(async (value) => {
-					this.plugin.settings.exportThemeName = value;
-					await this.plugin.saveSettings();
-					let varInput: HTMLInputElement | null = window.document.querySelector('.cts-view .export-form-theme-name');
-					if (varInput) {
-						varInput.value = value;
-					}
-				}));
-
-		new Setting(containerEl)
-			.setName('Author name')
-			.setDesc('Your name as the theme author. ')
-			.addText(text => text
-				.setValue(this.plugin.settings.exportThemeAuthor)
-				.onChange(async (value) => {
-					this.plugin.settings.exportThemeAuthor = value;
-					await this.plugin.saveSettings();
-					let varInput: HTMLInputElement | null = window.document.querySelector('.cts-view .export-form-theme-author');
-					if (varInput) {
-						varInput.value = value;
-					}
-				}));
-
-		new Setting(containerEl)
-			.setName('Author URL')
-			// eslint-disable-next-line obsidianmd/ui/sentence-case -- URL protocol should not be capitalized
-			.setDesc('URL to your GitHub profile page (e.g. https://github.com/username). ')
-			.addText(text => text
-				.setValue(this.plugin.settings.exportThemeURL)
-				.onChange(async (value) => {
-					this.plugin.settings.exportThemeURL = value;
-					await this.plugin.saveSettings();
-					let varInput: HTMLInputElement | null = window.document.querySelector('.cts-view .export-form-theme-url');
-					if (varInput) {
-						varInput.value = value;
-					}
-				}));
-
-		new Setting(containerEl)
-			.setName('Include disabled CSS rules when exporting')
-			.setDesc('Include disabled rules in exported themes (useful for sharing themes with optional features)."')
-			.addToggle(toggle => toggle
-				.setValue(this.plugin.settings.exportThemeIncludeDisabled)
-				.onChange(async (value) => {
-					this.plugin.settings.exportThemeIncludeDisabled = value;
-					await this.plugin.saveSettings();
-					// Update view checkbox
-					let includeDisabledToggle: HTMLInputElement | null = window.document.querySelector('.cts-view [id="include-disabled-switch"]');
-					if (includeDisabledToggle) {
-						if (value) {
-							includeDisabledToggle.checked = true;
-						} else {
-							includeDisabledToggle.checked = false;
-						}
-					}
-				})
-			);
-
-		new Setting(containerEl)
-			.setName('Prettier formatting')
-			.setDesc('Automatically format CSS using prettier formatter.')
-			.addToggle(toggle => toggle
-				.setValue(this.plugin.settings.exportPrettierFormat)
-				.onChange(async (value) => {
-					this.plugin.settings.exportPrettierFormat = value;
-					await this.plugin.saveSettings();
-					// Update view checkbox
-					let enabledPrettierToggle: HTMLInputElement | null = window.document.querySelector('.cts-view [id="enable-prettier-switch"]');
-					if (enabledPrettierToggle) {
-						if (value) {
-							enabledPrettierToggle.checked = true;
-						} else {
-							enabledPrettierToggle.checked = false;
-						}
-					}
-				})
-			);
-
-		new Setting(containerEl).setName('Scroll helper').setHeading();
-
-		new Setting(containerEl)
-			.setName('Scroll to top')
-			.setDesc('Auto-scroll to expanded sections or active editors for easier navigation.')
-			.addToggle(toggle => toggle
-				.setValue(this.plugin.settings.viewScrollToTop)
-				.onChange(async (value) => {
-					this.plugin.settings.viewScrollToTop = value;
-					await this.plugin.saveSettings();
-				})
-			);
-
-		new Setting(containerEl).setName('Backup').setHeading();
-
-		new Setting(containerEl)
-			.setName('Export & import settings')
-			.setDesc('Export or import all plugin settings. Import will overwrite current settings. File saved to vault root as cts_settings.json.')
-			.addButton((button) => {
-				button.setButtonText('Export');
-				button.onClick(() => {
-					void settingsIO.exportSettings(this.plugin.settings, this.app);
-				});
-			})
-			.addButton((button) => {
-				button.setButtonText('Import');
-				button.onClick(async () => {
-					const importedSettings = await settingsIO.importSettings(this.app);
-					if (importedSettings) {
-						if (await confirm('This will overwrite your current settings and cannot be undone. Continue?', this.plugin.app)) {
-							this.plugin.settings = importedSettings;
-							await this.plugin.saveData(this.plugin.settings);
-
-							// Refresh the view if it's open
-							const leaves = this.app.workspace.getLeavesOfType('cts-view');
-							if (leaves.length > 0) {
-								void this.plugin.reloadView();
-							}
-
-							// Refresh settings display
-							this.display();
-							new Notice('Settings imported successfully');
-						}
-					}
-				});
-			});
-
-		// Troubleshooting Section
-		new Setting(containerEl).setName('Troubleshooting').setHeading();
-
-		new Setting(containerEl)
-			.setName('Reload view')
-			.setDesc('Most settings under CSS variables & CSS rules require the plugin\'s view to be reloaded to take effect.')
-			.addButton(button => button
-				.setButtonText('Reload')
-				.setClass('mod-destructive')
-				.onClick(async () => {
-					if (await confirm('You may have unsaved changes. Reloading the view will reload all forms. Continue?', this.plugin.app)) {
-						try {
-							await this.plugin.reloadView();
-							new Notice('The custom theme studio view has been reloaded');
-						} catch (error) {
-							Logger.error(error instanceof Error ? error.message : String(error));
-							new Notice('Failed to reload view. Check developer console for details.', 10000);
-						}
-					}
-				})
-			);
-
-		// Debug Level Setting
-		new Setting(containerEl)
-			.setName('Debug level')
-			.setDesc('Control console logging verbosity for debugging')
-			.addDropdown(dropdown => dropdown
-				.addOption('none', 'None (no logs)')
-				.addOption('error', 'Errors only')
-				.addOption('warn', 'Warnings and errors')
-				.addOption('info', 'Info, warnings, and errors')
-				.addOption('debug', 'Debug (all logs)')
-				.setValue(this.plugin.settings.debugLevel)
-				.onChange(async (value: 'none' | 'error' | 'warn' | 'info' | 'debug') => {
-					this.plugin.settings.debugLevel = value;
-					await this.plugin.saveSettings();
-				}));
-
-		new Setting(containerEl).setName('Reset').setClass('reset-options-heading').setHeading();
-
-		new Setting(containerEl)
-			.setName('Reset theme')
-			.setDesc('Reset all theme customizations.')
-			.addButton(button => button
-				.setButtonText('Reset')
-				.setClass('mod-destructive')
-				.onClick(async () => {
-					if (await confirm('Are you sure you want to reset all theme customizations? This cannot be undone.', this.plugin.app)) {
-						this.plugin.settings.customCSS = '';
-						this.plugin.settings.cssVariables = [];
-						this.plugin.settings.cssRules = [];
-						this.plugin.settings.themeEnabled = false;
-
-						// Apply changes
-						this.plugin.themeManager.removeCustomTheme();
-						this.plugin.themeManager.applyIfEnabled();
-
-						await this.plugin.saveSettings();
-
-						// Refresh the view if it's open
-						const leaves = this.app.workspace.getLeavesOfType('cts-view');
-						if (leaves.length > 0) {
-							void this.plugin.reloadView();
-						}
-						this.display();
-						new Notice('Theme has been reset');
-					}
-				}));
-
+		super.display();
+		this.containerEl.addClass('cts-settings-tab');
 	}
+	/* eslint-enable @typescript-eslint/no-deprecated */
 
+	getSettingDefinitions(): SettingDefinitionItem[] {
+		const doc = this.app.workspace.containerEl.ownerDocument;
+
+		return [
+			// ── Enable custom theme ──
+			{
+				name: 'Enable custom theme',
+				desc: 'Toggle your custom theme on or off.',
+				render: (setting) => {
+					setting.addToggle(toggle => toggle
+						.setValue(this.plugin.settings.themeEnabled)
+						.onChange(async (value) => {
+							this.plugin.settings.themeEnabled = value;
+							if (value) {
+								this.plugin.themeManager.applyCustomTheme();
+							} else {
+								this.plugin.themeManager.removeCustomTheme();
+							}
+							await this.plugin.saveSettings();
+							const themeToggle: HTMLInputElement | null = doc.querySelector('.cts-view [id="theme-toggle-switch"]');
+							if (themeToggle) {
+								themeToggle.checked = value;
+							}
+						})
+					);
+				},
+			},
+
+			// ── CSS variables ──
+			{
+				type: 'group',
+				heading: 'CSS variables',
+				items: [
+					{
+						name: 'Variable update trigger',
+						desc: 'When to update CSS after changing variable values. Choose "input" for live updates (every keystroke) or "change" to update only when you finish editing (clicking away from the field).',
+						control: {
+							type: 'dropdown',
+							key: 'variableInputListener',
+							options: { 'input': 'input', 'change': 'change' },
+						},
+					},
+					{
+						name: 'Variable color picker',
+						desc: 'Enable a color picker for CSS variables that have a default hex color value.',
+						control: { type: 'toggle', key: 'enableColorPicker' },
+					},
+				],
+			},
+
+			// ── CSS rules ──
+			{
+				type: 'group',
+				heading: 'CSS rules',
+				items: [
+					{
+						name: 'Font import',
+						desc: 'Enable font imports to create @font-face CSS rules.',
+						control: { type: 'toggle', key: 'enableFontImport' },
+					},
+					{
+						name: 'Warn before discarding changes',
+						desc: 'Warn before discarding unsaved changes when closing or switching between CSS editors.',
+						control: { type: 'toggle', key: 'showConfirmation' },
+					},
+				],
+			},
+
+			// ── Element selector ──
+			{
+				type: 'group',
+				heading: 'Element selector',
+				items: [
+					{
+						name: 'Selector style preset',
+						desc: 'Choose the style of CSS selectors generated when picking elements. "minimal" creates short selectors, "balanced" includes the tag name, and "specific" includes all attributes.',
+						control: {
+							type: 'dropdown',
+							key: 'selectorStyle',
+							options: {
+								'minimal': 'Minimal (clean & short)',
+								'balanced': 'Balanced (moderate specificity)',
+								'specific': 'Specific (maximum detail)',
+							},
+						},
+					},
+					{
+						name: 'Prefer classes over attributes',
+						desc: 'When enabled, prioritize class selectors (e.g., .my-class) over data attributes.',
+						control: { type: 'toggle', key: 'selectorPreferClasses' },
+					},
+					{
+						name: 'Always include tag names',
+						desc: 'When enabled, always include the HTML tag (e.g., div[data-foo] instead of [data-foo]).',
+						control: { type: 'toggle', key: 'selectorAlwaysIncludeTag' },
+					},
+					{
+						name: 'Excluded attribute patterns',
+						desc: 'Attributes matching these patterns will be excluded from minimal and balanced selectors (one per line). Supports wildcards like "data-tooltip-*". Specific mode includes all attributes.',
+						control: {
+							type: 'textarea',
+							key: 'selectorExcludedAttributes',
+							placeholder: 'Data-tooltip-*',
+							rows: 5,
+						},
+					},
+					{
+						name: 'Generate CSS',
+						desc: 'Automatically populate the CSS editor with common properties (color, background, font, etc.) when selecting an element.',
+						control: { type: 'toggle', key: 'generateComputedCSS' },
+					},
+				],
+			},
+
+			// ── CSS editor ──
+			{
+				type: 'group',
+				heading: 'CSS editor',
+				items: [
+					{
+						name: 'Auto-apply changes',
+						desc: 'Automatically preview changes "live" as you make them. Changes become permanent once the CSS is saved.',
+						control: { type: 'toggle', key: 'autoApplyChanges' },
+					},
+					// Auto-apply warning notice
+					{
+						name: '',
+						searchable: false,
+						render: (setting) => {
+							setting.settingEl.empty();
+							const noticeDiv = setting.settingEl.createDiv('cts-auto-apply-changes-notice');
+							const noticeIcon = noticeDiv.createDiv('cts-auto-apply-changes-notice-icon');
+							noticeIcon.setAttribute('aria-label', 'Notice');
+							noticeIcon.setAttribute('data-tooltip-position', 'top');
+							const noticeText = noticeDiv.createDiv('cts-auto-apply-changes-notice-text');
+							noticeText.textContent = 'When enabled, every keystroke triggers a "live" refresh of your theme. This can lead to unwanted styling and possibly make Obsidian unusable.';
+							setIcon(noticeIcon, 'alert-triangle');
+						},
+					},
+					// Debounce delay slider + reset
+					{
+						name: 'Auto-apply change delay',
+						desc: 'Delay before live-previewing CSS changes while typing (requires auto-apply). Lower values = faster feedback but may cause performance issues.',
+						render: (setting) => {
+							let debounceDelaySlider: SliderComponent;
+							setting.addSlider(slider => {
+								debounceDelaySlider = slider;
+								slider
+									.setLimits(0, 2000, 100)
+									.setValue(this.plugin.settings.cssEditorDebounceDelay)
+									.onChange(async (value) => {
+										slider.sliderEl.setAttribute('aria-label', value.toString() + 'ms');
+										this.plugin.settings.cssEditorDebounceDelay = value;
+										await this.plugin.saveSettings();
+									});
+								slider.sliderEl.setAttribute('aria-label', this.plugin.settings.cssEditorDebounceDelay.toString() + 'ms');
+								slider.sliderEl.setAttribute('data-tooltip-position', 'top');
+								slider.sliderEl.setAttribute('data-tooltip-delay', '100');
+							})
+							.addExtraButton(button => button
+								.setIcon('rotate-ccw')
+								.setTooltip(`Restore default (${DEFAULT_SETTINGS.cssEditorDebounceDelay.toString()})`)
+								.onClick(async () => {
+									debounceDelaySlider.setValue(DEFAULT_SETTINGS.cssEditorDebounceDelay);
+									debounceDelaySlider.sliderEl.setAttribute('aria-label', DEFAULT_SETTINGS.cssEditorDebounceDelay.toString());
+									this.plugin.settings.cssEditorDebounceDelay = DEFAULT_SETTINGS.cssEditorDebounceDelay;
+									await this.plugin.saveSettings();
+								})
+							);
+						},
+					},
+				],
+			},
+
+			// ── CSS editor preferences ──
+			{
+				type: 'group',
+				heading: 'CSS editor preferences',
+				items: [
+					{
+						name: 'Editor color picker',
+						desc: 'Show inline color picker for hex/rgb values.',
+						control: { type: 'toggle', key: 'enableAceColorPicker' },
+					},
+					{
+						name: 'Live auto completion',
+						desc: 'Show auto-completion suggestions while typing CSS properties and values.',
+						render: (setting) => {
+							setting.addToggle(toggle => toggle
+								.setValue(this.plugin.settings.enableAceAutoCompletion)
+								.onChange(async (value) => {
+									if (!value && this.plugin.settings.enableAceSnippets) {
+										new Notice('Snippets are enabled and require that "live auto completion" be enabled. Please disable the below "snippets" toggle before disabling this setting.', 10000);
+										toggle.setValue(true);
+										return;
+									}
+									this.plugin.settings.enableAceAutoCompletion = value;
+									await this.plugin.saveSettings();
+								})
+							);
+						},
+					},
+					{
+						name: 'Snippets',
+						desc: 'Show Obsidian CSS variables in auto-completion (requires live auto-completion).',
+						render: (setting) => {
+							setting.addToggle(toggle => toggle
+								.setValue(this.plugin.settings.enableAceSnippets)
+								.onChange(async (value) => {
+									if (value && !this.plugin.settings.enableAceAutoCompletion) {
+										new Notice('Please enable the above "live auto completion" toggle before enabling this setting.', 10000);
+										toggle.setValue(false);
+										return;
+									}
+									this.plugin.settings.enableAceSnippets = value;
+									if (!value) {
+										new Notice('Disabling this setting requires a reload of the Obsidian window. From the command palette, run the command "reload app without saving." … click this message to dismiss.', 0);
+									}
+									await this.plugin.saveSettings();
+								})
+							);
+						},
+					},
+					{
+						name: 'Editor theme',
+						desc: 'CSS editor color theme. "auto" matches your Obsidian theme.',
+						control: {
+							type: 'dropdown',
+							key: 'editorTheme',
+							options: { 'Auto': 'Auto', 'Light': 'Light', 'Dark': 'Dark' },
+						},
+					},
+					{
+						name: 'Light mode theme',
+						desc: 'Syntax highlighting theme when Obsidian is in light mode.',
+						control: {
+							type: 'dropdown',
+							key: 'editorLightTheme',
+							options: themesToRecord(AceLightThemesList),
+						},
+					},
+					{
+						name: 'Dark mode theme',
+						desc: 'Syntax highlighting theme when Obsidian is in dark mode.',
+						control: {
+							type: 'dropdown',
+							key: 'editorDarkTheme',
+							options: themesToRecord(AceDarkThemesList),
+						},
+					},
+					{
+						name: 'Keyboard shortcuts',
+						desc: 'Keyboard shortcut scheme for the CSS editor.',
+						control: {
+							type: 'dropdown',
+							key: 'editorKeyboard',
+							options: stringsToRecord(AceKeyboardList),
+						},
+					},
+					{
+						name: 'Font size',
+						desc: 'Set the font size of the CSS editor.',
+						render: (setting) => {
+							let fontSizeSlider: SliderComponent;
+							setting.addSlider(slider => {
+								fontSizeSlider = slider;
+								slider
+									.setLimits(5, 30, 1)
+									.setValue(this.plugin.settings.editorFontSize)
+									.onChange(async (value) => {
+										slider.sliderEl.setAttribute('aria-label', value.toString());
+										this.plugin.settings.editorFontSize = value;
+										void this.plugin.saveSettings();
+									});
+								slider.sliderEl.setAttribute('aria-label', this.plugin.settings.editorFontSize.toString());
+								slider.sliderEl.setAttribute('data-tooltip-position', 'top');
+								slider.sliderEl.setAttribute('data-tooltip-delay', '100');
+							})
+							.addExtraButton(button => button
+								.setIcon('rotate-ccw')
+								.setTooltip('Restore default (15)')
+								.onClick(async () => {
+									fontSizeSlider.setValue(15);
+									fontSizeSlider.sliderEl.setAttribute('aria-label', '15');
+									this.plugin.settings.editorFontSize = 15;
+									await this.plugin.saveSettings();
+								})
+							);
+						},
+					},
+					{
+						name: 'Font family',
+						desc: 'Font family for the CSS editor (e.g., "fira code", "monaco"). Leave empty for default.',
+						control: { type: 'text', key: 'editorFontFamily' },
+					},
+					{
+						name: 'Tab width',
+						desc: 'Indentation width (spaces per tab level). Standard is 2 or 4.',
+						render: (setting) => {
+							setting.addDropdown(dropdown => {
+								dropdown
+									.addOptions({ '2': '2', '4': '4' })
+									.setValue(this.plugin.settings.editorTabWidth.toString())
+									.onChange(async (newValue) => {
+										this.plugin.settings.editorTabWidth = newValue;
+										await this.plugin.saveSettings();
+									});
+							})
+							.addExtraButton(button => button
+								.setIcon('rotate-ccw')
+								.setTooltip(`Restore default (${DEFAULT_SETTINGS.editorTabWidth.toString()})`)
+								.onClick(async () => {
+									this.plugin.settings.editorTabWidth = DEFAULT_SETTINGS.editorTabWidth.toString();
+									await this.plugin.saveSettings();
+									this.update();
+								})
+							);
+						},
+					},
+					{
+						name: 'Word wrap',
+						desc: 'Wrap long lines instead of scrolling horizontally.',
+						control: { type: 'toggle', key: 'editorWordWrap' },
+					},
+					{
+						name: 'Line numbers',
+						desc: 'Show line numbers in the CSS editor.',
+						control: { type: 'toggle', key: 'editorLineNumbers' },
+					},
+				],
+			},
+
+			// ── Theme export ──
+			{
+				type: 'group',
+				heading: 'Theme export',
+				items: [
+					// Export description text
+					{
+						name: '',
+						searchable: false,
+						render: (setting) => {
+							setting.settingEl.empty();
+							setting.settingEl.createDiv({
+								cls: 'cts-theme-export-description',
+								text: 'These settings can also be changed at time of export.',
+							});
+						},
+					},
+					// Theme name (render: syncs view input)
+					{
+						name: 'Theme name',
+						desc: 'The name or title for your exported theme. ',
+						render: (setting) => {
+							setting.addText(text => text
+								.setValue(this.plugin.settings.exportThemeName)
+								.onChange(async (value) => {
+									this.plugin.settings.exportThemeName = value;
+									await this.plugin.saveSettings();
+									const varInput: HTMLInputElement | null = doc.querySelector('.cts-view .export-form-theme-name');
+									if (varInput) {
+										varInput.value = value;
+									}
+								}));
+						},
+					},
+					// Author name (render: syncs view input)
+					{
+						name: 'Author name',
+						desc: 'Your name as the theme author. ',
+						render: (setting) => {
+							setting.addText(text => text
+								.setValue(this.plugin.settings.exportThemeAuthor)
+								.onChange(async (value) => {
+									this.plugin.settings.exportThemeAuthor = value;
+									await this.plugin.saveSettings();
+									const varInput: HTMLInputElement | null = doc.querySelector('.cts-view .export-form-theme-author');
+									if (varInput) {
+										varInput.value = value;
+									}
+								}));
+						},
+					},
+					// Author URL (render: syncs view input)
+					{
+						name: 'Author URL',
+						desc: 'URL to your GitHub profile page (e.g. https://github.com/username). ',
+						render: (setting) => {
+							setting.addText(text => text
+								.setValue(this.plugin.settings.exportThemeURL)
+								.onChange(async (value) => {
+									this.plugin.settings.exportThemeURL = value;
+									await this.plugin.saveSettings();
+									const varInput: HTMLInputElement | null = doc.querySelector('.cts-view .export-form-theme-url');
+									if (varInput) {
+										varInput.value = value;
+									}
+								}));
+						},
+					},
+					// Include disabled CSS rules (render: syncs view checkbox)
+					{
+						name: 'Include disabled CSS rules when exporting',
+						desc: 'Include disabled rules in exported themes (useful for sharing themes with optional features)."',
+						render: (setting) => {
+							setting.addToggle(toggle => toggle
+								.setValue(this.plugin.settings.exportThemeIncludeDisabled)
+								.onChange(async (value) => {
+									this.plugin.settings.exportThemeIncludeDisabled = value;
+									await this.plugin.saveSettings();
+									const includeDisabledToggle: HTMLInputElement | null = doc.querySelector('.cts-view [id="include-disabled-switch"]');
+									if (includeDisabledToggle) {
+										includeDisabledToggle.checked = value;
+									}
+								})
+							);
+						},
+					},
+					// Prettier formatting (render: syncs view checkbox)
+					{
+						name: 'Prettier formatting',
+						desc: 'Automatically format CSS using prettier formatter.',
+						render: (setting) => {
+							setting.addToggle(toggle => toggle
+								.setValue(this.plugin.settings.exportPrettierFormat)
+								.onChange(async (value) => {
+									this.plugin.settings.exportPrettierFormat = value;
+									await this.plugin.saveSettings();
+									const enabledPrettierToggle: HTMLInputElement | null = doc.querySelector('.cts-view [id="enable-prettier-switch"]');
+									if (enabledPrettierToggle) {
+										enabledPrettierToggle.checked = value;
+									}
+								})
+							);
+						},
+					},
+				],
+			},
+
+			// ── Scroll helper ──
+			{
+				type: 'group',
+				heading: 'Scroll helper',
+				items: [
+					{
+						name: 'Scroll to top',
+						desc: 'Auto-scroll to expanded sections or active editors for easier navigation.',
+						control: { type: 'toggle', key: 'viewScrollToTop' },
+					},
+				],
+			},
+
+			// ── Backup ──
+			{
+				type: 'group',
+				heading: 'Backup',
+				items: [
+					{
+						name: 'Export & import settings',
+						desc: 'Export or import all plugin settings. Import will overwrite current settings. File saved to vault root as cts_settings.json.',
+						render: (setting) => {
+							setting
+								.addButton(button => {
+									button.setButtonText('Export');
+									button.onClick(() => {
+										void settingsIO.exportSettings(this.plugin.settings, this.app);
+									});
+								})
+								.addButton(button => {
+									button.setButtonText('Import');
+									button.onClick(async () => {
+										const importedSettings = await settingsIO.importSettings(this.app);
+										if (importedSettings) {
+											if (await confirm('This will overwrite your current settings and cannot be undone. Continue?', this.plugin.app)) {
+												this.plugin.settings = importedSettings;
+												await this.plugin.saveData(this.plugin.settings);
+
+												const leaves = this.app.workspace.getLeavesOfType('cts-view');
+												if (leaves.length > 0) {
+													void this.plugin.reloadView();
+												}
+
+												this.update();
+												new Notice('Settings imported successfully');
+											}
+										}
+									});
+								});
+						},
+					},
+				],
+			},
+
+			// ── Troubleshooting ──
+			{
+				type: 'group',
+				heading: 'Troubleshooting',
+				items: [
+					{
+						name: 'Reload view',
+						desc: 'Most settings under CSS variables & CSS rules require the plugin\'s view to be reloaded to take effect.',
+						render: (setting) => {
+							setting.addButton(button => button
+								.setButtonText('Reload')
+								.setClass('mod-destructive')
+								.onClick(async () => {
+									if (await confirm('You may have unsaved changes. Reloading the view will reload all forms. Continue?', this.plugin.app)) {
+										try {
+											await this.plugin.reloadView();
+											new Notice('The custom theme studio view has been reloaded');
+										} catch (error) {
+											Logger.error(error instanceof Error ? error.message : String(error));
+											new Notice('Failed to reload view. Check developer console for details.', 10000);
+										}
+									}
+								})
+							);
+						},
+					},
+					{
+						name: 'Debug level',
+						desc: 'Control console logging verbosity for debugging',
+						control: {
+							type: 'dropdown',
+							key: 'debugLevel',
+							options: {
+								'none': 'None (no logs)',
+								'error': 'Errors only',
+								'warn': 'Warnings and errors',
+								'info': 'Info, warnings, and errors',
+								'debug': 'Debug (all logs)',
+							},
+						},
+					},
+				],
+			},
+
+			// ── Reset ──
+			{
+				type: 'group',
+				heading: 'Reset',
+				cls: 'reset-options-heading',
+				items: [
+					{
+						name: 'Reset theme',
+						desc: 'Reset all theme customizations.',
+						render: (setting) => {
+							setting.addButton(button => button
+								.setButtonText('Reset')
+								.setClass('mod-destructive')
+								.onClick(async () => {
+									if (await confirm('Are you sure you want to reset all theme customizations? This cannot be undone.', this.plugin.app)) {
+										this.plugin.settings.customCSS = '';
+										this.plugin.settings.cssVariables = [];
+										this.plugin.settings.cssRules = [];
+										this.plugin.settings.themeEnabled = false;
+
+										this.plugin.themeManager.removeCustomTheme();
+										this.plugin.themeManager.applyIfEnabled();
+
+										await this.plugin.saveSettings();
+
+										const leaves = this.app.workspace.getLeavesOfType('cts-view');
+										if (leaves.length > 0) {
+											void this.plugin.reloadView();
+										}
+										this.update();
+										new Notice('Theme has been reset');
+									}
+								}));
+						},
+					},
+				],
+			},
+		];
+	}
 }

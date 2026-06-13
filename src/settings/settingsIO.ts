@@ -23,7 +23,7 @@ class SettingsIO {
 
     /**
      * Exports the plugin settings to a JSON file in the vault.
-     * The file will be created as CTS_settings.json in the vault root.
+     * The file will be created as cts_settings.json in the vault root.
      *
      * @param settings - The settings object to export.
      * @returns A promise that resolves to true if the export was successful, false otherwise.
@@ -45,19 +45,19 @@ class SettingsIO {
 
     /**
      * Exports the settings to the vault.
-     * Exports the settings to a file named CTS_settings.json
+     * Exports the settings to a file named cts_settings.json
      *
      * @param settingsData - The settings data to export.
      * @returns A promise that resolves to true if the export was successful, false otherwise.
      */
     private async exportToVault(settingsData: string, app: App): Promise<boolean> {
         try {
-            const filename = 'CTS_settings.json';
+            const filename = 'cts_settings.json';
             const existingFile = app.vault.getAbstractFileByPath(filename);
 
             if (existingFile instanceof TFile) {
                 // Create backup before overwriting
-                const backupName = `CTS_settings_backup_${Date.now()}.json`;
+                const backupName = `cts_settings_backup_${Date.now()}.json`;
                 await app.vault.copy(existingFile, backupName);
                 await app.vault.modify(existingFile, settingsData);
             } else {
@@ -75,7 +75,7 @@ class SettingsIO {
 
     /**
      * Imports settings from a JSON file in the vault.
-     * Looks for CTS_settings.json in the vault root.
+     * Looks for cts_settings.json in the vault root.
      *
      * @returns The imported settings or null if the import failed.
      */
@@ -95,13 +95,13 @@ class SettingsIO {
 
     /**
      * Fallback method to import settings from the vault.
-     * from the file CTS_settings.json
+     * from the file cts_settings.json
      *
      * @returns The imported settings or null if the import failed.
      */
     private async importFromVault(app: App): Promise<CustomThemeStudioSettings | null> {
         try {
-            const filename = 'CTS_settings.json';
+            const filename = 'cts_settings.json';
             const file = app.vault.getAbstractFileByPath(filename);
 
             if (!file || !(file instanceof TFile)) {

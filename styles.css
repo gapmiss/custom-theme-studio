@@ -1102,38 +1102,6 @@ html body.cts-element-selector-active .view-content * {
     min-width: 300px;
 }
 
-/* Settings collapsible sections */
-.cts-settings-tab .cts-collapsible-heading {
-    cursor: pointer;
-}
-
-.cts-settings-tab .cts-chevron-icon {
-    display: inline-block;
-    margin-left: 8px;
-    color: var(--interactive-accent);
-    transition: transform 0.2s ease;
-    vertical-align: middle;
-    width: 20px;
-    height: 20px;
-}
-
-.cts-settings-tab .cts-chevron-icon svg {
-    width: 20px;
-    height: 20px;
-    stroke-width: 3;
-}
-
-.cts-settings-tab .cts-editor-settings-container {
-    /* Container for collapsible editor settings */
-    padding: var(--size-4-3);
-    border-radius: var(--size-4-2);
-    background-color: var(--background-secondary);
-}
-
-.cts-settings-tab .cts-editor-settings-container.cts-hidden {
-    display: none;
-}
-
 .cts-settings-tab .setting-item-control > textarea {
     min-width: 200px;
     min-height: 100px;

@@ -44,38 +44,16 @@ const context = await esbuild.context({
 
 if (prod) {
 	await context.rebuild();
-	// Post-build: Remove dynamic script loading from Ace editor (security review requirement)
+	// Post-build: Stub out Ace editor's dynamic network helpers (security scanner flags)
 	const fs = await import("fs");
 	let contents = fs.readFileSync("main.js", "utf8");
 	contents = contents.replace(
-		`exports2.loadScript = function(path2, callback) {
-        var head = dom.getDocumentHead();
-        var s = document.createElement("script");
-        s.src = path2;
-        head.appendChild(s);
-        s.onload = s.onreadystatechange = function(_2, isAbort) {
-          if (isAbort || !s.readyState || s.readyState == "loaded" || s.readyState == "complete") {
-            s = s.onload = s.onreadystatechange = null;
-            if (!isAbort)
-              callback();
-          }
-        };
-      };`,
-		`exports2.loadScript = function(path2, callback) { /* disabled for security */ };`
+		/exports2\.loadScript\s*=\s*function\s*\([^)]*\)\s*\{[\s\S]*?document\.createElement\("script"\)[\s\S]*?\n\s{6}\};/,
+		`exports2.loadScript = function() { /* disabled: all resources are bundled */ };`
 	);
-	// Remove XMLHttpRequest from Ace editor's net module (plugin scanner disclosure)
 	contents = contents.replace(
-		`exports2.get = function(url, callback) {
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", url, true);
-        xhr.onreadystatechange = function() {
-          if (xhr.readyState === 4) {
-            callback(xhr.responseText);
-          }
-        };
-        xhr.send(null);
-      };`,
-		`exports2.get = function(url, callback) { /* disabled: use bundled resources */ };`
+		/exports2\.get\s*=\s*function\s*\([^)]*\)\s*\{[\s\S]*?XMLHttpRequest[\s\S]*?\n\s{6}\};/,
+		`exports2.get = function() { /* disabled: use bundled resources */ };`
 	);
 	fs.writeFileSync("main.js", contents);
 	process.exit(0);
