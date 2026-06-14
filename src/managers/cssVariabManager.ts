@@ -1,5 +1,5 @@
 import CustomThemeStudioPlugin from '../main';
-import { CSSVariable } from 'src/settings';
+import { CSSVariable } from '../settings';
 import { generateUniqueId } from '../utils';
 import obsidianCSSVariables from './obsidianCSSVariables.json';
 
@@ -147,49 +147,39 @@ export class CSSVariableManager {
 	 */
 	updateVariable(uuid: string | undefined, name: string, value: string, parent: string): void {
 
-		let customVars: CSSVariable[] = this.plugin.settings.cssVariables;
-
-		// Store in settings
-		if (!customVars) {
-			this.plugin.settings.cssVariables = [];
+		const customVars: CSSVariable[] = this.plugin.settings.cssVariables ?? [];
+		if (!this.plugin.settings.cssVariables) {
+			this.plugin.settings.cssVariables = customVars;
 		}
 
-		// Helper to update an existing variable's name and value
-		const updateVar = (target: CSSVariable, name: string, value: string) => {
-			target.variable = name;
-			target.value = value;
+		const updateVar = (target: CSSVariable, newName: string, newValue: string) => {
+			target.variable = newName;
+			target.value = newValue;
 		};
 
-		// Helper to remove a variable by UUID
-		const removeVarByUUID = (uuid: string) => {
-			const index = customVars.findIndex(el => el.uuid === uuid);
+		const removeVarByUUID = (targetUuid: string) => {
+			const index = customVars.findIndex(el => el.uuid === targetUuid);
 			if (index !== -1) customVars.splice(index, 1);
 		};
 
 		if (uuid) {
-			// Case 1: We have a UUID — look for the existing variable by UUID
 			const existing = customVars.find(el => el.uuid === uuid);
-			if (!existing) return; // If not found, do nothing
+			if (!existing) return;
 
 			if (value !== '') {
-				// Update the variable's name and value
 				updateVar(existing, name, value);
 			} else {
-				// If the new value is empty, remove the variable
 				removeVarByUUID(uuid);
 			}
 
 		} else {
-			// Case 2: No UUID — check if a variable already exists with the same name + parent
 			const existing = customVars.find(el => el.variable === name && el.parent === parent);
 
 			if (existing) {
 				if (value !== '') {
-					// Update existing variable
 					updateVar(existing, name, value);
-				} else {
-					// Remove it if the new value is empty
-					removeVarByUUID(existing.uuid!);
+				} else if (existing.uuid) {
+					removeVarByUUID(existing.uuid);
 				}
 
 			} else if (value !== '') {
