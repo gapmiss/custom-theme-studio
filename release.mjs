@@ -23,7 +23,7 @@ const VERSION_TYPES = {
 // Default settings
 const DEFAULT_VERSION_TYPE = VERSION_TYPES.PATCH;
 const RELEASE_FILES = ['main.js', 'manifest.json', 'styles.css'];
-const MIN_APP_VERSION = "1.7.2"
+const MIN_APP_VERSION = "1.13.0"
 
 // Store original versions for rollback if needed
 let originalPackageVersion = '';
