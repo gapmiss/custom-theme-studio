@@ -206,7 +206,14 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 					{
 						name: 'Font import',
 						desc: 'Enable font imports to create @font-face CSS rules.',
-						control: { type: 'toggle', key: 'enableFontImport' },
+						render: (setting) => {
+							setting.addToggle(toggle => toggle
+								.setValue(this.plugin.settings.enableFontImport)
+								.onChange(async (value) => {
+									await this.plugin.settingsManager.update('enableFontImport', value);
+								})
+							);
+						},
 					},
 					{
 						name: 'Warn before discarding changes',

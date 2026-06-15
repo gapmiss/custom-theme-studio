@@ -6,9 +6,12 @@ import { FontImportModal } from '../../modals/fontImportModal';
 export class CSSRulesSection extends UIComponent {
 	public ruleSearch: string = '';
 	ruleSearchCounter: HTMLElement;
+	private settingsUnsubscribers: (() => void)[] = [];
+	private buttonContainer: HTMLElement | null = null;
 
 	constructor(context: ComponentContext) {
 		super(context);
+		this.setupReactiveListeners();
 	}
 
 	render(): HTMLElement {
@@ -32,9 +35,9 @@ export class CSSRulesSection extends UIComponent {
 	}
 
 	private renderButtons(container: HTMLElement): void {
-		const buttonContainer = container.createDiv('css-rules-button-container');
+		this.buttonContainer = container.createDiv('css-rules-button-container');
 
-		createIconButton(buttonContainer, {
+		createIconButton(this.buttonContainer, {
 			icon: 'square-pen',
 			label: 'Add CSS rule',
 			classes: ['add-rule-button'],
@@ -43,7 +46,7 @@ export class CSSRulesSection extends UIComponent {
 			}
 		});
 
-		createIconButton(buttonContainer, {
+		createIconButton(this.buttonContainer, {
 			icon: 'mouse-pointer-square-dashed',
 			label: 'Select an element',
 			classes: ['select-element-button'],
@@ -53,15 +56,36 @@ export class CSSRulesSection extends UIComponent {
 		});
 
 		if (this.plugin.settings.enableFontImport) {
-			createIconButton(buttonContainer, {
-				icon: 'file-type',
-				label: 'Import font',
-				classes: ['add-font-face-button'],
-				onClick: () => {
-					new FontImportModal(this.app, this.plugin).open();
-				}
-			});
+			this.addFontImportButton();
 		}
+	}
+
+	private addFontImportButton(): void {
+		if (!this.buttonContainer) return;
+		createIconButton(this.buttonContainer, {
+			icon: 'file-type',
+			label: 'Import font',
+			classes: ['add-font-face-button'],
+			onClick: () => {
+				new FontImportModal(this.app, this.plugin).open();
+			}
+		});
+	}
+
+	private removeFontImportButton(): void {
+		this.buttonContainer?.querySelector('.add-font-face-button')?.remove();
+	}
+
+	private setupReactiveListeners(): void {
+		this.settingsUnsubscribers.push(
+			this.settingsManager.onChange('enableFontImport', (value) => {
+				if (value) {
+					this.addFontImportButton();
+				} else {
+					this.removeFontImportButton();
+				}
+			})
+		);
 	}
 
 	private async handleAddRule(): Promise<void> {
@@ -240,6 +264,9 @@ export class CSSRulesSection extends UIComponent {
 	}
 
 	destroy(): void {
+		this.settingsUnsubscribers.forEach(unsub => unsub());
+		this.settingsUnsubscribers = [];
+		this.buttonContainer = null;
 		this.element?.remove();
 	}
 }
