@@ -147,6 +147,10 @@
         "--checklist-done-decoration": "line-through",
         "--checklist-done-color": "var(--text-muted)"
     },
+    "collapse": {
+        "--collapse-icon-color": "var(--text-faint)",
+        "--collapse-icon-color-collapsed": "var(--text-accent)"
+    },
     "code": {
         "--code-white-space": "pre-wrap",
         "--code-border-width": "0px",
@@ -264,7 +268,8 @@
         "--embed-border-top": "none",
         "--embed-border-bottom": "none",
         "--embed-padding": "0 0 0 var(--size-4-6)",
-        "--embed-font-style": "inherit"
+        "--embed-font-style": "inherit",
+        "--embed-block-shadow-hover": "0 0 0 1px var(--background-modifier-border), inset 0 0 0 1px var(--background-modifier-border)"
     },
     "file": {
         "--file-line-width": "700px",
@@ -279,6 +284,10 @@
         "--file-header-background-focused": "var(--background-primary)",
         "--file-header-border": "var(--border-width) solid transparent",
         "--file-header-justify": "center"
+    },
+    "flair": {
+        "--flair-background": "var(--interactive-normal)",
+        "--flair-color": "var(--text-normal)"
     },
     "footnote": {
         "--footnote-divider-color-active": "var(--metadata-divider-color-focus)",
@@ -537,6 +546,14 @@
         "--popover-pdf-width": "450px",
         "--popover-pdf-height": "400px",
         "--popover-font-size": "var(--font-text-size)"
+    },
+    "pdf": {
+        "--pdf-background": "var(--background-primary)",
+        "--pdf-page-background": "var(--background-primary)",
+        "--pdf-shadow": "0 0 0 1px rgba(0, 0, 0, 0.05), 0 2px 8px rgba(0, 0, 0, 0.1)",
+        "--pdf-spread-shadow": "0 0 0 1px rgba(0, 0, 0, 0.05)",
+        "--pdf-sidebar-background": "var(--background-primary)",
+        "--pdf-thumbnail-shadow": "0 0 0 1px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.2)"
     },
     "prompt": {
         "--prompt-input-height": "40px",
