@@ -11,7 +11,7 @@ import { CustomThemeStudioView } from '../views/customThemeStudioView';
 
 function saveAs(blob: Blob, filename: string): void {
 	const url = URL.createObjectURL(blob);
-	const a = activeDocument.createElement('a');
+	const a = createFragment().createEl('a');
 	a.href = url;
 	a.download = filename;
 	a.click();
