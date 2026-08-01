@@ -840,6 +840,10 @@ export class CSSEditorManager {
 		return this.ruleItemRenderer.createRuleItem(containerEl, rule);
 	}
 
+	repopulateRules(): void {
+		this.ruleListManager?.populateList();
+	}
+
 	/**
 	 * Clean up timers and resources
 	 */

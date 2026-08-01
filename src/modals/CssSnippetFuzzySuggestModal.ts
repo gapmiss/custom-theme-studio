@@ -70,38 +70,28 @@ export class CssSnippetFuzzySuggestModal extends FuzzySuggestModal<Snippets> {
                 await this.app.workspace.revealLeaf(leaf);
                 if (leaf.view instanceof CustomThemeStudioView) {
                     const view = leaf.view;
-                    const ruleList = view.containerEl.querySelector('.css-rule');
-                    if (ruleList) {
-                        ruleList.empty();
-                        // Sort by "rule" value ASC
-                        this.plugin.settings.cssRules.sort((a, b) => a.rule.localeCompare(b.rule));
-                        // Re-populate with all rules
-                        this.plugin.settings.cssRules.forEach(r => {
-                            // eslint-disable-next-line @typescript-eslint/no-deprecated -- createRuleItem is the current API for rule rendering
-                            view.cssEditorManager.createRuleItem(ruleList as HTMLElement, r);
-                        });
+                    this.plugin.settings.cssRules.sort((a, b) => a.rule.localeCompare(b.rule));
+                    view.cssEditorManager.repopulateRules();
 
-                        const rulesSection = view.containerEl.querySelector('.rules-section');
-                        const ruleSection = rulesSection?.querySelector('.collapsible-content');
-                        const toggleIcon: HTMLElement | null = rulesSection?.querySelector('.collapse-icon') ?? null;
+                    const rulesSection = view.containerEl.querySelector('.rules-section');
+                    const ruleSection = rulesSection?.querySelector('.collapsible-content');
+                    const toggleIcon: HTMLElement | null = rulesSection?.querySelector('.collapse-icon') ?? null;
 
-                        if (ruleSection && toggleIcon) {
-                            ruleSection.classList.replace('hide', 'show');
+                    if (ruleSection && toggleIcon) {
+                        ruleSection.classList.replace('hide', 'show');
 
-                            setIcon(toggleIcon, 'chevron-down');
-                            toggleIcon.setAttr('aria-label', 'Collapse section');
-                            toggleIcon.setAttr('data-tooltip-position', 'top');
-                        }
+                        setIcon(toggleIcon, 'chevron-down');
+                        toggleIcon.setAttr('aria-label', 'Collapse section');
+                        toggleIcon.setAttr('data-tooltip-position', 'top');
+                    }
 
-                        // Scroll CSS rule to the top of view
-                        if (this.plugin.settings.viewScrollToTop) {
-                            window.setTimeout(() => {
-                                const ruleDiv: HTMLElement | null = view.containerEl.querySelector(`[data-cts-uuid="${uuid}"]`);
-                                if (ruleDiv) {
-                                    view.scrollToDiv(ruleDiv);
-                                }
-                            }, 100);
-                        }
+                    if (this.plugin.settings.viewScrollToTop) {
+                        window.setTimeout(() => {
+                            const ruleDiv: HTMLElement | null = view.containerEl.querySelector(`[data-cts-uuid="${uuid}"]`);
+                            if (ruleDiv) {
+                                view.scrollToDiv(ruleDiv);
+                            }
+                        }, 100);
                     }
                 }
             } else {

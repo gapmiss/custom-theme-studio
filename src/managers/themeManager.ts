@@ -29,28 +29,19 @@ export class ThemeManager {
 		this.cssVariableManager = new CSSVariableManager(plugin);
 	}
 
-	/**
-	 * Applies the custom theme by injecting CSS into the document.
-	 * Generates CSS from variables and custom rules, then adds it to the document head.
-	 */
 	applyCustomTheme(): void {
-		// Remove existing style element if it exists
 		this.removeCustomTheme();
 
-		// Create style element - dynamic CSS injection is core functionality
-		// eslint-disable-next-line obsidianmd/no-forbidden-elements, obsidianmd/prefer-active-doc -- dynamic style element for theme CSS injection
-		this.styleEl = document.createElement('style');
+		const doc = this.plugin.app.workspace.containerEl.ownerDocument;
+		this.styleEl = doc.createElement('style');
 		this.styleEl.id = 'custom-theme-studio-css';
 
-		// Generate CSS from variables and CSS rules
 		const variablesCSS: string = this.generateVariablesCSS();
 		const rulesCSS: string = this.plugin.settings.customCSS || '';
 
 		this.styleEl.textContent = (variablesCSS !== '' ? (variablesCSS + '\n\n') : '') + rulesCSS;
 
-		// Add to document
-		// eslint-disable-next-line obsidianmd/prefer-active-doc -- theme style must attach to main document head
-		document.head.appendChild(this.styleEl);
+		doc.head.appendChild(this.styleEl);
 	}
 
 	/**
@@ -71,8 +62,8 @@ export class ThemeManager {
 			this.styleEl.remove();
 			this.styleEl = null;
 		} else {
-			// eslint-disable-next-line obsidianmd/prefer-active-doc -- must query main document for cleanup
-			const existingStyle: HTMLElement | null = document.getElementById('custom-theme-studio-css');
+			const doc = this.plugin.app.workspace.containerEl.ownerDocument;
+			const existingStyle: HTMLElement | null = doc.getElementById('custom-theme-studio-css');
 			if (existingStyle) {
 				existingStyle.remove();
 			}

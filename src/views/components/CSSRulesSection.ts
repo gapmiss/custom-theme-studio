@@ -201,16 +201,10 @@ export class CSSRulesSection extends UIComponent {
 		const ruleListContainer = container.createDiv('css-rule-container');
 		const ruleList = ruleListContainer.createDiv('css-rule');
 
-		// Initialize the rule list manager with incremental update support
 		this.cssEditorManager.initializeRuleListManager(ruleList);
 
-		// Initial population of the list
-		this.plugin.settings.cssRules
-			.sort((a, b) => a.rule.localeCompare(b.rule))
-			.forEach(rule => {
-				// eslint-disable-next-line @typescript-eslint/no-deprecated -- createRuleItem is the current API for rule rendering
-				this.cssEditorManager.createRuleItem(ruleList, rule);
-			});
+		this.plugin.settings.cssRules.sort((a, b) => a.rule.localeCompare(b.rule));
+		this.cssEditorManager.repopulateRules();
 	}
 
 	public async filterCSSRules(query: string): Promise<void> {

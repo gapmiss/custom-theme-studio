@@ -125,25 +125,17 @@ export class FontImportModal extends Modal {
 							}
 							await this.app.workspace.revealLeaf(leaf);
 							if (leaf.view instanceof CustomThemeStudioView) {
-								let view = leaf.view;
-								const ruleList = view.containerEl.querySelector('.css-rule');
-								if (ruleList) {
-									ruleList.empty();
-									// Sort by "rule" value ASC
-									this.plugin.settings.cssRules.sort((a, b) => a.rule.localeCompare(b.rule));
-									// Re-populate with all rules
-									this.plugin.settings.cssRules.forEach(rule => {
-										// eslint-disable-next-line @typescript-eslint/no-deprecated -- createRuleItem is the current API for rule rendering
-					view.cssEditorManager.createRuleItem(ruleList as HTMLElement, rule);
-									});
+								const view = leaf.view;
+								this.plugin.settings.cssRules.sort((a, b) => a.rule.localeCompare(b.rule));
+								view.cssEditorManager.repopulateRules();
 
-									// Scroll custom rule to the top of view
-									if (this.plugin.settings.viewScrollToTop) {
-										window.setTimeout(() => {
-											const ruleDiv: HTMLElement | null = view.containerEl.querySelector(`[data-cts-uuid="${uuid}"]`);
-											view.scrollToDiv(ruleDiv!);
-										}, 100);
-									}
+								if (this.plugin.settings.viewScrollToTop) {
+									window.setTimeout(() => {
+										const ruleDiv: HTMLElement | null = view.containerEl.querySelector(`[data-cts-uuid="${uuid}"]`);
+										if (ruleDiv) {
+											view.scrollToDiv(ruleDiv);
+										}
+									}, 100);
 								}
 							}
 						} else {

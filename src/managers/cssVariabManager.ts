@@ -18,7 +18,7 @@ interface CssVariable {
 
 // Utility to build a help fragment
 function createHelpFragment(text: string, parent = '', category = ''): DocumentFragment {
-	const helpFragment = activeDocument.createDocumentFragment();
+	const helpFragment = createFragment();
 
 	if (text !== '') {
 		helpFragment.append(text);

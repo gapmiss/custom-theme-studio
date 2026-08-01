@@ -39,8 +39,7 @@ export class AddVariableModal extends Modal {
             .setDesc('A variable value can be any valid CSS value.')
             .addText(text => text
                 .setValue('')
-                // eslint-disable-next-line obsidianmd/ui/sentence-case -- "purple" is an example CSS value, not a new sentence
-                .setPlaceholder('Enter value (e.g. purple)')
+                .setPlaceholder('Enter value (e.g. Purple)')
                 .onChange(async (value) => {
                     this.variableValue = value;
                 })

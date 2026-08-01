@@ -139,14 +139,8 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 	constructor(app: App, plugin: CustomThemeStudioPlugin) {
 		super(app, plugin);
 		this.plugin = plugin;
-	}
-
-	/* eslint-disable @typescript-eslint/no-deprecated -- super.display() needed to add CSS scope class */
-	display(): void {
-		super.display();
 		this.containerEl.addClass('cts-settings-tab');
 	}
-	/* eslint-enable @typescript-eslint/no-deprecated -- re-enable after display() override */
 
 	getSettingDefinitions(): SettingDefinitionItem[] {
 		const doc = this.app.workspace.containerEl.ownerDocument;
