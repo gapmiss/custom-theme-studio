@@ -1,11 +1,15 @@
 import { UIComponent, ComponentContext } from './UIComponent';
 import { createCollapsibleSection, createIconButton, createToggleSwitch } from '../../utils/uiHelpers';
 import { DEFAULT_SETTINGS } from '../../settings';
+import { showNotice } from '../../utils';
+import { NOTICE_DURATIONS } from '../../constants';
 
 export class ExportSection extends UIComponent {
 	private nameInput?: HTMLInputElement;
 	private authorInput?: HTMLInputElement;
 	private urlInput?: HTMLInputElement;
+	private versionInput?: HTMLInputElement;
+	private minAppVersionInput?: HTMLInputElement;
 	private settingsUnsubscribers: (() => void)[] = [];
 
 	constructor(context: ComponentContext) {
@@ -35,7 +39,7 @@ export class ExportSection extends UIComponent {
 	private renderDescription(container: HTMLElement): void {
 		const description = container.createDiv('export-description');
 		description.createSpan({
-			text: 'Export your custom variables and rules as CSS and manifest files to create a shareable theme.'
+			text: 'Download your variables and rules as a theme you can install or share.'
 		});
 	}
 
@@ -45,6 +49,8 @@ export class ExportSection extends UIComponent {
 		this.renderThemeNameInput(formContainer);
 		this.renderAuthorInput(formContainer);
 		this.renderURLInput(formContainer);
+		this.renderVersionInput(formContainer);
+		this.renderMinAppVersionInput(formContainer);
 		this.renderIncludeDisabledToggle(formContainer);
 		this.renderPrettierToggle(formContainer);
 	}
@@ -100,6 +106,42 @@ export class ExportSection extends UIComponent {
 		});
 	}
 
+	private renderVersionInput(container: HTMLElement): void {
+		const versionContainer = container.createDiv('export-form-item');
+		versionContainer.createSpan({ text: 'Version:' });
+
+		this.versionInput = versionContainer.createEl('input', {
+			cls: 'export-form-theme-version',
+			attr: {
+				type: 'text',
+				placeholder: DEFAULT_SETTINGS.exportThemeVersion,
+				value: this.plugin.settings.exportThemeVersion || DEFAULT_SETTINGS.exportThemeVersion
+			}
+		});
+
+		this.versionInput.addEventListener('change', () => {
+			void this.handleVersionInputChange(this.versionInput!, 'exportThemeVersion');
+		});
+	}
+
+	private renderMinAppVersionInput(container: HTMLElement): void {
+		const minAppVersionContainer = container.createDiv('export-form-item');
+		minAppVersionContainer.createSpan({ text: 'Minimum Obsidian version:' });
+
+		this.minAppVersionInput = minAppVersionContainer.createEl('input', {
+			cls: 'export-form-theme-min-app-version',
+			attr: {
+				type: 'text',
+				placeholder: DEFAULT_SETTINGS.exportThemeMinAppVersion,
+				value: this.plugin.settings.exportThemeMinAppVersion || DEFAULT_SETTINGS.exportThemeMinAppVersion
+			}
+		});
+
+		this.minAppVersionInput.addEventListener('change', () => {
+			void this.handleVersionInputChange(this.minAppVersionInput!, 'exportThemeMinAppVersion');
+		});
+	}
+
 	private renderIncludeDisabledToggle(container: HTMLElement): void {
 		const includeDisabledContainer = container.createDiv('export-form-item include-disabled-toggle');
 
@@ -121,7 +163,7 @@ export class ExportSection extends UIComponent {
 		createToggleSwitch(
 			enablePrettierContainer,
 			'enable-prettier-switch',
-			'Format CSS with prettier formatter',
+			'Format CSS with prettier',
 			this.plugin.settings.exportPrettierFormat,
 			(checked) => {
 				this.plugin.settings.exportPrettierFormat = checked;
@@ -194,6 +236,14 @@ export class ExportSection extends UIComponent {
 		void this.settingsManager.update('exportThemeURL', value);
 	}
 
+	private async handleVersionInputChange(input: HTMLInputElement, key: 'exportThemeVersion' | 'exportThemeMinAppVersion'): Promise<void> {
+		const saved = await this.settingsManager.update(key, input.value);
+		if (!saved) {
+			showNotice('Use a version like 1.0.0', NOTICE_DURATIONS.STANDARD, 'error');
+			input.value = this.plugin.settings[key] || DEFAULT_SETTINGS[key];
+		}
+	}
+
 	private setupReactiveListeners(): void {
 		// Listen for settings changes and update UI accordingly
 		this.settingsUnsubscribers.push(
@@ -212,6 +262,18 @@ export class ExportSection extends UIComponent {
 			this.settingsManager.onChange('exportThemeURL', (value) => {
 				if (this.urlInput && this.urlInput.value !== value) {
 					this.urlInput.value = value;
+				}
+			}),
+
+			this.settingsManager.onChange('exportThemeVersion', (value) => {
+				if (this.versionInput && this.versionInput.value !== value) {
+					this.versionInput.value = value;
+				}
+			}),
+
+			this.settingsManager.onChange('exportThemeMinAppVersion', (value) => {
+				if (this.minAppVersionInput && this.minAppVersionInput.value !== value) {
+					this.minAppVersionInput.value = value;
 				}
 			})
 		);

@@ -120,7 +120,7 @@ export class FontImportModal extends Modal {
 
 						let leaf = this.app.workspace.getLeavesOfType(VIEW_TYPE_CTS).first();
 						if (leaf) {
-							if (!await confirm('The @font-face has been saved as a new CSS rule. Click "OK" to reload the "Custom Theme Studio" view or if you have unsaved changes, click "Cancel" to reload the view manually at a later time.', this.plugin.app)) {
+							if (!await confirm('Font saved as a new, disabled @font-face rule. Reload the view now to see it? If you have unsaved changes, cancel and reload later.', this.plugin.app)) {
 								return;
 							}
 							await this.app.workspace.revealLeaf(leaf);

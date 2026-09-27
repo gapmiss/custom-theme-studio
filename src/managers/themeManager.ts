@@ -214,18 +214,7 @@ ${rulesCSS}`;
 
 	exportThemeManifest(): void {
 		try {
-			// Generate manifest.json content
-			const themeId: string = (this.plugin.settings.exportThemeName || DEFAULT_SETTINGS.exportThemeName)
-				.toLowerCase()
-				.replace(/[^a-z0-9]+/g, '-');
-
-			const manifest: ThemeManifest = {
-				name: themeId,
-				version: '1.0.0',
-				minAppVersion: '0.15.0',
-				author: this.plugin.settings.exportThemeAuthor || DEFAULT_SETTINGS.exportThemeAuthor,
-				authorUrl: this.plugin.settings.exportThemeURL || DEFAULT_SETTINGS.exportThemeURL
-			};
+			const manifest = this.buildManifest();
 
 			const manifestJSON: string = JSON.stringify(manifest, null, 2);
 
@@ -268,20 +257,27 @@ ${rulesCSS}`;
 		}
 	}
 
+	/**
+	 * Builds the theme manifest from the export settings.
+	 */
+	private buildManifest(): ThemeManifest {
+		const settings = this.plugin.settings;
+		const themeId: string = (settings.exportThemeName || DEFAULT_SETTINGS.exportThemeName)
+			.toLowerCase()
+			.replace(/[^a-z0-9]+/g, '-');
+
+		return {
+			name: themeId,
+			version: settings.exportThemeVersion || DEFAULT_SETTINGS.exportThemeVersion,
+			minAppVersion: settings.exportThemeMinAppVersion || DEFAULT_SETTINGS.exportThemeMinAppVersion,
+			author: settings.exportThemeAuthor || DEFAULT_SETTINGS.exportThemeAuthor,
+			authorUrl: settings.exportThemeURL || DEFAULT_SETTINGS.exportThemeURL
+		};
+	}
+
 	async copyManifestToClipboard(): Promise<void> {
 		try {
-			// Generate manifest.json content
-			const themeId: string = (this.plugin.settings.exportThemeName || DEFAULT_SETTINGS.exportThemeName)
-				.toLowerCase()
-				.replace(/[^a-z0-9]+/g, '-');
-
-			const manifest: ThemeManifest = {
-				name: themeId,
-				version: '1.0.0',
-				minAppVersion: '0.15.0',
-				author: this.plugin.settings.exportThemeAuthor || DEFAULT_SETTINGS.exportThemeAuthor,
-				authorUrl: this.plugin.settings.exportThemeURL || DEFAULT_SETTINGS.exportThemeURL
-			};
+			const manifest = this.buildManifest();
 
 			await navigator.clipboard.writeText(JSON.stringify(manifest, null, 2));
 			showNotice('Manifest JSON copied to clipboard', NOTICE_DURATIONS.STANDARD, 'success');

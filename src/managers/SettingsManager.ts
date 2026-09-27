@@ -264,6 +264,20 @@ export class SettingsManager {
 	}
 
 	/**
+	 * Validate a version string in x.y.z format
+	 */
+	private validateVersion(value: string): SettingValidationResult {
+		const trimmed = value.trim();
+		if (!/^\d+\.\d+\.\d+$/.test(trimmed)) {
+			return {
+				valid: false,
+				error: 'Version must be in x.y.z format, e.g. 1.0.0'
+			};
+		}
+		return { valid: true, sanitizedValue: trimmed };
+	}
+
+	/**
 	 * Setup default validators for common settings
 	 */
 	private setupDefaultValidators(): void {
@@ -277,6 +291,9 @@ export class SettingsManager {
 			valid: true,
 			sanitizedValue: value.trim()
 		}));
+
+		this.addValidator('exportThemeVersion', (value: string) => this.validateVersion(value));
+		this.addValidator('exportThemeMinAppVersion', (value: string) => this.validateVersion(value));
 
 		// Number validators
 		this.addValidator('editorFontSize', (value: number) => {

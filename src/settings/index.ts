@@ -28,6 +28,8 @@ export interface CustomThemeStudioSettings {
 	exportThemeName: string;
 	exportThemeAuthor: string;
 	exportThemeURL: string;
+	exportThemeVersion: string;
+	exportThemeMinAppVersion: string;
 	exportThemeIncludeDisabled: boolean;
 	exportPrettierFormat: boolean;
 	lastSelectedSelector: string;
@@ -76,6 +78,8 @@ export const DEFAULT_SETTINGS: CustomThemeStudioSettings = {
 	exportThemeName: 'My Custom Theme',
 	exportThemeAuthor: 'Anonymous',
 	exportThemeURL: 'https://github.com/obsidianmd',
+	exportThemeVersion: '1.0.0',
+	exportThemeMinAppVersion: '0.15.0',
 	exportThemeIncludeDisabled: false,
 	exportPrettierFormat: true,
 	lastSelectedSelector: '',
@@ -142,6 +146,14 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 		this.containerEl.addClass('cts-settings-tab');
 	}
 
+	private async saveVersion(input: HTMLInputElement, key: 'exportThemeVersion' | 'exportThemeMinAppVersion'): Promise<void> {
+		const saved = await this.plugin.settingsManager.update(key, input.value);
+		if (!saved) {
+			new Notice('Use a version like 1.0.0');
+			input.value = this.plugin.settings[key] || DEFAULT_SETTINGS[key];
+		}
+	}
+
 	getSettingDefinitions(): SettingDefinitionItem[] {
 		const doc = this.app.workspace.containerEl.ownerDocument;
 
@@ -149,7 +161,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 			// ── Enable custom theme ──
 			{
 				name: 'Enable custom theme',
-				desc: 'Toggle your custom theme on or off.',
+				desc: 'Turn your customizations on or off.',
 				render: (setting) => {
 					setting.addToggle(toggle => toggle
 						.setValue(this.plugin.settings.themeEnabled)
@@ -177,16 +189,16 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				items: [
 					{
 						name: 'Variable update trigger',
-						desc: 'When to update CSS after changing variable values. Choose "input" for live updates (every keystroke) or "change" to update only when you finish editing (clicking away from the field).',
+						desc: 'When a changed variable value is applied to your theme.',
 						control: {
 							type: 'dropdown',
 							key: 'variableInputListener',
-							options: { 'input': 'input', 'change': 'change' },
+							options: { 'change': 'When I leave the field', 'input': 'As I type' },
 						},
 					},
 					{
 						name: 'Variable color picker',
-						desc: 'Enable a color picker for CSS variables that have a default hex color value.',
+						desc: 'Show a color swatch next to variables that have a hex color default.',
 						control: { type: 'toggle', key: 'enableColorPicker' },
 					},
 				],
@@ -199,7 +211,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				items: [
 					{
 						name: 'Font import',
-						desc: 'Enable font imports to create @font-face CSS rules.',
+						desc: 'Show an "import font" button that turns a font file into an @font-face rule.',
 						render: (setting) => {
 							setting.addToggle(toggle => toggle
 								.setValue(this.plugin.settings.enableFontImport)
@@ -211,7 +223,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 					},
 					{
 						name: 'Warn before discarding changes',
-						desc: 'Warn before discarding unsaved changes when closing or switching between CSS editors.',
+						desc: 'Ask before closing a CSS editor that has unsaved changes.',
 						control: { type: 'toggle', key: 'showConfirmation' },
 					},
 				],
@@ -224,7 +236,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				items: [
 					{
 						name: 'Selector style preset',
-						desc: 'Choose the style of CSS selectors generated when picking elements. "minimal" creates short selectors, "balanced" includes the tag name, and "specific" includes all attributes.',
+						desc: 'How detailed the selectors from the element selector are. Minimal is the shortest that works, balanced adds the tag name, and specific uses every attribute.',
 						control: {
 							type: 'dropdown',
 							key: 'selectorStyle',
@@ -237,17 +249,17 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 					},
 					{
 						name: 'Prefer classes over attributes',
-						desc: 'When enabled, prioritize class selectors (e.g., .my-class) over data attributes.',
+						desc: 'Use class selectors like .my-class before data attributes.',
 						control: { type: 'toggle', key: 'selectorPreferClasses' },
 					},
 					{
 						name: 'Always include tag names',
-						desc: 'When enabled, always include the HTML tag (e.g., div[data-foo] instead of [data-foo]).',
+						desc: 'Write div[data-foo] instead of [data-foo].',
 						control: { type: 'toggle', key: 'selectorAlwaysIncludeTag' },
 					},
 					{
 						name: 'Excluded attribute patterns',
-						desc: 'Attributes matching these patterns will be excluded from minimal and balanced selectors (one per line). Supports wildcards like "data-tooltip-*". Specific mode includes all attributes.',
+						desc: 'Attributes to leave out of minimal and balanced selectors, one per line. Wildcards work, like data-tooltip-*.',
 						control: {
 							type: 'textarea',
 							key: 'selectorExcludedAttributes',
@@ -257,7 +269,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 					},
 					{
 						name: 'Generate CSS',
-						desc: 'Automatically populate the CSS editor with common properties (color, background, font, etc.) when selecting an element.',
+						desc: 'Fill new rules with the element\'s current color, background, font, and similar properties.',
 						control: { type: 'toggle', key: 'generateComputedCSS' },
 					},
 				],
@@ -270,7 +282,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				items: [
 					{
 						name: 'Auto-apply changes',
-						desc: 'Automatically preview changes "live" as you make them. Changes become permanent once the CSS is saved.',
+						desc: 'Preview CSS as you type. Changes are only kept once you save the rule.',
 						control: { type: 'toggle', key: 'autoApplyChanges' },
 					},
 					// Auto-apply warning notice
@@ -284,14 +296,14 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 							noticeIcon.setAttribute('aria-label', 'Notice');
 							noticeIcon.setAttribute('data-tooltip-position', 'top');
 							const noticeText = noticeDiv.createDiv('cts-auto-apply-changes-notice-text');
-							noticeText.textContent = 'When enabled, every keystroke triggers a "live" refresh of your theme. This can lead to unwanted styling and possibly make Obsidian unusable.';
+							noticeText.textContent = 'Half-finished CSS gets applied too. A bad rule can hide parts of Obsidian until you fix it or run the "toggle custom theme" command.';
 							setIcon(noticeIcon, 'alert-triangle');
 						},
 					},
 					// Debounce delay slider + reset
 					{
 						name: 'Auto-apply change delay',
-						desc: 'Delay before live-previewing CSS changes while typing (requires auto-apply). Lower values = faster feedback but may cause performance issues.',
+						desc: 'How long to wait after you stop typing before previewing. Needs auto-apply. Shorter feels faster but can slow Obsidian down.',
 						render: (setting) => {
 							let debounceDelaySlider: SliderComponent;
 							setting.addSlider(slider => {
@@ -330,18 +342,18 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				items: [
 					{
 						name: 'Editor color picker',
-						desc: 'Show inline color picker for hex/rgb values.',
+						desc: 'Show a color swatch next to color values. Click it to pick a new color.',
 						control: { type: 'toggle', key: 'enableAceColorPicker' },
 					},
 					{
 						name: 'Live auto completion',
-						desc: 'Show auto-completion suggestions while typing CSS properties and values.',
+						desc: 'Suggest CSS properties and values as you type.',
 						render: (setting) => {
 							setting.addToggle(toggle => toggle
 								.setValue(this.plugin.settings.enableAceAutoCompletion)
 								.onChange(async (value) => {
 									if (!value && this.plugin.settings.enableAceSnippets) {
-										new Notice('Snippets are enabled and require that "live auto completion" be enabled. Please disable the below "snippets" toggle before disabling this setting.', 10000);
+										new Notice('Turn off "snippets" first. It needs live auto completion.', 10000);
 										toggle.setValue(true);
 										return;
 									}
@@ -353,19 +365,19 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 					},
 					{
 						name: 'Snippets',
-						desc: 'Show Obsidian CSS variables in auto-completion (requires live auto-completion).',
+						desc: 'Include Obsidian\'s CSS variables in suggestions. Needs live auto completion.',
 						render: (setting) => {
 							setting.addToggle(toggle => toggle
 								.setValue(this.plugin.settings.enableAceSnippets)
 								.onChange(async (value) => {
 									if (value && !this.plugin.settings.enableAceAutoCompletion) {
-										new Notice('Please enable the above "live auto completion" toggle before enabling this setting.', 10000);
+										new Notice('Turn on "live auto completion" first.', 10000);
 										toggle.setValue(false);
 										return;
 									}
 									this.plugin.settings.enableAceSnippets = value;
 									if (!value) {
-										new Notice('Disabling this setting requires a reload of the Obsidian window. From the command palette, run the command "reload app without saving." … click this message to dismiss.', 0);
+										new Notice('Reload Obsidian for this to take effect. Run "reload app without saving" from the command palette. Click to dismiss.', 0);
 									}
 									await this.plugin.saveSettings();
 								})
@@ -374,7 +386,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 					},
 					{
 						name: 'Editor theme',
-						desc: 'CSS editor color theme. "auto" matches your Obsidian theme.',
+						desc: 'Color theme for the CSS editor. Auto follows Obsidian.',
 						control: {
 							type: 'dropdown',
 							key: 'editorTheme',
@@ -383,7 +395,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 					},
 					{
 						name: 'Light mode theme',
-						desc: 'Syntax highlighting theme when Obsidian is in light mode.',
+						desc: 'Syntax colors when Obsidian is in light mode.',
 						control: {
 							type: 'dropdown',
 							key: 'editorLightTheme',
@@ -392,7 +404,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 					},
 					{
 						name: 'Dark mode theme',
-						desc: 'Syntax highlighting theme when Obsidian is in dark mode.',
+						desc: 'Syntax colors when Obsidian is in dark mode.',
 						control: {
 							type: 'dropdown',
 							key: 'editorDarkTheme',
@@ -401,7 +413,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 					},
 					{
 						name: 'Keyboard shortcuts',
-						desc: 'Keyboard shortcut scheme for the CSS editor.',
+						desc: 'Key bindings for the CSS editor.',
 						control: {
 							type: 'dropdown',
 							key: 'editorKeyboard',
@@ -410,7 +422,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 					},
 					{
 						name: 'Font size',
-						desc: 'Set the font size of the CSS editor.',
+						desc: 'Font size in the CSS editor.',
 						render: (setting) => {
 							let fontSizeSlider: SliderComponent;
 							setting.addSlider(slider => {
@@ -441,12 +453,12 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 					},
 					{
 						name: 'Font family',
-						desc: 'Font family for the CSS editor (e.g., "fira code", "monaco"). Leave empty for default.',
+						desc: 'Font for the CSS editor, like "fira code". Leave empty for the default.',
 						control: { type: 'text', key: 'editorFontFamily' },
 					},
 					{
 						name: 'Tab width',
-						desc: 'Indentation width (spaces per tab level). Standard is 2 or 4.',
+						desc: 'Spaces per indent level.',
 						render: (setting) => {
 							setting.addDropdown(dropdown => {
 								dropdown
@@ -494,14 +506,14 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 							setting.settingEl.empty();
 							setting.settingEl.createDiv({
 								cls: 'cts-theme-export-description',
-								text: 'These settings can also be changed at time of export.',
+								text: 'These are the same fields as in the export theme section of the view.',
 							});
 						},
 					},
 					// Theme name (render: syncs view input)
 					{
 						name: 'Theme name',
-						desc: 'The name or title for your exported theme. ',
+						desc: 'Name of your exported theme.',
 						render: (setting) => {
 							setting.addText(text => text
 								.setValue(this.plugin.settings.exportThemeName)
@@ -518,7 +530,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 					// Author name (render: syncs view input)
 					{
 						name: 'Author name',
-						desc: 'Your name as the theme author. ',
+						desc: 'Your name.',
 						render: (setting) => {
 							setting.addText(text => text
 								.setValue(this.plugin.settings.exportThemeAuthor)
@@ -535,7 +547,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 					// Author URL (render: syncs view input)
 					{
 						name: 'Author URL',
-						desc: 'URL to your GitHub profile page (e.g. https://github.com/username). ',
+						desc: 'Link to your website or GitHub profile.',
 						render: (setting) => {
 							setting.addText(text => text
 								.setValue(this.plugin.settings.exportThemeURL)
@@ -549,10 +561,38 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 								}));
 						},
 					},
-					// Include disabled CSS rules (render: syncs view checkbox)
+					// Theme version (render: validates on blur, syncs view via settingsManager)
+				{
+					name: 'Theme version',
+					desc: 'Version number in the manifest, like 1.0.0.',
+					render: (setting) => {
+						setting.addText(text => {
+							text.setPlaceholder(DEFAULT_SETTINGS.exportThemeVersion)
+								.setValue(this.plugin.settings.exportThemeVersion || DEFAULT_SETTINGS.exportThemeVersion);
+							text.inputEl.addEventListener('change', () => {
+								void this.saveVersion(text.inputEl, 'exportThemeVersion');
+							});
+						});
+					},
+				},
+				// Minimum Obsidian version (render: validates on blur, syncs view via settingsManager)
+				{
+					name: 'Minimum Obsidian version',
+					desc: 'Oldest Obsidian version your theme supports, like 1.13.0.',
+					render: (setting) => {
+						setting.addText(text => {
+							text.setPlaceholder(DEFAULT_SETTINGS.exportThemeMinAppVersion)
+								.setValue(this.plugin.settings.exportThemeMinAppVersion || DEFAULT_SETTINGS.exportThemeMinAppVersion);
+							text.inputEl.addEventListener('change', () => {
+								void this.saveVersion(text.inputEl, 'exportThemeMinAppVersion');
+							});
+						});
+					},
+				},
+				// Include disabled CSS rules (render: syncs view checkbox)
 					{
 						name: 'Include disabled CSS rules when exporting',
-						desc: 'Include disabled rules in exported themes (useful for sharing themes with optional features)."',
+						desc: 'Add disabled rules to the exported CSS. Handy for optional pieces people can switch on.',
 						render: (setting) => {
 							setting.addToggle(toggle => toggle
 								.setValue(this.plugin.settings.exportThemeIncludeDisabled)
@@ -570,7 +610,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 					// Prettier formatting (render: syncs view checkbox)
 					{
 						name: 'Prettier formatting',
-						desc: 'Automatically format CSS using prettier formatter.',
+						desc: 'Tidy the exported CSS with prettier.',
 						render: (setting) => {
 							setting.addToggle(toggle => toggle
 								.setValue(this.plugin.settings.exportPrettierFormat)
@@ -595,7 +635,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				items: [
 					{
 						name: 'Scroll to top',
-						desc: 'Auto-scroll to expanded sections or active editors for easier navigation.',
+						desc: 'Scroll the view to the section or editor you just opened.',
 						control: { type: 'toggle', key: 'viewScrollToTop' },
 					},
 				],
@@ -608,7 +648,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				items: [
 					{
 						name: 'Export & import settings',
-						desc: 'Export or import all plugin settings. Import will overwrite current settings. File saved to vault root as cts_settings.json.',
+						desc: 'Export saves everything to cts_settings.json in your vault root. Import replaces all current settings with that file.',
 						render: (setting) => {
 							setting
 								.addButton(button => {
@@ -622,7 +662,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 									button.onClick(async () => {
 										const importedSettings = await settingsIO.importSettings(this.app);
 										if (importedSettings) {
-											if (await confirm('This will overwrite your current settings and cannot be undone. Continue?', this.plugin.app)) {
+											if (await confirm('This replaces all your current settings and can\'t be undone. Continue?', this.plugin.app)) {
 												this.plugin.settings = importedSettings;
 												await this.plugin.saveData(this.plugin.settings);
 
@@ -649,19 +689,19 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				items: [
 					{
 						name: 'Reload view',
-						desc: 'Most settings under CSS variables & CSS rules require the plugin\'s view to be reloaded to take effect.',
+						desc: 'Reload the studio view. Some CSS variables and CSS rules settings only take effect after a reload.',
 						render: (setting) => {
 							setting.addButton(button => button
 								.setButtonText('Reload')
 								.setClass('mod-destructive')
 								.onClick(async () => {
-									if (await confirm('You may have unsaved changes. Reloading the view will reload all forms. Continue?', this.plugin.app)) {
+									if (await confirm('Reloading the view discards any unsaved changes. Continue?', this.plugin.app)) {
 										try {
 											await this.plugin.reloadView();
-											new Notice('The custom theme studio view has been reloaded');
+											new Notice('View reloaded');
 										} catch (error) {
 											Logger.error(error instanceof Error ? error.message : String(error));
-											new Notice('Failed to reload view. Check developer console for details.', 10000);
+											new Notice('Couldn\'t reload the view. Check the developer console for details.', 10000);
 										}
 									}
 								})
@@ -670,7 +710,7 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 					},
 					{
 						name: 'Debug level',
-						desc: 'Control console logging verbosity for debugging',
+						desc: 'How much to log to the developer console.',
 						control: {
 							type: 'dropdown',
 							key: 'debugLevel',
@@ -694,13 +734,13 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 				items: [
 					{
 						name: 'Reset theme',
-						desc: 'Reset all theme customizations.',
+						desc: 'Delete all your variables and rules and turn the custom theme off. Other settings are kept.',
 						render: (setting) => {
 							setting.addButton(button => button
 								.setButtonText('Reset')
 								.setClass('mod-destructive')
 								.onClick(async () => {
-									if (await confirm('Are you sure you want to reset all theme customizations? This cannot be undone.', this.plugin.app)) {
+									if (await confirm('Delete all your variables and rules? This can\'t be undone.', this.plugin.app)) {
 										this.plugin.settings.customCSS = '';
 										this.plugin.settings.cssVariables = [];
 										this.plugin.settings.cssRules = [];

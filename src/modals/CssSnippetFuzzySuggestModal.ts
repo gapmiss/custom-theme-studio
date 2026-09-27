@@ -64,7 +64,7 @@ export class CssSnippetFuzzySuggestModal extends FuzzySuggestModal<Snippets> {
 
             const leaf = this.app.workspace.getLeavesOfType(VIEW_TYPE_CTS).first();
             if (leaf) {
-                if (!await confirm('The snippet has been saved as a new CSS rule. Click "OK" to reload the "Custom Theme Studio" view or if you have unsaved changes, click "Cancel" to reload the view manually at a later time.', this.plugin.app)) {
+                if (!await confirm('Snippet saved as a new, disabled CSS rule. Reload the view now to see it? If you have unsaved changes, cancel and reload later.', this.plugin.app)) {
                     return;
                 }
                 await this.app.workspace.revealLeaf(leaf);
