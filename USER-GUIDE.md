@@ -168,7 +168,7 @@ Open **Export theme** and fill in:
 - **Author**
 - **URL** (usually your GitHub profile)
 - **Version**, like `1.0.0`
-- **Minimum Obsidian version**, the oldest version your theme supports
+- **Min. Obsidian**, the oldest Obsidian version your theme supports (called **Minimum Obsidian version** in settings)
 
 Two toggles control the output:
 
@@ -190,7 +190,7 @@ The CSS file contains your variables, then your enabled rules, with your name an
 
 Turn off **Enable theme** in the studio when you test this, or your changes will be applied twice.
 
-Bump **Version** each time you release an update. The default **Minimum Obsidian version** is `0.15.0`. If your theme uses variables added in newer releases (anything using `color-mix()`, for example), set it to the version that introduced them, like `1.13.0`.
+Bump **Version** each time you release an update. The default minimum Obsidian version is `0.15.0`. If your theme uses variables added in newer releases (anything using `color-mix()`, for example), set it to the version that introduced them, like `1.13.0`.
 
 ## Commands
 

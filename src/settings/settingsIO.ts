@@ -174,6 +174,10 @@ class SettingsIO {
         if (typeof settings.selectorStyle !== 'string') return false;
         if (typeof settings.selectorExcludedAttributes !== 'string') return false;
 
+        // Optional string fields (missing from older backups)
+        if (settings.exportThemeVersion !== undefined && typeof settings.exportThemeVersion !== 'string') return false;
+        if (settings.exportThemeMinAppVersion !== undefined && typeof settings.exportThemeMinAppVersion !== 'string') return false;
+
         // Required number fields
         if (typeof settings.editorFontSize !== 'number') return false;
         if (typeof settings.cssEditorDebounceDelay !== 'number') return false;

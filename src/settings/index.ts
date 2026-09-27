@@ -663,7 +663,8 @@ export class CustomThemeStudioSettingTab extends PluginSettingTab {
 										const importedSettings = await settingsIO.importSettings(this.app);
 										if (importedSettings) {
 											if (await confirm('This replaces all your current settings and can\'t be undone. Continue?', this.plugin.app)) {
-												this.plugin.settings = importedSettings;
+												// Fill in fields missing from older backups
+												this.plugin.settings = Object.assign({}, DEFAULT_SETTINGS, importedSettings);
 												await this.plugin.saveData(this.plugin.settings);
 
 												const leaves = this.app.workspace.getLeavesOfType('cts-view');

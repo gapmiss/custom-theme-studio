@@ -126,13 +126,15 @@ export class ExportSection extends UIComponent {
 
 	private renderMinAppVersionInput(container: HTMLElement): void {
 		const minAppVersionContainer = container.createDiv('export-form-item');
-		minAppVersionContainer.createSpan({ text: 'Minimum Obsidian version:' });
+		minAppVersionContainer.createSpan({ text: 'Min. Obsidian:' });
 
 		this.minAppVersionInput = minAppVersionContainer.createEl('input', {
 			cls: 'export-form-theme-min-app-version',
 			attr: {
 				type: 'text',
 				placeholder: DEFAULT_SETTINGS.exportThemeMinAppVersion,
+				'aria-label': 'Minimum Obsidian version',
+				'data-tooltip-position': 'top',
 				value: this.plugin.settings.exportThemeMinAppVersion || DEFAULT_SETTINGS.exportThemeMinAppVersion
 			}
 		});
