@@ -78,6 +78,7 @@ const variableCategories: Record<string, { text?: string; parent?: string; categ
 	lightbox: { parent: 'Components', category: 'Lightbox', text: 'Lightbox variables' },
 	link: { parent: 'Editor', category: 'Link' },
 	list: { parent: 'Editor', category: 'List' },
+	mermaid: { parent: 'Editor', category: 'Mermaid', text: 'Mermaid diagram variables' },
 	modal: { parent: 'Components', category: 'Modal' },
 	multiselect: { parent: 'Components', category: 'Multi-select' },
 	navigation: { parent: 'Components', category: 'Navigation' },
