@@ -47,7 +47,7 @@ Obsidian's look is driven by hundreds of CSS variables: colors, fonts, spacing, 
 
 - **Search.** Type in the search box to filter by name. A counter shows how many matched.
 - **Tags.** Click a tag to show one group: `components`, `editor`, `foundations`, `mobile`, `plugins`, `window`, `theme-dark`, `theme-light`, or `CTS` (the plugin's own variables plus any you've added). Click `all` to see everything again.
-- **Categories.** Variables are grouped into categories like Button, Callout, or Typography. Each category shows how many variables it holds and links to the matching page in Obsidian's developer docs.
+- **Categories.** Variables are grouped into categories like Button, Callout, or Typography. Each category shows how many variables it holds and links to the matching page in Obsidian's developer docs. Categories without a docs page, like Menus or Mermaid, show a short description instead.
 
 ### Changing a value
 
@@ -65,7 +65,7 @@ Click the **Add CSS variable** button (the pencil icon). Give it a name starting
 
 ### Deprecated variables
 
-Starting with Obsidian 1.13, many colors are built with `color-mix()` instead of the old `rgb`/`hsl` helper variables. Those older variables still work and live in the **Deprecated** category, so themes that rely on them keep working. For new work, prefer the current variables.
+Starting with Obsidian 1.13, many colors are built with `color-mix()` instead of the old `rgb`/`hsl` helper variables. Those older variables still work and live in the **Deprecated** category (under the `foundations` tag), so themes that rely on them keep working. For new work, prefer the current variables.
 
 ## CSS rules
 
@@ -190,7 +190,7 @@ The CSS file contains your variables, then your enabled rules, with your name an
 
 Turn off **Enable theme** in the studio when you test this, or your changes will be applied twice.
 
-Bump **Version** each time you release an update. The default minimum Obsidian version is `0.15.0`. If your theme uses variables added in newer releases (anything using `color-mix()`, for example), set it to the version that introduced them, like `1.13.0`.
+Bump **Version** each time you release an update. The default minimum Obsidian version is `0.15.0`. If your theme uses variables added in newer releases (anything using `color-mix()`, for example), set it to the version that introduced them, like `1.13.0`. The Mermaid diagram variables (`--mermaid-*`) need `1.15.0`.
 
 ## Commands
 
