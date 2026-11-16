@@ -1,34 +1,25 @@
-import tsParser from "@typescript-eslint/parser";
-import tseslint from "typescript-eslint";
+import { defineConfig, globalIgnores } from "eslint/config";
 import obsidianmd from "eslint-plugin-obsidianmd";
 
-export default [
-    {
-        ignores: [
-            "node_modules/**",
-            "main.js",
-            "*.mjs",
-            "package.json",
-            "package-lock.json",
-            "versions.json",
-            "tsconfig.json",
-            "src/lib/**"
-        ]
-    },
-    ...tseslint.configs.recommendedTypeChecked.map(config => ({
-        ...config,
-        files: ["src/**/*.ts"],
-    })),
+export default defineConfig([
+    // Build output, Node build/release scripts, and vendored third-party code are not plugin code.
+    globalIgnores([
+        "node_modules",
+        "main.js",
+        "*.mjs",
+        "src/lib/**",
+    ]),
     ...obsidianmd.configs.recommended,
     {
-        files: ["src/**/*.ts"],
         languageOptions: {
-            parser: tsParser,
             parserOptions: {
-                project: "./tsconfig.json",
-                sourceType: "module",
+                projectService: true,
+                tsconfigRootDir: import.meta.dirname,
             },
         },
+    },
+    {
+        files: ["src/**/*.ts"],
         rules: {
             "@typescript-eslint/no-unused-vars": ["error", {
                 argsIgnorePattern: "^_",
@@ -38,4 +29,4 @@ export default [
             "@typescript-eslint/no-empty-function": "off",
         },
     },
-];
+]);
