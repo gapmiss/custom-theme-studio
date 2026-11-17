@@ -31,12 +31,15 @@ export class AceService {
 		this.editor.setOptions(settings);
 		this.editor.getSession().setMode(`ace/mode/${languageMode}`, () => {
 			if (this.plugin.settings.enableAceColorPicker) {
-				void import('../lib/ace-colorpicker').then((AceColorPicker) => {
-					AceColorPicker.default.load(ace, this.editor, {
-						hideDelay: 2000,
-						showDelay: 500,
-						type: 'vscode'
-					});
+				// Must stay require(), not import(): the community scanner lints files reachable
+				// through import/import(), which pulls in the vendored src/lib/ace-colorpicker.js.
+				// eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-unsafe-assignment -- untyped vendored JS library; require() keeps it out of the scanner's import graph
+				const AceColorPicker = require('../lib/ace-colorpicker');
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access -- untyped JS library
+				AceColorPicker.load(ace, this.editor, {
+					hideDelay: 2000,
+					showDelay: 500,
+					type: 'vscode'
 				});
 			}
 		});

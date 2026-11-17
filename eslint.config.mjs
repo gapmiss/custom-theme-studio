@@ -27,6 +27,8 @@ export default defineConfig([
             }],
             "@typescript-eslint/ban-ts-comment": "off",
             "@typescript-eslint/no-empty-function": "off",
+            // The community scanner still reports require(), though obsidianmd's recommended config turns it off.
+            "@typescript-eslint/no-require-imports": "error",
         },
     },
 ]);
